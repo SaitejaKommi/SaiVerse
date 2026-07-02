@@ -14,9 +14,13 @@ export interface WorldData {
   weather: WeatherType
   currentDistrict: string | null
   activeScenes: string[]
+  discoveredLocations: string[]
+  activeWaypoints: string[]
+  weatherIntensity: number
+  windStrength: number
 }
 
-export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy'
+export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy' | 'stormy'
 
 export interface GameState {
   player: PlayerData

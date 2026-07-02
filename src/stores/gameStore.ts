@@ -11,6 +11,10 @@ interface GameActions {
   setCurrentDistrict: (district: string | null) => void
   setWeather: (weather: WorldData['weather']) => void
   setTimeOfDay: (time: number) => void
+  discoverLocation: (location: string) => void
+  unlockWaypoint: (waypoint: string) => void
+  setWeatherIntensity: (intensity: number) => void
+  setWindStrength: (strength: number) => void
   reset: () => void
 }
 
@@ -28,6 +32,10 @@ const initialWorld: WorldData = {
   weather: 'clear',
   currentDistrict: null,
   activeScenes: [],
+  discoveredLocations: [],
+  activeWaypoints: [],
+  weatherIntensity: 0,
+  windStrength: 0,
 }
 
 const initialGame: GameState = {
@@ -86,6 +94,38 @@ const useGameStore = create<GameState & GameActions>()((set) => ({
   setTimeOfDay: (timeOfDay) =>
     set((state) => ({
       world: { ...state.world, timeOfDay, dayProgress: timeOfDay / 24 },
+    })),
+
+  discoverLocation: (location) =>
+    set((state) => {
+      if (state.world.discoveredLocations.includes(location)) return state
+      return {
+        world: {
+          ...state.world,
+          discoveredLocations: [...state.world.discoveredLocations, location],
+        },
+      }
+    }),
+
+  unlockWaypoint: (waypoint) =>
+    set((state) => {
+      if (state.world.activeWaypoints.includes(waypoint)) return state
+      return {
+        world: {
+          ...state.world,
+          activeWaypoints: [...state.world.activeWaypoints, waypoint],
+        },
+      }
+    }),
+
+  setWeatherIntensity: (weatherIntensity) =>
+    set((state) => ({
+      world: { ...state.world, weatherIntensity },
+    })),
+
+  setWindStrength: (windStrength) =>
+    set((state) => ({
+      world: { ...state.world, windStrength },
     })),
 
   reset: () => set(initialGame),
