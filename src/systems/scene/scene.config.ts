@@ -1,0 +1,5 @@
+export const SCENE_CONFIG = {
+  MAX_ACTIVE_SCENES: 3,
+  TRANSITION_DURATION: 1,
+  UNLOAD_DELAY: 2,
+} as const
