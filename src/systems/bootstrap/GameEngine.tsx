@@ -12,6 +12,7 @@ import { PlayerController } from '@/systems/player/PlayerController'
 import { LightingManager } from '@/systems/lighting/LightingManager'
 import { DebugOverlay } from '@/systems/debug/DebugOverlay'
 import { audioManager } from '@/systems/audio/AudioManager'
+import { BengaluruHub } from '@/features/bengaluru-hub/BengaluruHub'
 
 interface GameEngineProps {
   children?: ReactNode
@@ -21,6 +22,7 @@ interface GameEngineProps {
   enableAudio?: boolean
   enablePlayer?: boolean
   enableCamera?: boolean
+  enableWorld?: boolean
   environmentPreset?: 'sunset' | 'dawn' | 'night' | 'warehouse' | 'forest' | 'apartment' | 'studio' | 'city' | 'park' | 'lobby'
 }
 
@@ -32,6 +34,7 @@ export function GameEngine({
   enableAudio = true,
   enablePlayer = true,
   enableCamera = true,
+  enableWorld = true,
   environmentPreset = 'night',
 }: GameEngineProps) {
   const setInitialized = useGameStore((s) => s.setInitialized)
@@ -71,6 +74,7 @@ export function GameEngine({
           </Physics>
         )}
         {enableCamera && <CameraSystem target={playerTarget} />}
+        {enableWorld && <BengaluruHub />}
         {children}
       </SceneProvider>
       {enableDebug && <DebugOverlay />}
