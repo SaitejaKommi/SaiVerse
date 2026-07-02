@@ -1,0 +1,62 @@
+{
+  "name": "saiverse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An interactive 3D adventure game that tells Sai's engineering journey through an immersive browser-based experience.",
+  "license": "MIT",
+  "author": "Saiteja Kommi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaitejaKommi/Portfolio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SaitejaKommi/Portfolio/issues"
+  },
+  "homepage": "https://github.com/SaitejaKommi/Portfolio#readme",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.170.0",
+    "@react-three/fiber": "^9.0.0",
+    "@react-three/drei": "^10.0.0",
+    "@react-three/rapier": "^2.0.0",
+    "@react-three/postprocessing": "^3.0.0",
+    "zustand": "^5.0.0",
+    "gsap": "^3.12.0",
+    "framer-motion": "^11.15.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.170.0",
+    "typescript": "^5.5.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.2.0",
+    "prettier": "^3.4.0",
+    "prettier-plugin-tailwindcss": "^0.6.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
