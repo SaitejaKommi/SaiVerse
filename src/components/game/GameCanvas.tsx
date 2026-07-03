@@ -57,7 +57,7 @@ export default function GameCanvas() {
   return (
     <CanvasErrorBoundary onError={handleError}>
       <LoadingScreen minimumDuration={1500} onComplete={handleLoadComplete} />
-      <div ref={canvasRef}>
+      <div ref={canvasRef} className="fixed inset-0">
         <Canvas
           shadows
           dpr={[1, 2]}
