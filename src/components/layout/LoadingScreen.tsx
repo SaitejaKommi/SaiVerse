@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 interface LoadingScreenProps {
   minimumDuration?: number
@@ -9,32 +9,39 @@ interface LoadingScreenProps {
 
 export function LoadingScreen({ minimumDuration = 1500, onComplete }: LoadingScreenProps) {
   const [progress, setProgress] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [fading, setFading] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const done = useRef(false)
 
   useEffect(() => {
     const startTime = performance.now()
 
     const interval = setInterval(() => {
       const elapsed = performance.now() - startTime
-      const rawProgress = Math.min(elapsed / minimumDuration, 1)
-      const easedProgress = 1 - Math.pow(1 - rawProgress, 3)
+      const raw = Math.min(elapsed / minimumDuration, 1)
+      setProgress(1 - Math.pow(1 - raw, 3))
 
-      setProgress(easedProgress)
-
-      if (elapsed >= minimumDuration) {
+      if (elapsed >= minimumDuration && !done.current) {
+        done.current = true
         clearInterval(interval)
-        setVisible(false)
-        onComplete?.()
+        setFading(true)
+        setTimeout(() => {
+          setHidden(true)
+          onComplete?.()
+        }, 500)
       }
     }, 16)
 
     return () => clearInterval(interval)
   }, [minimumDuration, onComplete])
 
-  if (!visible) return null
+  if (hidden) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-surface-950">
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-surface-950 transition-opacity duration-500"
+      style={{ opacity: fading ? 0 : 1 }}
+    >
       <div className="mb-8 flex flex-col items-center gap-2">
         <h1 className="text-3xl font-bold tracking-wider text-white">
           <span className="text-neon-blue">Sai</span>

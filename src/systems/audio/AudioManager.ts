@@ -47,7 +47,25 @@ class AudioManagerSingleton {
 
   async resume(): Promise<void> {
     if (this.#context?.state === 'suspended') {
-      await this.#context.resume()
+      try {
+        await this.#context.resume()
+      } catch {
+        // Browser may block resume without user gesture
+      }
+    }
+  }
+
+  resumeOnInteraction(): void {
+    if (this.#context?.state === 'suspended') {
+      const handler = async () => {
+        await this.resume()
+        document.removeEventListener('click', handler)
+        document.removeEventListener('keydown', handler)
+        document.removeEventListener('touchstart', handler)
+      }
+      document.addEventListener('click', handler, { once: true })
+      document.addEventListener('keydown', handler, { once: true })
+      document.addEventListener('touchstart', handler, { once: true })
     }
   }
 

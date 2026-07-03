@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { SpawnProvider, useSpawnSystem } from '@/systems/world/SpawnPoint'
 import { FastTravelProvider, useFastTravel } from '@/systems/world/FastTravel'
-import { InteractiveProvider, useInteractiveSystem } from '@/systems/interaction/InteractiveObject'
+import { InteractionProvider, useInteractionSystem } from '@/systems/interaction/InteractionSystem'
 import { Terrain } from '@/systems/world/Terrain'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { WorldStreamer } from '@/systems/world/WorldStreamer'
@@ -15,6 +15,7 @@ import { Skybox } from '@/systems/world/Skybox'
 import { WeatherManager } from '@/systems/world/WeatherManager'
 import { ParticleManager } from '@/systems/world/ParticleManager'
 import { NavigationMesh } from '@/systems/world/NavigationMesh'
+import { PlaceholderNPC } from '@/features/npc/PlaceholderNPC'
 
 import {
   TERRAIN_TILES,
@@ -32,7 +33,7 @@ import {
 function HubAssets() {
   const { registerSpawn } = useSpawnSystem()
   const { registerNode } = useFastTravel()
-  const { registerObject } = useInteractiveSystem()
+  const { registerObject } = useInteractionSystem()
 
   useEffect(() => {
     for (const spawn of SPAWN_POINTS) {
@@ -43,10 +44,14 @@ function HubAssets() {
     }
     for (const obj of INTERACTIVE_OBJECTS) {
       registerObject({
-        ...obj,
+        id: obj.id,
+        type: obj.type as any,
+        label: 'Interact',
+        position: obj.position,
         radius: obj.radius ?? 3,
         isActive: true,
         isInteractable: true,
+        data: obj.data,
       })
     }
   }, [registerSpawn, registerNode, registerObject])
@@ -91,6 +96,8 @@ function HubEnvironment() {
           rotation={b.rotation ?? 0}
         />
       ))}
+
+      <PlaceholderNPC />
     </group>
   )
 }
@@ -109,7 +116,7 @@ export function BengaluruHub() {
   return (
     <SpawnProvider defaultSpawnId="hub-center">
       <FastTravelProvider>
-        <InteractiveProvider>
+        <InteractionProvider>
           <HubAssets />
 
           <WorldStreamer loadRadius={3}>
@@ -122,7 +129,7 @@ export function BengaluruHub() {
 
             <HubEnvironment />
           </WorldStreamer>
-        </InteractiveProvider>
+        </InteractionProvider>
       </FastTravelProvider>
     </SpawnProvider>
   )

@@ -1,21 +1,47 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback, Component, type ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { GameEngine } from '@/systems/bootstrap/GameEngine'
 import { LoadingScreen } from '@/components/layout/LoadingScreen'
+import { HUDWrapper } from '@/components/game/hud/HUD'
+
+class CanvasErrorBoundary extends Component<
+  { children: ReactNode; onError: () => void },
+  { hasError: boolean }
+> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: Error) {
+    console.error('[Canvas] Error:', error.message)
+    this.props.onError()
+  }
+
+  render() {
+    if (this.state.hasError) return null
+    return this.props.children
+  }
+}
 
 export default function GameCanvas() {
-  const [loading, setLoading] = useState(true)
+  const handleLoadComplete = useCallback(() => {}, [])
 
-  const handleLoadComplete = useCallback(() => {
-    setLoading(false)
+  const handleCreated = useCallback((state: { gl: { domElement: HTMLCanvasElement; setClearColor: (color: string) => void } }) => {
+    state.gl.setClearColor('#020617')
+    const canvas = state.gl.domElement
+    const handleLost = (e: Event) => e.preventDefault()
+    canvas.addEventListener('webglcontextlost', handleLost)
   }, [])
 
-  return (
-    <>
-      {loading && <LoadingScreen onComplete={handleLoadComplete} />}
+  const handleError = useCallback(() => {}, [])
 
+  return (
+    <CanvasErrorBoundary onError={handleError}>
+      <LoadingScreen minimumDuration={1500} onComplete={handleLoadComplete} />
       <Canvas
         shadows
         dpr={[1, 2]}
@@ -23,6 +49,8 @@ export default function GameCanvas() {
           antialias: true,
           toneMapping: 3,
           toneMappingExposure: 1.0,
+          powerPreference: 'high-performance',
+          failIfMajorPerformanceCaveat: false,
         }}
         camera={{
           fov: 60,
@@ -30,9 +58,7 @@ export default function GameCanvas() {
           far: 1000,
           position: [0, 2, 5],
         }}
-        onCreated={(state) => {
-          state.gl.setClearColor('#020617')
-        }}
+        onCreated={handleCreated}
       >
         <GameEngine
           enableDebug={process.env.NODE_ENV === 'development'}
@@ -43,14 +69,8 @@ export default function GameCanvas() {
           enableCamera={true}
           environmentPreset="night"
         />
-
-        {loading && (
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
-            <planeGeometry args={[50, 50]} />
-            <meshStandardMaterial color="#1e293b" />
-          </mesh>
-        )}
       </Canvas>
-    </>
+      <HUDWrapper />
+    </CanvasErrorBoundary>
   )
 }

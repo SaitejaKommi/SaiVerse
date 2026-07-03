@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import type { ReactNode } from 'react'
-import { Physics } from '@react-three/rapier'
+import { Physics as RapierPhysics } from '@react-three/rapier'
 import type { Vector3 } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { InputManager } from '@/systems/input/InputManager'
@@ -13,6 +13,32 @@ import { LightingManager } from '@/systems/lighting/LightingManager'
 import { DebugOverlay } from '@/systems/debug/DebugOverlay'
 import { audioManager } from '@/systems/audio/AudioManager'
 import { BengaluruHub } from '@/features/bengaluru-hub/BengaluruHub'
+
+function PhysicsWrapper({ children, ...props }: { children: ReactNode; gravity: [number, number, number]; debug: boolean }) {
+  const [ready, setReady] = useState(false)
+  const started = useRef(false)
+
+  useEffect(() => {
+    if (started.current) return
+    started.current = true
+    let cancelled = false
+    ;(async () => {
+      try {
+        // @ts-expect-error - no @dimforge/rapier3d-compat types
+        const RAPIER = await import('@dimforge/rapier3d-compat')
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        await (RAPIER as { default: () => Promise<void> }).default()
+      } catch (e) {
+        console.error('[Rapier]', e)
+      }
+      if (!cancelled) setReady(true)
+    })()
+    return () => { cancelled = true }
+  }, [])
+
+  if (!ready) return null
+  return <RapierPhysics {...props}>{children}</RapierPhysics>
+}
 
 interface GameEngineProps {
   children?: ReactNode
@@ -46,7 +72,7 @@ export function GameEngine({
 
     if (enableAudio) {
       audioManager.init()
-      audioManager.resume()
+      audioManager.resumeOnInteraction()
     }
 
     setInitialized(true)
@@ -69,9 +95,9 @@ export function GameEngine({
       <SceneProvider>
         {enableLighting && <LightingManager preset={environmentPreset} />}
         {enablePhysics && (
-          <Physics gravity={[0, -9.81, 0]} debug={false}>
+          <PhysicsWrapper gravity={[0, -9.81, 0]} debug={false}>
             {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
-          </Physics>
+          </PhysicsWrapper>
         )}
         {enableCamera && <CameraSystem target={playerTarget} />}
         {enableWorld && <BengaluruHub />}
