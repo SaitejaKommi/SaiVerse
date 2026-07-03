@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
 
 interface BuildingProps {
@@ -69,6 +70,10 @@ export function Building({
 
   return (
     <group position={position}>
+      <CuboidCollider
+        position={[0, height / 2, 0]}
+        args={[width / 2, height / 2, depth / 2]}
+      />
       <mesh geometry={mainGeo} material={mainMat} position={[0, height / 2, 0]} castShadow receiveShadow>
         {hasWindows && windowGeos.map((geo, i) => {
           const rows = Math.floor(height / 2.5)

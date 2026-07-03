@@ -26,7 +26,6 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
   const setPlayer = useGameStore((s) => s.setPlayer)
   const groundedRef = useRef(false)
 
-  const lookAngle = useRef(0)
   const currentSpeed = useRef(0)
 
   useFrame((state, delta) => {
@@ -37,9 +36,6 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     const input = InputManager.getInstance()
     const frame = input.getFrameInput()
     const playerInput = processPlayerInput(frame)
-
-    const mouseDelta = frame.mouseDelta
-    lookAngle.current += mouseDelta.x
 
     const camera = state.camera
     const cameraForward = new Vector3()

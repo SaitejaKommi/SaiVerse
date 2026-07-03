@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, Component, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, Component, type ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { GameEngine } from '@/systems/bootstrap/GameEngine'
 import { LoadingScreen } from '@/components/layout/LoadingScreen'
@@ -28,6 +28,8 @@ class CanvasErrorBoundary extends Component<
 }
 
 export default function GameCanvas() {
+  const canvasRef = useRef<HTMLDivElement>(null)
+
   const handleLoadComplete = useCallback(() => {}, [])
 
   const handleCreated = useCallback((state: { gl: { domElement: HTMLCanvasElement; setClearColor: (color: string) => void } }) => {
@@ -39,37 +41,52 @@ export default function GameCanvas() {
 
   const handleError = useCallback(() => {}, [])
 
+  useEffect(() => {
+    const el = canvasRef.current
+    if (!el) return
+
+    const handleClick = () => {
+      if (!document.pointerLockElement) {
+        document.body.requestPointerLock()
+      }
+    }
+    el.addEventListener('click', handleClick)
+    return () => el.removeEventListener('click', handleClick)
+  }, [])
+
   return (
     <CanvasErrorBoundary onError={handleError}>
       <LoadingScreen minimumDuration={1500} onComplete={handleLoadComplete} />
-      <Canvas
-        shadows
-        dpr={[1, 2]}
-        gl={{
-          antialias: true,
-          toneMapping: 3,
-          toneMappingExposure: 1.0,
-          powerPreference: 'high-performance',
-          failIfMajorPerformanceCaveat: false,
-        }}
-        camera={{
-          fov: 60,
-          near: 0.1,
-          far: 1000,
-          position: [0, 2, 5],
-        }}
-        onCreated={handleCreated}
-      >
-        <GameEngine
-          enableDebug={process.env.NODE_ENV === 'development'}
-          enablePhysics={true}
-          enableLighting={true}
-          enableAudio={true}
-          enablePlayer={true}
-          enableCamera={true}
-          environmentPreset="night"
-        />
-      </Canvas>
+      <div ref={canvasRef}>
+        <Canvas
+          shadows
+          dpr={[1, 2]}
+          gl={{
+            antialias: true,
+            toneMapping: 3,
+            toneMappingExposure: 1.0,
+            powerPreference: 'high-performance',
+            failIfMajorPerformanceCaveat: false,
+          }}
+          camera={{
+            fov: 60,
+            near: 0.1,
+            far: 1000,
+            position: [0, 2, 5],
+          }}
+          onCreated={handleCreated}
+        >
+          <GameEngine
+            enableDebug={process.env.NODE_ENV === 'development'}
+            enablePhysics={true}
+            enableLighting={true}
+            enableAudio={true}
+            enablePlayer={true}
+            enableCamera={true}
+            environmentPreset="night"
+          />
+        </Canvas>
+      </div>
       <HUDWrapper />
     </CanvasErrorBoundary>
   )

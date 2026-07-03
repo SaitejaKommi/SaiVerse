@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback, useState, useRef } from 'react'
 import type { ReactNode } from 'react'
-import { Physics as RapierPhysics } from '@react-three/rapier'
+import { Physics as RapierPhysics, CuboidCollider } from '@react-three/rapier'
 import type { Vector3 } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { InputManager } from '@/systems/input/InputManager'
@@ -37,7 +37,12 @@ function PhysicsWrapper({ children, ...props }: { children: ReactNode; gravity: 
   }, [])
 
   if (!ready) return null
-  return <RapierPhysics {...props}>{children}</RapierPhysics>
+  return (
+    <RapierPhysics {...props}>
+      <CuboidCollider position={[0, -0.5, 0]} args={[80, 0.5, 80]} />
+      {children}
+    </RapierPhysics>
+  )
 }
 
 interface GameEngineProps {
@@ -97,11 +102,11 @@ export function GameEngine({
         {enablePhysics && (
           <PhysicsWrapper gravity={[0, -9.81, 0]} debug={false}>
             {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
+            {enableWorld && <BengaluruHub />}
+            {children}
           </PhysicsWrapper>
         )}
         {enableCamera && <CameraSystem target={playerTarget} />}
-        {enableWorld && <BengaluruHub />}
-        {children}
       </SceneProvider>
       {enableDebug && <DebugOverlay />}
     </>

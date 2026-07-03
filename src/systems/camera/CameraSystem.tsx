@@ -9,6 +9,7 @@ import type { CameraMode } from './camera.types'
 import { CameraShake } from './CameraShake'
 import { dampAngle, dampVector3 } from '@/lib/math/vectors'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { InputManager } from '@/systems/input/InputManager'
 
 const UP = new Vector3(0, 1, 0)
 const TEMP_VEC = new Vector3()
@@ -116,34 +117,38 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
   useFrame((_, delta) => {
     const dt = Math.min(delta, 1 / 30)
     const targetPos = externalTarget ?? internalTarget.current
+
+    const input = InputManager.getInstance()
+    const frame = input.getFrameInput()
+    const mouseDelta = frame.mouseDelta
+
+    stateRef.current.targetAngle += mouseDelta.x * settings.sensitivity
+    stateRef.current.targetElevation = Math.max(
+      CAMERA_CONFIG.MIN_ELEVATION,
+      Math.min(
+        CAMERA_CONFIG.MAX_ELEVATION,
+        stateRef.current.targetElevation - mouseDelta.y * settings.sensitivity,
+      ),
+    )
+
+    const scroll = frame.scrollDelta
+    if (scroll !== 0) {
+      stateRef.current.targetDistance = Math.max(
+        CAMERA_CONFIG.MIN_DISTANCE,
+        Math.min(
+          CAMERA_CONFIG.MAX_DISTANCE,
+          stateRef.current.targetDistance + scroll * CAMERA_CONFIG.ZOOM_SPEED,
+        ),
+      )
+    }
+
     updateCamera(dt, targetPos)
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setTarget = useCallback((pos: Vector3) => {
     internalTarget.current.copy(pos)
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const setAngle = useCallback((angleDelta: number, elevationDelta: number) => {
-    const state = stateRef.current
-    state.targetAngle += angleDelta * settings.sensitivity
-    state.targetElevation = Math.max(
-      CAMERA_CONFIG.MIN_ELEVATION,
-      Math.min(CAMERA_CONFIG.MAX_ELEVATION, state.targetElevation - elevationDelta * settings.sensitivity),
-    )
-  }, [settings.sensitivity])
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const zoom = useCallback((amount: number) => {
-    const state = stateRef.current
-    state.targetDistance = Math.max(
-      CAMERA_CONFIG.MIN_DISTANCE,
-      Math.min(CAMERA_CONFIG.MAX_DISTANCE, state.targetDistance + amount * CAMERA_CONFIG.ZOOM_SPEED),
-    )
-  }, [])
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setMode = useCallback((mode: CameraMode) => {
     const state = stateRef.current
     state.mode = mode
@@ -176,7 +181,6 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     }
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const triggerShake = useCallback((config?: Partial<{
     intensity: number
     frequency: number
@@ -186,12 +190,10 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     shakeRef.current.trigger(config)
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setCollisionEnabled = useCallback((enabled: boolean) => {
     collisionEnabled.current = enabled
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setTargetPosition = useCallback((x: number, y: number, z: number) => {
     internalTarget.current.set(x, y, z)
   }, [])
