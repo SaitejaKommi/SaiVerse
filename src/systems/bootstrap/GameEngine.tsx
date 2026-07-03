@@ -27,7 +27,7 @@ function PhysicsWrapper({ children, ...props }: { children: ReactNode; gravity: 
         // @ts-expect-error - no @dimforge/rapier3d-compat types
         const RAPIER = await import('@dimforge/rapier3d-compat')
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        await (RAPIER as { default: () => Promise<void> }).default()
+        await (RAPIER as { init: () => Promise<void> }).init()
       } catch (e) {
         console.error('[Rapier]', e)
       }
