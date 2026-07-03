@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, useState, useRef } from 'react'
+import { useEffect, useCallback, useState, Suspense } from 'react'
 import type { ReactNode } from 'react'
 import { Physics as RapierPhysics, CuboidCollider } from '@react-three/rapier'
 import type { Vector3 } from 'three'
@@ -13,37 +13,6 @@ import { LightingManager } from '@/systems/lighting/LightingManager'
 import { DebugOverlay } from '@/systems/debug/DebugOverlay'
 import { audioManager } from '@/systems/audio/AudioManager'
 import { BengaluruHub } from '@/features/bengaluru-hub/BengaluruHub'
-
-function PhysicsWrapper({ children, ...props }: { children: ReactNode; gravity: [number, number, number]; debug: boolean }) {
-  const [ready, setReady] = useState(false)
-  const started = useRef(false)
-
-  useEffect(() => {
-    if (started.current) return
-    started.current = true
-    let cancelled = false
-    ;(async () => {
-      try {
-        // @ts-expect-error - no @dimforge/rapier3d-compat types
-        const RAPIER = await import('@dimforge/rapier3d-compat')
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        await (RAPIER as { init: () => Promise<void> }).init()
-      } catch (e) {
-        console.error('[Rapier]', e)
-      }
-      if (!cancelled) setReady(true)
-    })()
-    return () => { cancelled = true }
-  }, [])
-
-  if (!ready) return null
-  return (
-    <RapierPhysics {...props}>
-      <CuboidCollider position={[0, -0.5, 0]} args={[80, 0.5, 80]} />
-      {children}
-    </RapierPhysics>
-  )
-}
 
 interface GameEngineProps {
   children?: ReactNode
@@ -100,11 +69,14 @@ export function GameEngine({
       <SceneProvider>
         {enableLighting && <LightingManager preset={environmentPreset} />}
         {enablePhysics && (
-          <PhysicsWrapper gravity={[0, -9.81, 0]} debug={false}>
-            {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
-            {enableWorld && <BengaluruHub />}
-            {children}
-          </PhysicsWrapper>
+          <Suspense fallback={null}>
+            <RapierPhysics gravity={[0, -9.81, 0]} debug={false}>
+              <CuboidCollider position={[0, -0.5, 0]} args={[80, 0.5, 80]} />
+              {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
+              {enableWorld && <BengaluruHub />}
+              {children}
+            </RapierPhysics>
+          </Suspense>
         )}
         {enableCamera && <CameraSystem target={playerTarget} />}
       </SceneProvider>
