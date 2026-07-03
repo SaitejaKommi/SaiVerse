@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
 import type { RapierRigidBody } from '@react-three/rapier'
@@ -13,9 +13,10 @@ import { clamp } from '@/lib/utils'
 
 const MOVE_DIR = new Vector3()
 const VELOCITY = new Vector3()
-const CURRENT_VEL = new Vector3()
 
-const GROUND_THRESHOLD = 0.1
+const GROUND_Y = 0
+const HALF_HEIGHT = PLAYER_CONFIG.HEIGHT / 2
+const GROUND_THRESHOLD = 0.2
 
 interface PlayerControllerProps {
   onPositionChange?: (pos: Vector3) => void
@@ -24,27 +25,32 @@ interface PlayerControllerProps {
 export function PlayerController({ onPositionChange }: PlayerControllerProps) {
   const rigidBodyRef = useRef<RapierRigidBody>(null)
   const setPlayer = useGameStore((s) => s.setPlayer)
-  const groundedRef = useRef(false)
-
   const currentSpeed = useRef(0)
+
+  useEffect(() => {
+    const body = rigidBodyRef.current
+    if (!body) return
+    body.setLinvel({ x: 0, y: 0, z: 0 }, true)
+  }, [])
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 1 / 30)
     const body = rigidBodyRef.current
     if (!body) return
 
-    const input = InputManager.getInstance()
-    const frame = input.getFrameInput()
-    const playerInput = processPlayerInput(frame)
-
     const camera = state.camera
+
     const cameraForward = new Vector3()
     camera.getWorldDirection(cameraForward)
     cameraForward.y = 0
-    cameraForward.normalize()
+    if (cameraForward.lengthSq() > 0) cameraForward.normalize()
 
     const cameraRight = new Vector3()
     cameraRight.crossVectors(cameraForward, new Vector3(0, 1, 0)).normalize()
+
+    const input = InputManager.getInstance()
+    const frame = input.getFrameInput()
+    const playerInput = processPlayerInput(frame)
 
     MOVE_DIR.set(0, 0, 0)
     if (playerInput.moveZ !== 0) {
@@ -53,14 +59,10 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     if (playerInput.moveX !== 0) {
       MOVE_DIR.addScaledVector(cameraRight, playerInput.moveX)
     }
+    if (MOVE_DIR.lengthSq() > 0) MOVE_DIR.normalize()
 
-    if (MOVE_DIR.lengthSq() > 0) {
-      MOVE_DIR.normalize()
-    }
-
-    CURRENT_VEL.copy(body.linvel() as unknown as Vector3)
-    const isGrounded = Math.abs(CURRENT_VEL.y) < GROUND_THRESHOLD && groundedRef.current
-    groundedRef.current = Math.abs(CURRENT_VEL.y) < GROUND_THRESHOLD
+    const pos = body.translation()
+    const isGrounded = pos.y <= GROUND_Y + HALF_HEIGHT + GROUND_THRESHOLD
 
     const targetSpeed = playerInput.sprint && isGrounded
       ? PLAYER_CONFIG.RUN_SPEED
@@ -79,7 +81,8 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     VELOCITY.copy(MOVE_DIR).multiplyScalar(currentSpeed.current)
 
-    const moveVel = new Vector3(VELOCITY.x, isGrounded ? 0 : CURRENT_VEL.y, VELOCITY.z)
+    const linvel = body.linvel()
+    const moveVel = new Vector3(VELOCITY.x, isGrounded ? 0 : linvel.y, VELOCITY.z)
 
     if (playerInput.jump && isGrounded) {
       moveVel.y = PLAYER_CONFIG.JUMP_FORCE
@@ -87,11 +90,10 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     body.setLinvel(moveVel, true)
 
-    const position = body.translation()
     const rot = body.rotation()
 
     setPlayer({
-      position: [position.x, position.y, position.z],
+      position: [pos.x, pos.y, pos.z],
       velocity: [moveVel.x, moveVel.y, moveVel.z],
       rotation: [rot.x, rot.y, rot.z, rot.w].slice(0, 3) as [number, number, number],
       state: !isGrounded ? 'jumping' : currentSpeed.current > PLAYER_CONFIG.WALK_SPEED * 0.5 ? 'running' : currentSpeed.current > 0.1 ? 'walking' : 'idle',
@@ -99,7 +101,7 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     })
 
     onPositionChange?.(
-      new Vector3(position.x, position.y, position.z),
+      new Vector3(pos.x, pos.y, pos.z),
     )
 
     input.endFrame()
