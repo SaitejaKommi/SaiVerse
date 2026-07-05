@@ -10,6 +10,7 @@ import { CameraShake } from './CameraShake'
 import { dampAngle, dampVector3 } from '@/lib/math/vectors'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { InputManager } from '@/systems/input/InputManager'
+import { PLAYER_CONFIG } from '@/systems/player/player.config'
 
 const UP = new Vector3(0, 1, 0)
 const TEMP_VEC = new Vector3()
@@ -36,7 +37,11 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     fov: CAMERA_CONFIG.DEFAULT_FOV,
   })
 
-  const internalTarget = useRef(new Vector3(0, 0, 0))
+  const internalTarget = useRef(new Vector3(
+    PLAYER_CONFIG.INITIAL_POSITION[0],
+    PLAYER_CONFIG.INITIAL_POSITION[1],
+    PLAYER_CONFIG.INITIAL_POSITION[2],
+  ))
   const raycaster = useRef(new Raycaster())
   const collisionEnabled = useRef(true)
 
