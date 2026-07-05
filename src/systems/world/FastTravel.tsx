@@ -77,6 +77,11 @@ export function FastTravelProvider({ children }: FastTravelProviderProps) {
     setIsTraveling(true)
 
     setTimeout(() => {
+      const store = useGameStore.getState()
+      store.setPlayer({
+        ...store.player,
+        position: to.position,
+      })
       setIsTraveling(false)
     }, FAST_TRAVEL_CONFIG.TRANSITION_DURATION * 1000)
 

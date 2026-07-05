@@ -32,7 +32,11 @@ export function DebugOverlay() {
       }
     }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    ;(window as any).__toggleDebug = () => setVisible((v) => !v)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      delete (window as any).__toggleDebug
+    }
   }, [])
 
   useFrame((state, delta) => {

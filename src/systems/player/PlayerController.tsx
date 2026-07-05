@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
 import type { RapierRigidBody } from '@react-three/rapier'
-import { Vector3 } from 'three'
+import { Vector3, Quaternion, Euler } from 'three'
 import { PLAYER_CONFIG } from './player.config'
 import { processPlayerInput } from './PlayerInput'
 import { InputManager } from '@/systems/input/InputManager'
@@ -91,11 +91,13 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     body.setLinvel(moveVel, true)
 
     const rot = body.rotation()
+    const quat = new Quaternion(rot.x, rot.y, rot.z, rot.w)
+    const euler = new Euler().setFromQuaternion(quat)
 
     setPlayer({
       position: [pos.x, pos.y, pos.z],
       velocity: [moveVel.x, moveVel.y, moveVel.z],
-      rotation: [rot.x, rot.y, rot.z, rot.w].slice(0, 3) as [number, number, number],
+      rotation: [euler.x, euler.y, euler.z],
       state: !isGrounded ? 'jumping' : currentSpeed.current > PLAYER_CONFIG.WALK_SPEED * 0.5 ? 'running' : currentSpeed.current > 0.1 ? 'walking' : 'idle',
       isGrounded,
     })

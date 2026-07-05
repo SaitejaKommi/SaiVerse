@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
+import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { LIGHTING_CONFIG } from './lighting.config'
 
@@ -24,6 +25,7 @@ export function DayNightCycle() {
   })
 
   const setTimeOfDay = useGameStore((s) => s.setTimeOfDay)
+  const { scene } = useThree()
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 1 / 30)
@@ -65,6 +67,19 @@ export function DayNightCycle() {
     }
 
     setTimeOfDay(dayProgress)
+
+    scene.traverse((child) => {
+      if ((child as THREE.Light).isLight) {
+        const light = child as THREE.Light
+        if (light.type === 'DirectionalLight') {
+          light.intensity = stateRef.current.sunIntensity
+        } else if (light.type === 'AmbientLight') {
+          light.intensity = stateRef.current.ambientIntensity
+        } else if (light.type === 'HemisphereLight') {
+          light.intensity = stateRef.current.hemisphereIntensity
+        }
+      }
+    })
   })
 
   return null

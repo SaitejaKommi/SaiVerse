@@ -52,8 +52,8 @@ export function HUD() {
             size="sm"
             variant="default"
             onClick={() => {
-              if (typeof window !== 'undefined') {
-                ;(window as any).__toggleDebug?.()
+              if (typeof window !== 'undefined' && typeof (window as Window & { __toggleDebug?: () => void }).__toggleDebug === 'function') {
+                ;(window as Window & { __toggleDebug?: () => void }).__toggleDebug!()
               }
             }}
           >

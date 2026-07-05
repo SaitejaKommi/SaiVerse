@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import { SKY_CONFIG } from './world.config'
@@ -81,6 +82,8 @@ export function Skybox() {
 
   const skyRef = useRef<THREE.Mesh>(null)
   const sunRef = useRef<THREE.Mesh>(null)
+  const skyMatRef = useRef<THREE.ShaderMaterial>(null)
+  const sunMatRef = useRef<THREE.MeshBasicMaterial>(null)
 
   const sunAngle = ((timeOfDay - 6) / 12) * Math.PI
   const sunX = Math.cos(sunAngle) * 80
@@ -94,7 +97,7 @@ export function Skybox() {
   }, [])
 
   const skyMaterial = useMemo(() => {
-    return new THREE.ShaderMaterial({
+    const mat = new THREE.ShaderMaterial({
       side: THREE.BackSide,
       uniforms: {
         uTopColor: { value: new THREE.Color(colors.zenith) },
@@ -122,19 +125,39 @@ export function Skybox() {
         }
       `,
     })
+    skyMatRef.current = mat
+    return mat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const sunGeometry = useMemo(() => new THREE.SphereGeometry(SKY_CONFIG.SUN_SPHERE_SIZE, 16, 16), [])
 
   const sunMaterial = useMemo(() => {
-    return new THREE.MeshBasicMaterial({
+    const mat = new THREE.MeshBasicMaterial({
       color: '#ffffff',
       transparent: true,
       opacity: sunY > 0 ? 1 : 0,
     })
+    sunMatRef.current = mat
+    return mat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useFrame(() => {
+    const mat = skyMatRef.current
+    if (mat) {
+      const c = getSkyColors(useGameStore.getState().world.timeOfDay)
+      const topUniform = mat.uniforms['uTopColor']
+      const bottomUniform = mat.uniforms['uBottomColor']
+      if (topUniform) topUniform.value.set(c.zenith)
+      if (bottomUniform) bottomUniform.value.set(c.horizon)
+    }
+    if (sunMatRef.current) {
+      const angle = ((useGameStore.getState().world.timeOfDay - 6) / 12) * Math.PI
+      const y = Math.sin(angle) * 80
+      sunMatRef.current.opacity = y > 0 ? 1 : 0
+    }
+  })
 
   return (
     <group>
