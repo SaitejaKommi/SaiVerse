@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { GameEngine } from '@/systems/bootstrap/GameEngine'
 import { LoadingScreen } from '@/components/layout/LoadingScreen'
 import { HUDWrapper } from '@/components/game/hud/HUD'
+import { IntroOverlay } from '@/features/intro/IntroOverlay'
 
 class CanvasErrorBoundary extends Component<
   { children: ReactNode; onError: () => void },
@@ -57,6 +58,7 @@ export default function GameCanvas() {
   return (
     <CanvasErrorBoundary onError={handleError}>
       <LoadingScreen minimumDuration={1500} onComplete={handleLoadComplete} />
+      <IntroOverlay />
       <div ref={canvasRef} className="fixed inset-0">
         <Canvas
           shadows
