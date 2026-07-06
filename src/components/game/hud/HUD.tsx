@@ -75,7 +75,10 @@ export function HUD() {
 
 export function HUDWrapper() {
   const isInitialized = useGameStore((s) => s.isInitialized)
-  if (!isInitialized) return null
 
-  return <HUD />
+  return (
+    <div className={`transition-opacity duration-1000 ${isInitialized ? 'opacity-100' : 'opacity-0'}`}>
+      {isInitialized && <HUD />}
+    </div>
+  )
 }

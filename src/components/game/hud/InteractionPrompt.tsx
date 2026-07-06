@@ -1,19 +1,22 @@
 import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
+import { useDialogueStore } from '@/stores/dialogueStore'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 
 export function InteractionPrompt() {
   let nearest: ReturnType<typeof useInteractionSystem>['nearestObject'] = null
   let isInteracting = false
+  let isDialogueOpen = false
 
   try {
     const ctx = useInteractionSystem()
     nearest = ctx.nearestObject
     isInteracting = ctx.isInteracting
+    isDialogueOpen = useDialogueStore.getState().isOpen
   } catch {
     return null
   }
 
-  if (!nearest || isInteracting) return null
+  if (!nearest || isInteracting || isDialogueOpen) return null
 
   const labels: Record<string, string> = {
     talk: 'Talk',
