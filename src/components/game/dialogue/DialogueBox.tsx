@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useDialogueEngine } from '@/systems/dialogue/DialogueEngine'
+import { soundFX } from '@/systems/audio/SoundFX'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { GlassButton } from '@/components/ui/GlassButton'
 
@@ -19,6 +20,8 @@ export function DialogueBox() {
 
   useEffect(() => {
     if (!isOpen) return
+
+    soundFX.playDialogueOpen()
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'KeyE' || e.code === 'Space' || e.code === 'Enter') {
