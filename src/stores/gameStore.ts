@@ -6,6 +6,7 @@ interface GameActions {
   setWorld: (data: Partial<WorldData>) => void
   setPaused: (paused: boolean) => void
   setInitialized: (initialized: boolean) => void
+  setCinematic: (cinematic: boolean) => void
   addActiveScene: (sceneId: SceneID) => void
   removeActiveScene: (sceneId: SceneID) => void
   setCurrentDistrict: (district: string | null) => void
@@ -43,6 +44,7 @@ const initialGame: GameState = {
   world: initialWorld,
   isPaused: false,
   isInitialized: false,
+  isCinematic: false,
 }
 
 const useGameStore = create<GameState & GameActions>()((set) => ({
@@ -61,6 +63,7 @@ const useGameStore = create<GameState & GameActions>()((set) => ({
   setPaused: (paused) => set({ isPaused: paused }),
 
   setInitialized: (initialized) => set({ isInitialized: initialized }),
+  setCinematic: (cinematic) => set({ isCinematic: cinematic }),
 
   addActiveScene: (sceneId) =>
     set((state) => {

@@ -27,6 +27,7 @@ export interface GameState {
   world: WorldData
   isPaused: boolean
   isInitialized: boolean
+  isCinematic: boolean
 }
 
 export interface CameraSettings {
