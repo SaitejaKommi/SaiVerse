@@ -15,6 +15,7 @@ interface InteractionContextValue {
   updateObject: (id: string, data: Partial<InteractableDef>) => void
   getNearestInRange: (pos: THREE.Vector3) => InteractableDef | null
   interact: (id: string) => boolean
+  endInteraction: () => void
   nearestObject: InteractableDef | null
   isInteracting: boolean
   activeInteractionId: string | null
@@ -38,7 +39,11 @@ export function InteractionProvider({ children }: InteractionProviderProps) {
   const [isInteracting, setIsInteracting] = useState(false)
   const [activeInteractionId, setActiveInteractionId] = useState<string | null>(null)
   const playerPos = useRef(new THREE.Vector3(0, 0, 0))
-  const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+  const clearInteraction = useCallback(() => {
+    setIsInteracting(false)
+    setActiveInteractionId(null)
+  }, [])
 
   const registerObject = useCallback((obj: InteractableDef) => {
     objectsRef.current.set(obj.id, obj)
@@ -84,15 +89,27 @@ export function InteractionProvider({ children }: InteractionProviderProps) {
       { objectId: id, objectType: obj.type, position: obj.position },
     )
 
-    if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current)
-    interactionTimeoutRef.current = setTimeout(() => {
-      setIsInteracting(false)
-      setActiveInteractionId(null)
-      EventBus.emit(GameEvents.INTERACTION_COMPLETE, { objectId: id, objectType: obj.type, position: obj.position })
-    }, 500)
-
     return true
   }, [])
+
+  const endInteraction = useCallback(() => {
+    const currentId = activeInteractionId
+    clearInteraction()
+    if (currentId) {
+      EventBus.emit(GameEvents.INTERACTION_COMPLETE, {
+        objectId: currentId,
+        objectType: '',
+        position: [0, 0, 0],
+      })
+    }
+  }, [activeInteractionId, clearInteraction])
+
+  useEffect(() => {
+    const unsub = EventBus.on(GameEvents.INTERACTION_COMPLETE, () => {
+      clearInteraction()
+    })
+    return () => { unsub() }
+  }, [clearInteraction])
 
   useFrame(() => {
     const player = useGameStore.getState().player
@@ -100,12 +117,6 @@ export function InteractionProvider({ children }: InteractionProviderProps) {
     const nearest = getNearestInRange(playerPos.current)
     setNearestObject(nearest)
   })
-
-  useEffect(() => {
-    return () => {
-      if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current)
-    }
-  }, [])
 
   return (
     <InteractionContext.Provider
@@ -115,6 +126,7 @@ export function InteractionProvider({ children }: InteractionProviderProps) {
         updateObject,
         getNearestInRange,
         interact,
+        endInteraction,
         nearestObject,
         isInteracting,
         activeInteractionId,
