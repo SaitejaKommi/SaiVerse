@@ -4,6 +4,8 @@ import { useMemo } from 'react'
 import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
 
+type RoofStyle = 'classic' | 'flat' | 'modern'
+
 interface BuildingProps {
   position: [number, number, number]
   width?: number
@@ -13,6 +15,7 @@ interface BuildingProps {
   roofColor?: string
   hasWindows?: boolean
   windowsColor?: string
+  style?: RoofStyle
 }
 
 export function Building({
@@ -24,13 +27,9 @@ export function Building({
   roofColor = '#2d3748',
   hasWindows = true,
   windowsColor = '#88ccff',
+  style = 'classic',
 }: BuildingProps) {
   const mainGeo = useMemo(() => new THREE.BoxGeometry(width, height, depth), [width, height, depth])
-  const roofGeo = useMemo(() => {
-    const geo = new THREE.ConeGeometry(Math.max(width, depth) * 0.7, 1.5, 4)
-    return geo
-  }, [width, depth])
-
   const mainMat = useMemo(() => new THREE.MeshStandardMaterial({
     color,
     roughness: 0.6,
@@ -43,26 +42,35 @@ export function Building({
     metalness: 0.1,
   }), [roofColor])
 
-  const windowsMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: windowsColor,
-    emissive: windowsColor,
-    emissiveIntensity: 0.3,
-    transparent: true,
-    opacity: 0.8,
-    roughness: 0.1,
-    metalness: 0.5,
-  }), [windowsColor])
+  const roof = useMemo(() => {
+    if (style === 'flat') {
+      const h = 0.4
+      const geo = new THREE.BoxGeometry(width * 1.05, h, depth * 1.05)
+      return <mesh geometry={geo} material={roofMat} position={[0, height + h / 2, 0]} castShadow />
+    }
+    if (style === 'modern') {
+      const h = 0.3
+      const overhang = 0.8
+      const geo = new THREE.BoxGeometry(width + overhang, h, depth + overhang)
+      return <mesh geometry={geo} material={roofMat} position={[0, height + h / 2, 0]} castShadow />
+    }
+    const geo = new THREE.ConeGeometry(Math.max(width, depth) * 0.7, 1.5, 4)
+    return <mesh geometry={geo} material={roofMat} position={[0, height + 0.75, 0]} castShadow />
+  }, [style, width, depth, height, roofMat])
 
   const windowGeos = useMemo(() => {
     if (!hasWindows) return []
-    const geos: THREE.BoxGeometry[] = []
+    const geos: { x: number; y: number }[] = []
     const rows = Math.floor(height / 2.5)
     const cols = Math.floor(width / 1.5)
-    const windowSize = 0.4
+    const spacingX = width / (cols + 1)
+    const spacingY = height / (rows + 1)
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        geos.push(new THREE.BoxGeometry(windowSize, windowSize * 1.5, 0.05))
+        const wx = -width / 2 + spacingX * (c + 1)
+        const wy = -height / 2 + spacingY * (r + 1)
+        geos.push({ x: wx, y: wy })
       }
     }
     return geos
@@ -75,25 +83,25 @@ export function Building({
         args={[width / 2, height / 2, depth / 2]}
       />
       <mesh geometry={mainGeo} material={mainMat} position={[0, height / 2, 0]} castShadow receiveShadow>
-        {hasWindows && windowGeos.map((geo, i) => {
-          const rows = Math.floor(height / 2.5)
-          const spacingX = width / (Math.floor(width / 1.5) + 1)
-          const spacingY = height / (rows + 1)
-          const col = i % Math.floor(width / 1.5)
-          const row = Math.floor(i / Math.floor(width / 1.5))
-          const wx = -width / 2 + spacingX * (col + 1)
-          const wy = -height / 2 + spacingY * (row + 1)
-          return (
-            <mesh
-              key={`window-${i}`}
-              geometry={geo}
-              material={windowsMat}
-              position={[wx, wy, depth / 2 + 0.03]}
+        {hasWindows && windowGeos.map((pos, i) => (
+          <mesh
+            key={`window-${i}`}
+            position={[pos.x, pos.y, depth / 2 + 0.03]}
+          >
+            <boxGeometry args={[0.4, 0.6, 0.05]} />
+            <meshStandardMaterial
+              color={windowsColor}
+              emissive={windowsColor}
+              emissiveIntensity={0.3}
+              transparent
+              opacity={0.8}
+              roughness={0.1}
+              metalness={0.5}
             />
-          )
-        })}
+          </mesh>
+        ))}
       </mesh>
-      <mesh geometry={roofGeo} material={roofMat} position={[0, height + 0.75, 0]} castShadow />
+      {roof}
     </group>
   )
 }
