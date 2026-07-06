@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
-
+import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
 import { ENV_CONFIG } from './environment.config'
 
@@ -46,6 +46,7 @@ export function StreetLamp({
 
   return (
     <group position={[position[0], 0, position[2]]}>
+      <CuboidCollider position={[0, ENV_CONFIG.LAMP_HEIGHT / 2, 0]} args={[0.05, ENV_CONFIG.LAMP_HEIGHT / 2, 0.05]} />
       <mesh geometry={poleGeo} material={poleMat} position={[0, ENV_CONFIG.LAMP_HEIGHT / 2, 0]} castShadow />
       <mesh geometry={armGeo} material={poleMat} position={[0.25, ENV_CONFIG.LAMP_HEIGHT, 0]} rotation={[0, 0, Math.PI / 2]} />
       <mesh geometry={lampGeo} material={lampMat} position={[0.5, ENV_CONFIG.LAMP_HEIGHT, 0]} />

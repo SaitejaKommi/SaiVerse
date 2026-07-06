@@ -1,7 +1,10 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
+import { useGameStore } from '@/stores/gameStore'
 
 interface TreeProps {
   position: [number, number, number]
@@ -24,6 +27,11 @@ function createCanopyGeometry(variant: number): THREE.SphereGeometry | THREE.Con
 }
 
 export function Tree({ position, scale = 1, variant = 0 }: TreeProps) {
+  const groupRef = useRef<THREE.Group>(null)
+  const baseRotation = useMemo(() => Math.random() * Math.PI * 2, [])
+  const swaySpeed = useMemo(() => 0.5 + Math.random() * 0.5, [])
+  const swayAmount = useMemo(() => 0.008 + Math.random() * 0.005, [])
+
   const trunkGeo = useMemo(() => createTrunkGeometry(), [])
   const canopyGeo = useMemo(() => createCanopyGeometry(variant), [variant])
 
@@ -40,8 +48,17 @@ export function Tree({ position, scale = 1, variant = 0 }: TreeProps) {
     })
   }, [variant])
 
+  useFrame((state) => {
+    if (!groupRef.current) return
+    const windStr = useGameStore.getState().world.windStrength
+    const t = state.clock.elapsedTime * swaySpeed + baseRotation
+    const sway = Math.sin(t) * swayAmount * (1 + windStr * 0.5)
+    groupRef.current.rotation.z = sway
+  })
+
   return (
-    <group position={position} scale={[scale, scale, scale]}>
+    <group ref={groupRef} position={position} scale={[scale, scale, scale]}>
+      <CuboidCollider position={[0, 0.5, 0]} args={[0.15, 0.5, 0.15]} />
       <mesh geometry={trunkGeo} material={trunkMat} position={[0, 0.5, 0]} castShadow />
       <mesh geometry={canopyGeo} material={canopyMat} position={[0, 1.5 + (variant === 2 ? 0.5 : 0), 0]} castShadow />
     </group>

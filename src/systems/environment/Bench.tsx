@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
 
 interface BenchProps {
@@ -22,6 +23,7 @@ export function Bench({ position, rotation = 0, color = '#4a3728' }: BenchProps)
 
   return (
     <group position={[position[0], 0, position[2]]} rotation={[0, rotation, 0]}>
+      <CuboidCollider position={[0, 0.3, 0]} args={[0.75, 0.3, 0.25]} />
       <mesh geometry={seatGeo} material={mat} position={[0, 0.35, 0]} castShadow />
       <mesh geometry={legGeo} material={mat} position={[-0.6, 0.175, -0.2]} />
       <mesh geometry={legGeo} material={mat} position={[0.6, 0.175, -0.2]} />
