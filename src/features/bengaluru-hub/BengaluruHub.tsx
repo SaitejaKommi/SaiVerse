@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { SpawnProvider, useSpawnSystem } from '@/systems/world/SpawnPoint'
 import { FastTravelProvider, useFastTravel } from '@/systems/world/FastTravel'
-import { InteractionProvider, useInteractionSystem } from '@/systems/interaction/InteractionSystem'
+import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
 import { Terrain } from '@/systems/world/Terrain'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { WorldStreamer } from '@/systems/world/WorldStreamer'
@@ -11,11 +11,17 @@ import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { Bench } from '@/systems/environment/Bench'
+import { Fountain } from '@/systems/environment/Fountain'
+import { SignPost } from '@/systems/environment/SignPost'
+import { Statue } from '@/systems/environment/Statue'
+import { MetroTrack } from '@/systems/environment/MetroTrack'
 import { Skybox } from '@/systems/world/Skybox'
 import { WeatherManager } from '@/systems/world/WeatherManager'
 import { ParticleManager } from '@/systems/world/ParticleManager'
 import { NavigationMesh } from '@/systems/world/NavigationMesh'
 import { PlaceholderNPC } from '@/features/npc/PlaceholderNPC'
+import { CampusEntrance } from '@/features/bengaluru-hub/CampusEntrance'
+import { CampusRevealCinematic } from '@/features/cinematics/CampusRevealCinematic'
 
 import {
   TERRAIN_TILES,
@@ -70,6 +76,9 @@ function HubEnvironment() {
           depth={b.depth}
           height={b.height}
           color={b.color}
+          roofColor={b.roofColor}
+          windowsColor={b.windowsColor}
+          style={b.style}
         />
       ))}
 
@@ -97,7 +106,22 @@ function HubEnvironment() {
         />
       ))}
 
+      {/* Center plaza */}
+      <Fountain position={[0, 0, 0]} scale={1.2} />
+      <Statue position={[0, 0, -14]} scale={1.0} />
+
+      {/* District signposts */}
+      <SignPost position={[0, 0, -26]} rotation={0} color='#3b5998' />
+      <SignPost position={[0, 0, 28]} rotation={Math.PI} color='#c05621' />
+      <SignPost position={[28, 0, 0]} rotation={-Math.PI / 2} color='#2b6cb0' />
+      <SignPost position={[-28, 0, 0]} rotation={Math.PI / 2} color='#553c9a' />
+
+      {/* Elevated metro track */}
+      <MetroTrack position={[0, 0, -70]} length={80} rotation={0} />
+
       <PlaceholderNPC />
+      <CampusEntrance />
+      <CampusRevealCinematic />
     </group>
   )
 }
@@ -116,20 +140,18 @@ export function BengaluruHub() {
   return (
     <SpawnProvider defaultSpawnId="hub-center">
       <FastTravelProvider>
-        <InteractionProvider>
-          <HubAssets />
+        <HubAssets />
 
-          <WorldStreamer loadRadius={3}>
-            <Skybox />
-            <WeatherManager enableCycle={true} initialWeather="clear" />
-            <ParticleManager maxParticles={2000} rainArea={80} />
+        <WorldStreamer loadRadius={3}>
+          <Skybox />
+          <WeatherManager enableCycle={true} initialWeather="clear" />
+          <ParticleManager maxParticles={2000} rainArea={80} />
 
-            <Terrain tiles={TERRAIN_TILES} size={50} />
-            <RoadSystem segments={ROAD_SEGMENTS} />
+          <Terrain tiles={TERRAIN_TILES} size={50} />
+          <RoadSystem segments={ROAD_SEGMENTS} />
 
-            <HubEnvironment />
-          </WorldStreamer>
-        </InteractionProvider>
+          <HubEnvironment />
+        </WorldStreamer>
       </FastTravelProvider>
     </SpawnProvider>
   )
