@@ -12,6 +12,8 @@ import { PlayerController } from '@/systems/player/PlayerController'
 import { LightingManager } from '@/systems/lighting/LightingManager'
 import { DebugOverlay } from '@/systems/debug/DebugOverlay'
 import { audioManager } from '@/systems/audio/AudioManager'
+import { soundFX } from '@/systems/audio/SoundFX'
+import { InteractionProvider } from '@/systems/interaction/InteractionSystem'
 import { BengaluruHub } from '@/features/bengaluru-hub/BengaluruHub'
 
 interface GameEngineProps {
@@ -47,14 +49,15 @@ export function GameEngine({
     if (enableAudio) {
       audioManager.init()
       audioManager.resumeOnInteraction()
+      soundFX.resumeOnInteraction()
+      soundFX.startAmbient()
     }
-
-    setInitialized(true)
 
     return () => {
       InputManager.reset()
       if (enableAudio) {
         audioManager.dispose()
+        soundFX.dispose()
       }
       setInitialized(false)
     }
@@ -67,14 +70,17 @@ export function GameEngine({
   return (
     <>
       <SceneProvider>
+        <fog attach="fog" args={['#020617', 30, 110]} />
         {enableLighting && <LightingManager preset={environmentPreset} />}
         {enablePhysics && (
           <Suspense fallback={null}>
-            <RapierPhysics gravity={[0, -9.81, 0]} debug={false}>
-              <CuboidCollider position={[0, -0.5, 0]} args={[80, 0.5, 80]} />
-              {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
-              {enableWorld && <BengaluruHub />}
-              {children}
+            <RapierPhysics gravity={[0, -9.81, 0]} colliders={false}>
+              <InteractionProvider>
+                <CuboidCollider position={[0, -0.5, 0]} args={[200, 0.5, 200]} />
+                {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
+                {enableWorld && <BengaluruHub />}
+                {children}
+              </InteractionProvider>
             </RapierPhysics>
           </Suspense>
         )}
