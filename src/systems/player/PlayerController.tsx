@@ -1,22 +1,27 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { RigidBody } from '@react-three/rapier'
+import { RigidBody, useRapier } from '@react-three/rapier'
 import type { RapierRigidBody } from '@react-three/rapier'
-import { Vector3, Quaternion, Euler } from 'three'
+import { Vector3 } from 'three'
 import { PLAYER_CONFIG } from './player.config'
 import { processPlayerInput } from './PlayerInput'
 import { InputManager } from '@/systems/input/InputManager'
 import { useGameStore } from '@/stores/gameStore'
+import { useDialogueStore } from '@/stores/dialogueStore'
+import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
+import { soundFX } from '@/systems/audio/SoundFX'
+import type { PlayerState } from '@/types/game'
 import { clamp } from '@/lib/utils'
 
 const MOVE_DIR = new Vector3()
 const VELOCITY = new Vector3()
-
-const GROUND_Y = 0
+const CAM_FWD = new Vector3()
+const CAM_RIGHT = new Vector3()
+const UP = new Vector3(0, 1, 0)
 const HALF_HEIGHT = PLAYER_CONFIG.HEIGHT / 2
-const GROUND_THRESHOLD = 0.2
+const GROUND_RAY_LENGTH = 0.6
 
 interface PlayerControllerProps {
   onPositionChange?: (pos: Vector3) => void
@@ -26,6 +31,17 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
   const rigidBodyRef = useRef<RapierRigidBody>(null)
   const setPlayer = useGameStore((s) => s.setPlayer)
   const currentSpeed = useRef(0)
+  const footstepTimer = useRef(0)
+  const { world, rapier } = useRapier()
+  const { interact, nearestObject } = useInteractionSystem()
+  const wasInteractingRef = useRef(false)
+  const lastInteractTime = useRef(0)
+
+  const handleInteractKey = useCallback(() => {
+    const input = InputManager.getInstance()
+    const kbm = input.getKeyboardManager()
+    return kbm.wasJustPressed('KeyE')
+  }, [])
 
   useEffect(() => {
     const body = rigidBodyRef.current
@@ -38,31 +54,41 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     const body = rigidBodyRef.current
     if (!body) return
 
+    const gameState = useGameStore.getState()
+
+    if (gameState.isCinematic) {
+      body.setLinvel({ x: 0, y: 0, z: 0 }, true)
+      const pos = body.translation()
+      setPlayer({ position: [pos.x, pos.y, pos.z], velocity: [0, 0, 0], rotation: [0, 0, 0], state: 'idle', isGrounded: true })
+      onPositionChange?.(new Vector3(pos.x, pos.y, pos.z))
+      const input = InputManager.getInstance()
+      input.getFrameInput()
+      input.endFrame()
+      return
+    }
+
     const camera = state.camera
-
-    const cameraForward = new Vector3()
-    camera.getWorldDirection(cameraForward)
-    cameraForward.y = 0
-    if (cameraForward.lengthSq() > 0) cameraForward.normalize()
-
-    const cameraRight = new Vector3()
-    cameraRight.crossVectors(cameraForward, new Vector3(0, 1, 0)).normalize()
+    camera.getWorldDirection(CAM_FWD)
+    CAM_FWD.y = 0
+    if (CAM_FWD.lengthSq() > 0) CAM_FWD.normalize()
+    CAM_RIGHT.crossVectors(CAM_FWD, UP).normalize()
 
     const input = InputManager.getInstance()
     const frame = input.getFrameInput()
     const playerInput = processPlayerInput(frame)
 
     MOVE_DIR.set(0, 0, 0)
-    if (playerInput.moveZ !== 0) {
-      MOVE_DIR.addScaledVector(cameraForward, playerInput.moveZ)
-    }
-    if (playerInput.moveX !== 0) {
-      MOVE_DIR.addScaledVector(cameraRight, playerInput.moveX)
-    }
+    if (playerInput.moveZ !== 0) MOVE_DIR.addScaledVector(CAM_FWD, playerInput.moveZ)
+    if (playerInput.moveX !== 0) MOVE_DIR.addScaledVector(CAM_RIGHT, playerInput.moveX)
     if (MOVE_DIR.lengthSq() > 0) MOVE_DIR.normalize()
 
     const pos = body.translation()
-    const isGrounded = pos.y <= GROUND_Y + HALF_HEIGHT + GROUND_THRESHOLD
+
+    const rayOrigin = { x: pos.x, y: pos.y - HALF_HEIGHT + 0.05, z: pos.z }
+    const rayDir = { x: 0, y: -1, z: 0 }
+    const ray = new rapier.Ray(rayOrigin, rayDir)
+    const hit = world.castRay(ray, GROUND_RAY_LENGTH, true)
+    const isGrounded = hit !== null
 
     const targetSpeed = playerInput.sprint && isGrounded
       ? PLAYER_CONFIG.RUN_SPEED
@@ -80,7 +106,6 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     }
 
     VELOCITY.copy(MOVE_DIR).multiplyScalar(currentSpeed.current)
-
     const linvel = body.linvel()
     const moveVel = new Vector3(VELOCITY.x, isGrounded ? 0 : linvel.y, VELOCITY.z)
 
@@ -90,21 +115,44 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     body.setLinvel(moveVel, true)
 
-    const rot = body.rotation()
-    const quat = new Quaternion(rot.x, rot.y, rot.z, rot.w)
-    const euler = new Euler().setFromQuaternion(quat)
+    let playerState: PlayerState = 'idle'
+    if (!isGrounded) playerState = 'jumping'
+    else if (currentSpeed.current > PLAYER_CONFIG.WALK_SPEED * 0.5) playerState = 'running'
+    else if (currentSpeed.current > 0.1) playerState = 'walking'
 
     setPlayer({
       position: [pos.x, pos.y, pos.z],
       velocity: [moveVel.x, moveVel.y, moveVel.z],
-      rotation: [euler.x, euler.y, euler.z],
-      state: !isGrounded ? 'jumping' : currentSpeed.current > PLAYER_CONFIG.WALK_SPEED * 0.5 ? 'running' : currentSpeed.current > 0.1 ? 'walking' : 'idle',
+      rotation: [0, 0, 0],
+      state: playerState,
       isGrounded,
     })
 
-    onPositionChange?.(
-      new Vector3(pos.x, pos.y, pos.z),
-    )
+    onPositionChange?.(new Vector3(pos.x, pos.y, pos.z))
+
+    if (isGrounded && (playerState === 'walking' || playerState === 'running')) {
+      footstepTimer.current += dt
+      const interval = playerState === 'running' ? 0.3 : 0.5
+      if (footstepTimer.current >= interval) {
+        footstepTimer.current = 0
+        soundFX.playFootstep()
+      }
+    } else {
+      footstepTimer.current = 0
+    }
+
+    const eJustPressed = handleInteractKey()
+    const isDialogueOpen = useDialogueStore.getState().isOpen
+
+    if (eJustPressed && nearestObject && !isDialogueOpen) {
+      const now = performance.now()
+      if (now - lastInteractTime.current > 500) {
+        if (interact(nearestObject.id)) {
+          lastInteractTime.current = now
+        }
+      }
+    }
+    wasInteractingRef.current = playerInput.interact
 
     input.endFrame()
   })
@@ -122,10 +170,20 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
       friction={0}
       restitution={0}
     >
-      <mesh position={[0, -PLAYER_CONFIG.HEIGHT / 2, 0]} castShadow>
-        <boxGeometry args={[PLAYER_CONFIG.RADIUS * 2, PLAYER_CONFIG.HEIGHT, PLAYER_CONFIG.RADIUS * 2]} />
-        <meshStandardMaterial color="#6366f1" visible={false} />
-      </mesh>
+      <group position={[0, -HALF_HEIGHT, 0]}>
+        <mesh position={[0, HALF_HEIGHT * 0.6, 0]} castShadow>
+          <capsuleGeometry args={[PLAYER_CONFIG.RADIUS, HALF_HEIGHT * 0.7, 8, 16]} />
+          <meshStandardMaterial color="#6366f1" metalness={0.3} roughness={0.4} />
+        </mesh>
+        <mesh position={[0, HALF_HEIGHT * 1.4, 0]} castShadow>
+          <sphereGeometry args={[PLAYER_CONFIG.RADIUS * 0.7, 16, 16]} />
+          <meshStandardMaterial color="#a5b4fc" metalness={0.2} roughness={0.3} />
+        </mesh>
+        <mesh position={[0, HALF_HEIGHT * 0.6 - 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[PLAYER_CONFIG.RADIUS * 0.5, PLAYER_CONFIG.RADIUS * 0.9, 32]} />
+          <meshBasicMaterial color="#6366f1" transparent opacity={0.15} side={2} />
+        </mesh>
+      </group>
     </RigidBody>
   )
 }
