@@ -7,6 +7,7 @@ import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
 import { useDialogueStore } from '@/stores/dialogueStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
+import { soundFX } from '@/systems/audio/SoundFX'
 import { EventBus } from '@/lib/events/EventBus'
 import { GameEvents } from '@/lib/events/events.types'
 import type { QuestDef } from '@/systems/quest/quest.types'
@@ -14,22 +15,22 @@ import type { DialogueDef, DialogueNode } from '@/systems/dialogue/dialogue.type
 
 const NPC_ID = 'npc-placeholder'
 const NPC_DIALOGUE_ID = 'npc-placeholder-dialogue'
-const NPC_QUEST_ID = 'quest-placeholder'
+const NPC_QUEST_ID = 'quest-first-step'
 const NPC_POSITION: [number, number, number] = [5, 0.5, 8]
 
 function buildQuest(): QuestDef {
   return {
     id: NPC_QUEST_ID,
-    title: 'A Warm Welcome',
-    description: 'Speak with the guide and explore the hub to learn the basics.',
+    title: 'The First Step',
+    description: 'Reach the Campus Entrance to begin your journey.',
     category: 'main',
     status: 'available',
     prerequisites: [],
     dialogueStartId: NPC_DIALOGUE_ID,
     dialogueCompleteId: NPC_DIALOGUE_ID,
-    rewards: { knowledge: 25, badgeId: 'first-steps' },
+    rewards: { knowledge: 25, badgeId: 'journey-begins' },
     objectives: [
-      { id: 'obj-explore', type: 'reach', description: 'Explore the Bengaluru Hub', targetId: 'hub-explore', count: 1, current: 0, isOptional: false },
+      { id: 'obj-reach-campus', type: 'reach', description: 'Reach the Campus Entrance', targetId: 'campus-entrance', count: 1, current: 0, isOptional: false },
     ],
   }
 }
@@ -39,31 +40,39 @@ function buildDialogue(): DialogueDef {
     start: {
       id: 'start',
       speaker: 'Guide',
-      text: 'Welcome to Bengaluru Hub, explorer! This is the starting point of your journey through SaiVerse. Would you like a quest to get started?',
+      text: 'Welcome to SaiVerse, explorer. You are about to experience Sai\'s engineering journey — from his first line of code to building worlds like this one.',
       choices: [
-        { text: 'Yes, give me a quest!', nextNodeId: 'accept' },
-        { text: 'Not right now.', nextNodeId: 'decline' },
+        { text: 'Where do I start?', nextNodeId: 'quest_intro' },
+        { text: 'Tell me more about Sai.', nextNodeId: 'about_sai' },
       ],
     },
-    accept: {
-      id: 'accept',
+    about_sai: {
+      id: 'about_sai',
       speaker: 'Guide',
-      text: 'Excellent! Your first task is simple — explore the hub and get familiar with the surroundings. Come back when you are done.',
+      text: 'Sai started as a curious student who loved building things. The Campus was where he wrote his first program. Every district in SaiVerse represents a chapter of his story.',
+      choices: [
+        { text: 'Give me the quest!', nextNodeId: 'quest_intro' },
+      ],
     },
-    decline: {
-      id: 'decline',
+    quest_intro: {
+      id: 'quest_intro',
       speaker: 'Guide',
-      text: 'No problem! Feel free to explore the city on your own. I am here if you change your mind.',
+      text: 'Your first task: Reach the Campus Entrance. It\'s just beyond the northern edge of the hub. A glowing beacon will guide you there. Take your first step.',
     },
-    complete: {
-      id: 'complete',
+    quest_accepted: {
+      id: 'quest_accepted',
       speaker: 'Guide',
-      text: 'You have explored the hub! Well done. You earned the "First Steps" badge and 25 knowledge points. Keep up the great work!',
+      text: 'I can see the determination in your eyes. Follow the beacon north. I will meet you there with more information once you arrive. Safe travels.',
+    },
+    campus_reveal: {
+      id: 'campus_reveal',
+      speaker: 'Guide',
+      text: 'There it is. The Campus — where Sai wrote his first "Hello, World!" and discovered his passion for engineering. Every great journey begins with a single step, and you just took yours. The campus gate is now open for you.',
     },
     done: {
       id: 'done',
       speaker: 'Guide',
-      text: 'Welcome back! There are more adventures ahead when you are ready.',
+      text: 'Welcome back! The campus is open whenever you are ready to continue Sai\'s journey.',
     },
   }
 
@@ -71,21 +80,31 @@ function buildDialogue(): DialogueDef {
 }
 
 function NPCModel() {
-  const meshRef = useRef<THREE.Mesh>(null)
+  const bodyRef = useRef<THREE.Mesh>(null)
+  const headRef = useRef<THREE.Mesh>(null)
+  const glowRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = 1.2 + Math.sin(state.clock.elapsedTime * 0.8) * 0.05
+    const t = state.clock.elapsedTime
+    if (bodyRef.current) {
+      bodyRef.current.position.y = 1.2 + Math.sin(t * 0.8) * 0.05
+    }
+    if (headRef.current) {
+      headRef.current.position.y = 1.8 + Math.sin(t * 0.8) * 0.05
+    }
+    if (glowRef.current) {
+      glowRef.current.position.y = 0.01 + Math.sin(t * 1.2) * 0.02
+      glowRef.current.scale.setScalar(1 + Math.sin(t * 1.2) * 0.05)
     }
   })
 
   return (
     <group>
-      <mesh ref={meshRef} position={[0, 1.2, 0]} castShadow>
+      <mesh ref={bodyRef} position={[0, 1.2, 0]} castShadow>
         <capsuleGeometry args={[0.3, 0.6, 8, 16]} />
         <meshStandardMaterial color="#6366f1" metalness={0.3} roughness={0.4} />
       </mesh>
-      <mesh position={[0, 1.8, 0]} castShadow>
+      <mesh ref={headRef} position={[0, 1.8, 0]} castShadow>
         <sphereGeometry args={[0.22, 16, 16]} />
         <meshStandardMaterial color="#a5b4fc" metalness={0.2} roughness={0.3} />
       </mesh>
@@ -97,30 +116,50 @@ function NPCModel() {
         <planeGeometry args={[0.08, 0.03]} />
         <meshBasicMaterial color="#00d4ff" />
       </mesh>
+      <mesh ref={glowRef} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.25, 0.45, 32]} />
+        <meshBasicMaterial color="#00d4ff" transparent opacity={0.3} side={THREE.DoubleSide} />
+      </mesh>
     </group>
   )
 }
 
-function NPCGlow() {
-  const meshRef = useRef<THREE.Mesh>(null)
+function FloatingName() {
+  const textureRef = useRef<THREE.CanvasTexture | null>(null)
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = 0.01 + Math.sin(state.clock.elapsedTime * 1.2) * 0.02
-      meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 1.2) * 0.05)
-    }
-  })
+  if (!textureRef.current) {
+    const canvas = document.createElement('canvas')
+    canvas.width = 256
+    canvas.height = 64
+    const ctx = canvas.getContext('2d')!
+    ctx.clearRect(0, 0, 256, 64)
+
+    ctx.shadowColor = 'rgba(0,212,255,0.5)'
+    ctx.shadowBlur = 10
+    ctx.fillStyle = '#00d4ff'
+    ctx.font = 'bold 32px monospace'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('◆ Guide ◆', 128, 32)
+
+    textureRef.current = new THREE.CanvasTexture(canvas)
+    textureRef.current.needsUpdate = true
+  }
 
   return (
-    <mesh ref={meshRef} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[0.25, 0.45, 32]} />
-      <meshBasicMaterial color="#00d4ff" transparent opacity={0.3} side={THREE.DoubleSide} />
-    </mesh>
+    <sprite position={[0, 2.4, 0]} scale={[1.6, 0.4, 1]}>
+      <spriteMaterial
+        map={textureRef.current}
+        transparent
+        opacity={0.9}
+        depthTest={false}
+      />
+    </sprite>
   )
 }
 
 export function PlaceholderNPC() {
-  const { registerObject, unregisterObject } = useInteractionSystem()
+  const { registerObject, unregisterObject, endInteraction } = useInteractionSystem()
   const dialogueStore = useDialogueStore()
   const notif = useNotificationStore()
   const acceptedRef = useRef(false)
@@ -131,7 +170,7 @@ export function PlaceholderNPC() {
       type: 'talk',
       label: 'Guide',
       position: NPC_POSITION,
-      radius: 3,
+      radius: 4,
       isActive: true,
       isInteractable: true,
       data: { dialogueId: NPC_DIALOGUE_ID },
@@ -149,6 +188,7 @@ export function PlaceholderNPC() {
       const quest = QuestManager.getQuest(NPC_QUEST_ID)
       if (!quest) return
 
+      soundFX.playDialogueOpen()
       acceptedRef.current = false
 
       if (quest.status === 'completed') {
@@ -159,7 +199,7 @@ export function PlaceholderNPC() {
 
       if (quest.status === 'accepted') {
         dialogueStore.openDialogue(NPC_DIALOGUE_ID)
-        setTimeout(() => dialogueStore.goToNode('complete'), 50)
+        setTimeout(() => dialogueStore.goToNode('quest_intro'), 50)
         return
       }
 
@@ -168,27 +208,17 @@ export function PlaceholderNPC() {
 
     const unsubAdvance = EventBus.on(GameEvents.DIALOGUE_ADVANCE, (payload: any) => {
       if (payload?.dialogueId !== NPC_DIALOGUE_ID) return
-      if (payload?.nodeId === 'accept') {
+      if (payload?.nodeId === 'quest_intro') {
         acceptedRef.current = true
+        QuestManager.acceptQuest(NPC_QUEST_ID)
+        soundFX.playQuestAccept()
+        notif.addNotification('quest', 'Quest Started', 'The First Step — Reach the Campus Entrance')
       }
     })
 
     const unsubEnd = EventBus.on(GameEvents.DIALOGUE_END, (payload: any) => {
       if (payload?.dialogueId !== NPC_DIALOGUE_ID) return
-      const quest = QuestManager.getQuest(NPC_QUEST_ID)
-      if (!quest) return
-
-      if (quest.status === 'available' && acceptedRef.current) {
-        QuestManager.acceptQuest(NPC_QUEST_ID)
-        notif.addNotification('quest', 'Quest Started', 'A Warm Welcome — Explore the Bengaluru Hub')
-      } else if (quest.status === 'accepted') {
-        QuestManager.completeObjective(NPC_QUEST_ID, 'obj-explore')
-        const updated = QuestManager.getQuest(NPC_QUEST_ID)
-        if (updated?.status === 'completed') {
-          notif.addNotification('badge', 'Badge Earned', 'First Steps')
-          notif.addNotification('knowledge', 'Knowledge +25', 'Hub exploration')
-        }
-      }
+      endInteraction()
     })
 
     return () => {
@@ -196,12 +226,12 @@ export function PlaceholderNPC() {
       unsubAdvance()
       unsubEnd()
     }
-  }, [dialogueStore, notif])
+  }, [dialogueStore, notif, endInteraction])
 
   return (
     <group position={NPC_POSITION}>
-      <NPCGlow />
       <NPCModel />
+      <FloatingName />
     </group>
   )
 }
