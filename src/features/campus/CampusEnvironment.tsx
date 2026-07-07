@@ -7,7 +7,7 @@ import { Bench } from '@/systems/environment/Bench'
 import { Fountain } from '@/systems/environment/Fountain'
 import { SignPost } from '@/systems/environment/SignPost'
 import { RoadSystem } from '@/systems/world/RoadSystem'
-import { ProfessorNPC } from '@/features/npc/ProfessorNPC'
+import { ClassroomEnvironment } from '@/features/campus/ClassroomEnvironment'
 
 import {
   CAMPUS_BUILDINGS,
@@ -68,8 +68,8 @@ export function CampusEnvironment() {
       {/* Campus roads */}
       <RoadSystem segments={CAMPUS_ROADS as any} />
 
-      {/* NPCs */}
-      <ProfessorNPC />
+      {/* Classroom Wing */}
+      <ClassroomEnvironment />
     </group>
   )
 }

@@ -17,7 +17,10 @@ import type { DialogueDef, DialogueNode } from '@/systems/dialogue/dialogue.type
 const NPC_ID = 'npc-professor'
 const NPC_DIALOGUE_ID = 'professor-dialogue'
 const NPC_QUEST_ID = 'quest-first-lesson'
-const NPC_POSITION: [number, number, number] = [23, 0.5, -146]
+const NPC_POSITION: [number, number, number] = [22.5, 0.5, -145.2]
+
+const WHITEBOARD_ID = 'classroom-whiteboard'
+const COMPUTER_ID = 'classroom-computer'
 
 const PREREQUISITE_QUEST = 'quest-first-step'
 
@@ -25,7 +28,7 @@ function buildQuest(): QuestDef {
   return {
     id: NPC_QUEST_ID,
     title: 'The First Lesson',
-    description: 'Complete Professor Mehta\'s programming puzzle.',
+    description: 'Study the whiteboard, write your first Java program, and show Professor Mehta.',
     category: 'main',
     status: 'available',
     prerequisites: [{ questId: PREREQUISITE_QUEST }],
@@ -33,7 +36,9 @@ function buildQuest(): QuestDef {
     dialogueCompleteId: NPC_DIALOGUE_ID,
     rewards: { knowledge: 50, badgeId: 'first-lesson' },
     objectives: [
-      { id: 'obj-complete-puzzle', type: 'talk', description: 'Complete the programming puzzle', targetId: 'professor', count: 1, current: 0, isOptional: false },
+      { id: 'obj-study-whiteboard', type: 'talk', description: 'Study the whiteboard', targetId: 'whiteboard', count: 1, current: 0, isOptional: false },
+      { id: 'obj-use-computer', type: 'talk', description: 'Write your first Java program on the computer', targetId: 'computer', count: 1, current: 0, isOptional: false },
+      { id: 'obj-show-professor', type: 'talk', description: 'Show your code to Professor Mehta', targetId: 'professor', count: 1, current: 0, isOptional: false },
     ],
   }
 }
@@ -43,112 +48,77 @@ function buildDialogue(): DialogueDef {
     prereq_not_met: {
       id: 'prereq_not_met',
       speaker: 'Prof. Mehta',
-      text: 'You\'re not quite ready for this lesson. Speak with the Guide in the hub first — they\'ll show you where your journey begins.',
+      text: 'You\'re early! The first lesson hasn\'t opened yet. Speak with the Guide in the hub — they\'ll prepare you for what\'s ahead.',
     },
-    start: {
-      id: 'start',
+    intro: {
+      id: 'intro',
       speaker: 'Prof. Mehta',
-      text: 'Ah, a new face. Sai stood where you\'re standing three years ago — curious, maybe a little uncertain. I\'m Professor Mehta. Welcome to the Campus.',
+      text: 'Welcome to the Classroom Wing. I\'m Professor Mehta — and this is where Sai wrote his very first Java program. Today, you\'ll follow the same path. I\'ve set up three stations: study the whiteboard, write code on the terminal, then show me what you\'ve created. Let\'s begin.',
+    },
+    intro_accepted: {
+      id: 'intro_accepted',
+      speaker: 'Prof. Mehta',
+      text: 'Back for more? The stations are waiting. Whiteboard to your left, terminal beside the desks. Take your time — every great programmer started exactly where you\'re standing.',
+    },
+    explore: {
+      id: 'explore',
+      speaker: 'Prof. Mehta',
+      text: 'Still finding your footing? That\'s fine. Start with the whiteboard — it\'ll give you the foundation. Then try your hand at the computer terminal. I\'ll be right here when you\'re ready.',
+    },
+    whiteboard: {
+      id: 'whiteboard',
+      speaker: 'Prof. Mehta',
+      text: 'The whiteboard shows the anatomy of a Java program. At its heart: a class, a main method, and statements that run top to bottom. Java is statically typed — every variable declares its kind before it holds a value. Like blueprint for memory. This discipline is what makes Java programs robust enough to run for years without crashing. Study it well — you\'ll need it for the terminal.',
+    },
+    computer: {
+      id: 'computer',
+      speaker: 'Prof. Mehta',
+      text: 'The terminal is open to a blank Java file. One line is missing. Fill in the blank to complete Sai\'s very first program:',
       choices: [
-        { text: 'I\'m ready to learn.', nextNodeId: 'lesson_intro' },
-        { text: 'Tell me about Sai.', nextNodeId: 'about_sai' },
+        { text: 'System.out.println("Hello, World!");', nextNodeId: 'computer_correct' },
+        { text: 'System.print("Hello World")', nextNodeId: 'computer_wrong' },
+        { text: 'console.log("Hello, World!");', nextNodeId: 'computer_wrong' },
       ],
     },
-    about_sai: {
-      id: 'about_sai',
+    computer_correct: {
+      id: 'computer_correct',
       speaker: 'Prof. Mehta',
-      text: 'Sai walked through that same entrance not knowing a single line of code. Today he builds worlds. The secret? He never stopped asking "why." That\'s the only prerequisite for this journey.',
-      choices: [
-        { text: 'Let me begin.', nextNodeId: 'lesson_intro' },
-      ],
+      text: 'That\'s it. \"Hello, World!\" — the same words Sai printed on his first day. You\'ve just written your first valid Java statement. The compiler accepts it, the terminal will show it. Well done. Come show me when you\'re ready to move forward.',
     },
-    lesson_intro: {
-      id: 'lesson_intro',
+    computer_wrong: {
+      id: 'computer_wrong',
       speaker: 'Prof. Mehta',
-      text: 'Every programmer\'s journey begins with a single program. Sai\'s was a calculator. I want to see if you can think the way Sai did when he wrote his first lines. I\'ll ask three questions. Ready?',
-      choices: [
-        { text: 'Let\'s do it.', nextNodeId: 'q1' },
-      ],
+      text: 'Almost — but the Java compiler expects a precise incantation. In Java, we use System.out.println with a capital S, and every statement ends with a semicolon. Try again.',
+      nextNodeId: 'computer',
     },
-    q1: {
-      id: 'q1',
+    need_whiteboard: {
+      id: 'need_whiteboard',
       speaker: 'Prof. Mehta',
-      text: 'Before Sai wrote a single line of code, what was the very first thing he did?',
-      choices: [
-        { text: 'Installed a compiler', nextNodeId: 'q1_wrong' },
-        { text: 'Planned the logic', nextNodeId: 'q1_correct' },
-        { text: 'Wrote the output first', nextNodeId: 'q1_wrong' },
-      ],
+      text: 'Before touching the terminal, study the whiteboard first. Java\'s syntax is precise — one wrong character and the compiler won\'t budge. The whiteboard will show you the shape of a valid program.',
     },
-    q1_correct: {
-      id: 'q1_correct',
+    no_quest: {
+      id: 'no_quest',
       speaker: 'Prof. Mehta',
-      text: 'Exactly. Planning comes first. Sai\'s rule: think three times, code once. The computer will wait. A clear plan is worth a hundred debugging sessions.',
-      nextNodeId: 'q2',
+      text: 'This terminal isn\'t active yet. Speak with me first and I\'ll open the lesson for you.',
     },
-    q1_wrong: {
-      id: 'q1_wrong',
+    already_done: {
+      id: 'already_done',
       speaker: 'Prof. Mehta',
-      text: 'Not quite. Would you build a house without a blueprint? Code is no different. Sai learned this lesson early: the thinking happens before the typing.',
-      nextNodeId: 'q1',
-    },
-    q2: {
-      id: 'q2',
-      speaker: 'Prof. Mehta',
-      text: 'When Sai writes code, what does he focus on first?',
-      choices: [
-        { text: 'Making it look elegant', nextNodeId: 'q2_wrong' },
-        { text: 'Making it work correctly', nextNodeId: 'q2_correct' },
-        { text: 'Following every rule', nextNodeId: 'q2_wrong' },
-      ],
-    },
-    q2_correct: {
-      id: 'q2_correct',
-      speaker: 'Prof. Mehta',
-      text: 'Correct. Sai\'s motto: make it work, make it right, make it fast — in that order. Never skip the first step. Working code beats perfect code every time.',
-      nextNodeId: 'q3',
-    },
-    q2_wrong: {
-      id: 'q2_wrong',
-      speaker: 'Prof. Mehta',
-      text: 'Close, but think about the goal. Code isn\'t art — it\'s a tool that solves problems. The first question should always be: does it solve the problem correctly?',
-      nextNodeId: 'q2',
-    },
-    q3: {
-      id: 'q3',
-      speaker: 'Prof. Mehta',
-      text: 'Last one. Sai learned four languages in his first year. What was the most important thing each language taught him?',
-      choices: [
-        { text: 'A new way of thinking', nextNodeId: 'q3_correct' },
-        { text: 'Different syntax rules', nextNodeId: 'q3_wrong' },
-        { text: 'How to type faster', nextNodeId: 'q3_wrong' },
-      ],
-    },
-    q3_correct: {
-      id: 'q3_correct',
-      speaker: 'Prof. Mehta',
-      text: 'Precisely. Java taught him discipline. Python taught him clarity. JavaScript taught him the web. Go taught him simplicity. Each language is a new lens for seeing problems. Code is not about computers — it\'s about how you think.',
-      nextNodeId: 'completion',
-    },
-    q3_wrong: {
-      id: 'q3_wrong',
-      speaker: 'Prof. Mehta',
-      text: 'Languages are more than vocabulary. Each one has a philosophy. Sai learned that switching languages meant switching how he approached problems entirely.',
-      nextNodeId: 'q3',
+      text: 'You\'ve already completed this station. Strong work. Move on to the next one.',
     },
     completion: {
       id: 'completion',
       speaker: 'Prof. Mehta',
-      text: 'You\'ve completed your first lesson. You have the mindset. Java, Python, JavaScript, Go — these were Sai\'s first companions. They\'re yours now too. The path ahead is long, but every master was once a beginner who refused to stop.',
+      text: 'You studied the fundamentals. You wrote working code. You showed me the result. That\'s the entire engineering cycle in one lesson. Java demands precision, patience, and clarity — and you just demonstrated all three. From this day forward, Java is part of your toolkit. Use it well.',
     },
     done: {
       id: 'done',
       speaker: 'Prof. Mehta',
-      text: 'Welcome back. Remember: the computer doesn\'t care about your doubts. It only cares about your code. Keep writing.',
+      text: 'Welcome back, programmer. Remember Sai\'s first lesson: Java is not just a language — it\'s a discipline. Every semicolon, every type declaration, every class is a commitment to clarity. Keep writing.',
     },
   }
 
-  return { id: NPC_DIALOGUE_ID, title: 'Professor Mehta', nodes, startNodeId: 'start' }
+  return { id: NPC_DIALOGUE_ID, title: 'Professor Mehta', nodes, startNodeId: 'intro' }
 }
 
 function ProfessorModel() {
@@ -180,7 +150,6 @@ function ProfessorModel() {
         <sphereGeometry args={[0.22, 16, 16]} />
         <meshStandardMaterial color="#e8a84c" metalness={0.2} roughness={0.3} />
       </mesh>
-      {/* Glasses */}
       <mesh position={[0, 1.78, 0.22]}>
         <torusGeometry args={[0.1, 0.02, 8, 16]} />
         <meshStandardMaterial color="#a0aec0" metalness={0.8} roughness={0.1} />
@@ -231,12 +200,19 @@ function FloatingName() {
   )
 }
 
+function isQuestObjectiveDone(questId: string, objectiveId: string): boolean {
+  const q = QuestManager.getQuest(questId)
+  if (!q) return false
+  const obj = q.objectives.find((o) => o.id === objectiveId)
+  return obj ? obj.current >= obj.count : false
+}
+
 export function ProfessorNPC() {
   const { registerObject, unregisterObject, endInteraction } = useInteractionSystem()
   const dialogueStore = useDialogueStore()
   const notif = useNotificationStore()
   const playerStore = usePlayerStore()
-  const acceptedRef = useRef(false)
+  const dialogueRegistered = useRef(false)
 
   useEffect(() => {
     registerObject({
@@ -250,69 +226,117 @@ export function ProfessorNPC() {
       data: { dialogueId: NPC_DIALOGUE_ID },
     })
 
+    return () => unregisterObject(NPC_ID)
+  }, [registerObject, unregisterObject])
+
+  useEffect(() => {
+    if (dialogueRegistered.current) return
     dialogueStore.registerDialogue(buildDialogue())
     QuestManager.registerQuest(buildQuest())
-
-    return () => unregisterObject(NPC_ID)
-  }, [registerObject, unregisterObject, dialogueStore])
+    dialogueRegistered.current = true
+  }, [dialogueStore])
 
   useEffect(() => {
     const unsubStart = EventBus.on(GameEvents.INTERACTION_START, (payload: any) => {
-      if (payload?.objectId !== NPC_ID) return
-      const quest = QuestManager.getQuest(NPC_QUEST_ID)
-      if (!quest) return
+      if (!payload?.objectId) return
+      if (![NPC_ID, WHITEBOARD_ID, COMPUTER_ID].includes(payload.objectId)) return
 
       soundFX.playDialogueOpen()
-      acceptedRef.current = false
 
-      if (quest.status === 'completed') {
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
-        setTimeout(() => dialogueStore.goToNode('done'), 50)
-        return
-      }
-
+      const quest = QuestManager.getQuest(NPC_QUEST_ID)
       const prereqQuest = QuestManager.getQuest(PREREQUISITE_QUEST)
-      if (!prereqQuest || prereqQuest.status !== 'completed') {
+
+      if (payload.objectId === NPC_ID) {
+        if (quest?.status === 'completed') {
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          setTimeout(() => dialogueStore.goToNode('done'), 50)
+          return
+        }
+        if (!prereqQuest || prereqQuest.status !== 'completed') {
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          setTimeout(() => dialogueStore.goToNode('prereq_not_met'), 50)
+          return
+        }
+        if (!quest || quest.status === 'available') {
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          return
+        }
+        if (quest.status === 'accepted') {
+          if (
+            isQuestObjectiveDone(NPC_QUEST_ID, 'obj-study-whiteboard') &&
+            isQuestObjectiveDone(NPC_QUEST_ID, 'obj-use-computer')
+          ) {
+            dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+            setTimeout(() => dialogueStore.goToNode('completion'), 50)
+            return
+          }
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          setTimeout(() => dialogueStore.goToNode('explore'), 50)
+          return
+        }
         dialogueStore.openDialogue(NPC_DIALOGUE_ID)
-        setTimeout(() => dialogueStore.goToNode('prereq_not_met'), 50)
         return
       }
 
-      if (quest.status === 'accepted') {
+      if (!quest || quest.status === 'available' || quest.status === 'completed') {
         dialogueStore.openDialogue(NPC_DIALOGUE_ID)
-        setTimeout(() => dialogueStore.goToNode('lesson_intro'), 50)
+        setTimeout(() => dialogueStore.goToNode('no_quest'), 50)
         return
       }
 
-      dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+      if (payload.objectId === WHITEBOARD_ID) {
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        setTimeout(() => dialogueStore.goToNode('whiteboard'), 50)
+        return
+      }
+
+      if (payload.objectId === COMPUTER_ID) {
+        if (!isQuestObjectiveDone(NPC_QUEST_ID, 'obj-study-whiteboard')) {
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          setTimeout(() => dialogueStore.goToNode('need_whiteboard'), 50)
+          return
+        }
+        if (isQuestObjectiveDone(NPC_QUEST_ID, 'obj-use-computer')) {
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          setTimeout(() => dialogueStore.goToNode('already_done'), 50)
+          return
+        }
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        setTimeout(() => dialogueStore.goToNode('computer'), 50)
+        return
+      }
     })
 
     const unsubAdvance = EventBus.on(GameEvents.DIALOGUE_ADVANCE, (payload: any) => {
       if (payload?.dialogueId !== NPC_DIALOGUE_ID) return
 
-      if (payload?.nodeId === 'lesson_intro') {
-        acceptedRef.current = true
+      if (payload?.nodeId === 'intro') {
         const accepted = QuestManager.acceptQuest(NPC_QUEST_ID)
         if (accepted) {
           soundFX.playQuestAccept()
-          notif.addNotification('quest', 'Quest Started', 'The First Lesson — Complete the programming puzzle')
+          notif.addNotification('quest', 'Quest Started', 'The First Lesson — Study, write, and show your work')
         }
       }
 
+      if (payload?.nodeId === 'whiteboard') {
+        QuestManager.completeObjective(NPC_QUEST_ID, 'obj-study-whiteboard')
+      }
+
+      if (payload?.nodeId === 'computer_correct') {
+        QuestManager.completeObjective(NPC_QUEST_ID, 'obj-use-computer')
+      }
+
       if (payload?.nodeId === 'completion') {
-        QuestManager.completeObjective(NPC_QUEST_ID, 'obj-complete-puzzle')
+        QuestManager.completeObjective(NPC_QUEST_ID, 'obj-show-professor')
         const updated = QuestManager.getQuest(NPC_QUEST_ID)
         if (updated?.status === 'completed') {
           soundFX.playQuestComplete()
           soundFX.playBadgeEarned()
           notif.addNotification('badge', 'Badge Earned', 'First Lesson')
-          notif.addNotification('knowledge', 'Knowledge +50', 'Programming puzzle completed')
+          notif.addNotification('knowledge', 'Knowledge +50', 'Java programming fundamentals')
 
           playerStore.addTrait('java-basics')
-          playerStore.addTrait('python-basics')
-          playerStore.addTrait('javascript-basics')
-          playerStore.addTrait('go-basics')
-          notif.addNotification('trait', 'Languages Unlocked', 'Java · Python · JavaScript · Go')
+          notif.addNotification('trait', 'Language Unlocked', 'Java')
         }
       }
     })
@@ -336,3 +360,5 @@ export function ProfessorNPC() {
     </group>
   )
 }
+
+export { NPC_DIALOGUE_ID, WHITEBOARD_ID, COMPUTER_ID, NPC_ID }
