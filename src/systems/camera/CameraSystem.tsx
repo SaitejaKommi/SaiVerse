@@ -156,13 +156,13 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
       sceneRef.current = result
     }
 
-    const isCinematic = useGameStore.getState().isCinematic
+    const { isCinematic, isPaused } = useGameStore.getState()
 
     const input = InputManager.getInstance()
     const mouseDelta = input.getMouseManager().consumeFrame()
     const scrollDelta = input.getMouseManager().consumeScroll()
 
-    if (!isCinematic) {
+    if (!isCinematic && !isPaused) {
       stateRef.current.targetAngle += mouseDelta.x * settings.sensitivity
       stateRef.current.targetElevation = Math.max(
         CAMERA_CONFIG.MIN_ELEVATION,

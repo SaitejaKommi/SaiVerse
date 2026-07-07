@@ -43,9 +43,6 @@ export class InputManager {
   }
 
   getFrameInput(): InputFrame {
-    const mouseDelta = this.#mouse.consumeFrame()
-    const scrollDelta = this.#mouse.consumeScroll()
-
     const actions: Record<string, boolean> = {}
     const actionNames = Object.keys(this.#config.keyBindings) as ActionName[]
     for (const action of actionNames) {
@@ -54,9 +51,9 @@ export class InputManager {
 
     return {
       actions,
-      mouseDelta,
+      mouseDelta: { x: 0, y: 0 },
       mousePosition: this.#mouse.getPosition(),
-      scrollDelta,
+      scrollDelta: 0,
       gamepadConnected: this.#gamepadIndex !== null,
     }
   }
