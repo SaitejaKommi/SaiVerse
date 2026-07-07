@@ -4,14 +4,14 @@ import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
-import { usePlayerStore } from '@/stores/playerStore'
-import { useNotificationStore } from '@/stores/notificationStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
+import { ChapterManager } from '@/systems/chapter/ChapterManager'
 import { soundFX } from '@/systems/audio/SoundFX'
 import { EventBus } from '@/lib/events/EventBus'
 import { GameEvents } from '@/lib/events/events.types'
 
 const CAMPUS_QUEST_ID = 'quest-first-lesson'
+const CHAPTER_ID = 'chapter-1'
 const CAMERA_PULLBACK_DURATION = 3
 
 const CINEMATIC_CAMERA_POS = new THREE.Vector3(5, 18, -85)
@@ -21,8 +21,6 @@ export function ChapterFinaleCamera() {
   const setCinematic = useGameStore((s) => s.setCinematic)
   const setFinalePhase = useGameStore((s) => s.setFinalePhase)
   const finalePhase = useGameStore((s) => s.finalePhase)
-  const notif = useNotificationStore()
-  const playerStore = usePlayerStore()
   const cameraStartPos = useRef(new THREE.Vector3())
   const cameraProgress = useRef(0)
   const rewardsApplied = useRef(false)
@@ -45,30 +43,17 @@ export function ChapterFinaleCamera() {
 
       QuestManager.completeObjective(CAMPUS_QUEST_ID, 'obj-show-professor')
 
-      const quest = QuestManager.getQuest(CAMPUS_QUEST_ID)
-      const alreadyCompleted = quest?.status === 'completed'
+      ChapterManager.completeChapter(CHAPTER_ID)
 
-      if (!alreadyCompleted) {
-        playerStore.addTrait('java-basics')
-        playerStore.addKnowledge(50, 'chapter:1')
-        playerStore.addBadge('chapter-1-complete')
-
-        soundFX.playQuestComplete()
-        soundFX.playBadgeEarned()
-        notif.addNotification('trait', 'Language Unlocked', 'Java')
-        notif.addNotification('knowledge', 'Knowledge +50', 'Chapter 1 completed')
-        notif.addNotification('badge', 'Badge Earned', 'Chapter 1 Complete')
-      }
-
+      soundFX.playBadgeEarned()
       EventBus.emit(GameEvents.CELEBRATION_TRIGGER, { type: 'java_unlock' })
-      EventBus.emit(GameEvents.CHAPTER_COMPLETE, { chapter: 1 })
 
       setTimeout(() => {
         setFinalePhase('complete_show')
         soundFX.playQuestComplete()
       }, 1500)
     }
-  }, [finalePhase, setFinalePhase, notif, playerStore])
+  }, [finalePhase, setFinalePhase])
 
   useFrame((state, delta) => {
     if (finalePhase === 'pullback') {

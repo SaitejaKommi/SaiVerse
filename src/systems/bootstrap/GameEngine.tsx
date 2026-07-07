@@ -15,6 +15,8 @@ import { audioManager } from '@/systems/audio/AudioManager'
 import { soundFX } from '@/systems/audio/SoundFX'
 import { InteractionProvider } from '@/systems/interaction/InteractionSystem'
 import { BengaluruHub } from '@/features/bengaluru-hub/BengaluruHub'
+import { registerAllChapters } from '@/data/chapters/index'
+import { ChapterManager } from '@/systems/chapter/ChapterManager'
 
 interface GameEngineProps {
   children?: ReactNode
@@ -53,7 +55,11 @@ export function GameEngine({
       soundFX.startAmbient()
     }
 
+    registerAllChapters()
+    ChapterManager.init()
+
     return () => {
+      ChapterManager.destroy()
       InputManager.reset()
       if (enableAudio) {
         audioManager.dispose()
