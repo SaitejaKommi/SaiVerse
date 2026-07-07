@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useMemo } from 'react'
+import React, { useEffect, useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { CuboidCollider } from '@react-three/rapier'
@@ -46,8 +46,9 @@ function Desk({ position, rotation = 0 }: { position: [number, number, number]; 
   )
 }
 
-function ComputerMonitor({ position }: { position: [number, number, number] }) {
-  const screenRef = useRef<THREE.Mesh>(null)
+function ComputerMonitor({ position, screenRef: externalRef }: { position: [number, number, number]; screenRef?: React.RefObject<THREE.Mesh | null> }) {
+  const internalRef = useRef<THREE.Mesh>(null)
+  const screenRef = externalRef ?? internalRef
 
   useFrame((state) => {
     if (screenRef.current) {
@@ -366,6 +367,52 @@ function ClassroomAmbience() {
   return null
 }
 
+function ClassroomLights() {
+  const warmRef = useRef<THREE.SpotLight>(null)
+
+  useFrame((state) => {
+    if (warmRef.current) {
+      warmRef.current.intensity = 0.6 + Math.sin(state.clock.elapsedTime * 0.1) * 0.1
+    }
+  })
+
+  return (
+    <>
+      <spotLight
+        ref={warmRef}
+        position={[BUILDING_X, 5.5, FRONT_WALL_Z - 2]}
+        angle={0.6}
+        penumbra={0.8}
+        decay={1}
+        distance={15}
+        color="#ffddaa"
+        intensity={0.6}
+      />
+      <pointLight position={[BUILDING_X, 0.5, FRONT_WALL_Z - 1.5]} color="#ffddaa" intensity={0.15} distance={8} />
+    </>
+  )
+}
+
+function FlickerComputer({ position }: { position: [number, number, number] }) {
+  const screenRef = useRef<THREE.Mesh>(null)
+  const flickerTimer = useRef(0)
+  const flickerState = useRef(0)
+
+  useFrame((state, delta) => {
+    if (!screenRef.current) return
+    flickerTimer.current += delta
+    if (flickerTimer.current > flickerState.current) {
+      flickerTimer.current = 0
+      flickerState.current = 0.05 + Math.random() * 0.2
+      const mat = screenRef.current.material as THREE.MeshStandardMaterial
+      const flicker = Math.random() > 0.85 ? 0.3 : 0.5 + Math.random() * 0.3
+      mat.emissiveIntensity = flicker
+    }
+  })
+
+  return <ComputerMonitor position={position} screenRef={screenRef} />
+}
+
 export function ClassroomEnvironment() {
   const { registerObject, unregisterObject } = useInteractionSystem()
 
@@ -404,14 +451,17 @@ export function ClassroomEnvironment() {
     <group>
       <ProfessorNPC />
 
+      {/* Classroom lighting */}
+      <ClassroomLights />
+
       {/* Background ambience */}
       <ClassroomAmbience />
 
       {/* Desks - Row 1 with computers */}
       <Desk position={[21, 0, -141.5]} />
-      <ComputerMonitor position={[21, 0.72, -141.5]} />
+      <FlickerComputer position={[21, 0.72, -141.5]} />
       <Desk position={[25, 0, -141.5]} />
-      <ComputerMonitor position={[25, 0.72, -141.5]} />
+      <FlickerComputer position={[25, 0.72, -141.5]} />
 
       {/* Desks - Row 2 (no computers) */}
       <Desk position={[21, 0, -138.5]} />

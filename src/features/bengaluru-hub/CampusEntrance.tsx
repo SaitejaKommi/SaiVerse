@@ -3,17 +3,21 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { QuestManager } from '@/systems/quest/QuestManager'
 import { CAMPUS_ENTRANCE_POSITION } from '@/data/bengaluru/hub-layout'
 
 const ENTRANCE_HEIGHT = 8
 const PILLAR_SPACING = 4
 const PILLAR_RADIUS = 0.3
 
+const CHAPTER_ONE_QUEST = 'quest-first-lesson'
+
 export function CampusEntrance() {
   const beaconRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Mesh>(null)
   const ringRef = useRef<THREE.Mesh>(null)
   const particlesRef = useRef<THREE.Points>(null)
+  const openedRef = useRef(false)
   const particlePositions = useMemo(() => {
     const positions = new Float32Array(60 * 3)
     for (let i = 0; i < 60; i++) {
@@ -63,19 +67,39 @@ export function CampusEntrance() {
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
+
+    const quest = QuestManager.getQuest(CHAPTER_ONE_QUEST)
+    const opened = quest?.status === 'completed'
+    if (opened && !openedRef.current) {
+      openedRef.current = true
+    }
+
+    const beaconColor = opened ? '#00ff88' : '#00d4ff'
+    const glowColor = opened ? '#00ff88' : '#00d4ff'
+
     if (beaconRef.current) {
       beaconRef.current.position.y = ENTRANCE_HEIGHT + 1.5 + Math.sin(t * 1.2) * 0.2
       beaconRef.current.scale.setScalar(1 + Math.sin(t * 2) * 0.05)
+      const mat = beaconRef.current.material as THREE.MeshStandardMaterial
+      if (mat) {
+        mat.color.set(beaconColor)
+        mat.emissive.set(beaconColor)
+        mat.emissiveIntensity = opened ? 0.5 : 1
+      }
     }
     if (glowRef.current) {
       glowRef.current.position.y = ENTRANCE_HEIGHT + 1.5 + Math.sin(t * 1.2) * 0.2
-      glowRef.current.scale.setScalar(1.5 + Math.sin(t * 1.5) * 0.1)
-      ;(glowRef.current.material as THREE.MeshBasicMaterial).opacity = 0.08 + Math.sin(t * 1.2) * 0.04
+      glowRef.current.scale.setScalar(opened ? 2 + Math.sin(t * 0.5) * 0.2 : 1.5 + Math.sin(t * 1.5) * 0.1)
+      const mat = glowRef.current.material as THREE.MeshBasicMaterial
+      mat.color.set(glowColor)
+      mat.opacity = opened ? 0.15 + Math.sin(t * 0.5) * 0.05 : 0.08 + Math.sin(t * 1.2) * 0.04
     }
     if (ringRef.current) {
       ringRef.current.position.y = ENTRANCE_HEIGHT + 1.5 + Math.sin(t * 1.2) * 0.2
       ringRef.current.rotation.x = Math.PI / 3 + Math.sin(t * 0.5) * 0.1
       ringRef.current.rotation.z = t * 0.5
+      const mat = ringRef.current.material as THREE.MeshBasicMaterial
+      mat.color.set(glowColor)
     }
     if (particlesRef.current) {
       const attr = particlesRef.current.geometry.attributes.position
@@ -83,7 +107,7 @@ export function CampusEntrance() {
         const pos = attr.array as Float32Array
         for (let i = 0; i < 60; i++) {
           const theta = t * 0.5 + i * 0.1
-          const r = 0.8 + Math.sin(t * 0.3 + i) * 0.3
+          const r = opened ? 1 + Math.sin(t * 0.2 + i) * 0.2 : 0.8 + Math.sin(t * 0.3 + i) * 0.3
           const baseY = ENTRANCE_HEIGHT + 1.5 + Math.sin(t * 1.2) * 0.2
           pos[i * 3] = Math.cos(theta) * r
           pos[i * 3 + 1] = baseY + Math.sin(t * 0.7 + i * 0.2) * 0.2

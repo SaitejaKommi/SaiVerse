@@ -22,6 +22,10 @@ export const GameEvents = {
   HUD_MODE_CHANGED: 'hud:mode_changed',
   GAME_PAUSED: 'game:paused',
   GAME_RESUMED: 'game:resumed',
+  CHAPTER_FINALE_TRIGGER: 'chapter:finale_trigger',
+  CHAPTER_COMPLETE: 'chapter:complete',
+  AMBIENCE_FADE: 'ambience:fade',
+  CELEBRATION_TRIGGER: 'celebration:trigger',
 } as const
 
 export interface InteractionEvent {

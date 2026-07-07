@@ -22,7 +22,10 @@ import { NavigationMesh } from '@/systems/world/NavigationMesh'
 import { PlaceholderNPC } from '@/features/npc/PlaceholderNPC'
 import { CampusEntrance } from '@/features/bengaluru-hub/CampusEntrance'
 import { CampusRevealCinematic } from '@/features/cinematics/CampusRevealCinematic'
+import { ChapterFinaleCamera } from '@/features/cinematics/ChapterFinaleCamera'
 import { CampusEnvironment } from '@/features/campus/CampusEnvironment'
+import { SoftwareCitySkyline } from '@/features/world/SoftwareCitySkyline'
+import { SkillUnlockEffect } from '@/features/effects/SkillUnlockEffect'
 import { CAMPUS_BOUNDS } from '@/data/bengaluru/campus-layout'
 
 import {
@@ -124,7 +127,10 @@ function HubEnvironment() {
       <PlaceholderNPC />
       <CampusEntrance />
       <CampusRevealCinematic />
+      <ChapterFinaleCamera />
       <CampusEnvironment />
+      <SoftwareCitySkyline />
+      <SkillUnlockEffect />
     </group>
   )
 }

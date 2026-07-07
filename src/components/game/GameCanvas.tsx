@@ -6,6 +6,8 @@ import { GameEngine } from '@/systems/bootstrap/GameEngine'
 import { LoadingScreen } from '@/components/layout/LoadingScreen'
 import { HUDWrapper } from '@/components/game/hud/HUD'
 import { IntroOverlay } from '@/features/intro/IntroOverlay'
+import { ChapterFinale } from '@/features/cinematics/ChapterFinale'
+import { ControlsOverlay } from '@/features/ui/ControlsOverlay'
 
 class CanvasErrorBoundary extends Component<
   { children: ReactNode; onError: () => void },
@@ -90,6 +92,8 @@ export default function GameCanvas() {
         </Canvas>
       </div>
       <HUDWrapper />
+      <ChapterFinale />
+      <ControlsOverlay />
     </CanvasErrorBoundary>
   )
 }

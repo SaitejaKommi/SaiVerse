@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { PlayerData, WorldData, GameState, SceneID } from '@/types/game'
+import type { PlayerData, WorldData, GameState, SceneID, FinalePhase } from '@/types/game'
 
 interface GameActions {
   setPlayer: (data: Partial<PlayerData>) => void
@@ -7,6 +7,7 @@ interface GameActions {
   setPaused: (paused: boolean) => void
   setInitialized: (initialized: boolean) => void
   setCinematic: (cinematic: boolean) => void
+  setFinalePhase: (phase: FinalePhase) => void
   addActiveScene: (sceneId: SceneID) => void
   removeActiveScene: (sceneId: SceneID) => void
   setCurrentDistrict: (district: string | null) => void
@@ -45,6 +46,7 @@ const initialGame: GameState = {
   isPaused: false,
   isInitialized: false,
   isCinematic: false,
+  finalePhase: 'idle',
 }
 
 const useGameStore = create<GameState & GameActions>()((set) => ({
@@ -64,6 +66,7 @@ const useGameStore = create<GameState & GameActions>()((set) => ({
 
   setInitialized: (initialized) => set({ isInitialized: initialized }),
   setCinematic: (cinematic) => set({ isCinematic: cinematic }),
+  setFinalePhase: (finalePhase) => set({ finalePhase }),
 
   addActiveScene: (sceneId) =>
     set((state) => {

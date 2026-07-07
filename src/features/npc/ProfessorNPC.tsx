@@ -7,6 +7,7 @@ import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
 import { useDialogueStore } from '@/stores/dialogueStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { usePlayerStore } from '@/stores/playerStore'
+import { useGameStore } from '@/stores/gameStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
 import { soundFX } from '@/systems/audio/SoundFX'
 import { EventBus } from '@/lib/events/EventBus'
@@ -122,14 +123,33 @@ function buildDialogue(): DialogueDef {
 }
 
 function ProfessorModel() {
-  const bodyRef = useRef<THREE.Mesh>(null)
+  const groupRef = useRef<THREE.Group>(null)
   const headRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Mesh>(null)
+  const lookTarget = useRef(new THREE.Vector3())
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
-    if (bodyRef.current) {
-      bodyRef.current.position.y = 1.2 + Math.sin(t * 0.7) * 0.04
+
+    const player = useGameStore.getState().player
+    if (player) {
+      lookTarget.current.set(player.position[0], 1.8, player.position[2])
+    }
+
+    if (groupRef.current) {
+      const pos = groupRef.current.position
+      const dx = lookTarget.current.x - pos.x
+      const dz = lookTarget.current.z - pos.z
+      const targetAngle = Math.atan2(dx, dz)
+      const currentAngle = groupRef.current.rotation.y
+      let diff = targetAngle - currentAngle
+      while (diff > Math.PI) diff -= Math.PI * 2
+      while (diff < -Math.PI) diff += Math.PI * 2
+      groupRef.current.rotation.y += diff * 0.05
+    }
+
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(t * 0.7) * 0.04
     }
     if (headRef.current) {
       headRef.current.position.y = 1.8 + Math.sin(t * 0.7) * 0.04
@@ -141,8 +161,8 @@ function ProfessorModel() {
   })
 
   return (
-    <group>
-      <mesh ref={bodyRef} position={[0, 1.2, 0]} castShadow>
+    <group ref={groupRef}>
+      <mesh position={[0, 1.2, 0]} castShadow>
         <capsuleGeometry args={[0.3, 0.6, 8, 16]} />
         <meshStandardMaterial color="#d4813a" metalness={0.3} roughness={0.4} />
       </mesh>
@@ -327,17 +347,7 @@ export function ProfessorNPC() {
       }
 
       if (payload?.nodeId === 'completion') {
-        QuestManager.completeObjective(NPC_QUEST_ID, 'obj-show-professor')
-        const updated = QuestManager.getQuest(NPC_QUEST_ID)
-        if (updated?.status === 'completed') {
-          soundFX.playQuestComplete()
-          soundFX.playBadgeEarned()
-          notif.addNotification('badge', 'Badge Earned', 'First Lesson')
-          notif.addNotification('knowledge', 'Knowledge +50', 'Java programming fundamentals')
-
-          playerStore.addTrait('java-basics')
-          notif.addNotification('trait', 'Language Unlocked', 'Java')
-        }
+        EventBus.emit(GameEvents.CHAPTER_FINALE_TRIGGER, {})
       }
     })
 

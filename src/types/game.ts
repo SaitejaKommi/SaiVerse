@@ -22,12 +22,15 @@ export interface WorldData {
 
 export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy' | 'stormy'
 
+export type FinalePhase = 'idle' | 'pullback' | 'dialogue' | 'rewards' | 'complete_show' | 'teaser' | 'done'
+
 export interface GameState {
   player: PlayerData
   world: WorldData
   isPaused: boolean
   isInitialized: boolean
   isCinematic: boolean
+  finalePhase: FinalePhase
 }
 
 export interface CameraSettings {
