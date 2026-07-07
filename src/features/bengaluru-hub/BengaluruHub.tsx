@@ -22,6 +22,8 @@ import { NavigationMesh } from '@/systems/world/NavigationMesh'
 import { PlaceholderNPC } from '@/features/npc/PlaceholderNPC'
 import { CampusEntrance } from '@/features/bengaluru-hub/CampusEntrance'
 import { CampusRevealCinematic } from '@/features/cinematics/CampusRevealCinematic'
+import { CampusEnvironment } from '@/features/campus/CampusEnvironment'
+import { CAMPUS_BOUNDS } from '@/data/bengaluru/campus-layout'
 
 import {
   TERRAIN_TILES,
@@ -122,6 +124,7 @@ function HubEnvironment() {
       <PlaceholderNPC />
       <CampusEntrance />
       <CampusRevealCinematic />
+      <CampusEnvironment />
     </group>
   )
 }
@@ -129,9 +132,12 @@ function HubEnvironment() {
 export function BengaluruHub() {
   const navMesh = new NavigationMesh(2)
   const isWalkable = (x: number, z: number) => {
-    const inBounds = x >= HUB_BOUNDS.minX && x <= HUB_BOUNDS.maxX &&
+    const inHub = x >= HUB_BOUNDS.minX && x <= HUB_BOUNDS.maxX &&
       z >= HUB_BOUNDS.minZ && z <= HUB_BOUNDS.maxZ
-    if (!inBounds) return false
+    const inCampus = x >= CAMPUS_BOUNDS.minX && x <= CAMPUS_BOUNDS.maxX &&
+      z >= CAMPUS_BOUNDS.minZ && z <= CAMPUS_BOUNDS.maxZ
+    if (!inHub && !inCampus) return false
+    if (inCampus) return true
     const centerDist = Math.sqrt(x * x + z * z)
     return centerDist < 70
   }
