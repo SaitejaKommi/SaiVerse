@@ -58,11 +58,13 @@ function buildDialogue(): DialogueDef {
       id: 'quest_intro',
       speaker: 'Guide',
       text: 'Your first task: Reach the Campus Entrance. It\'s just beyond the northern edge of the hub. A glowing beacon will guide you there. Take your first step.',
+      nextNodeId: 'quest_accepted',
     },
     quest_accepted: {
       id: 'quest_accepted',
       speaker: 'Guide',
       text: 'I can see the determination in your eyes. Follow the beacon north. I will meet you there with more information once you arrive. Safe travels.',
+      nextNodeId: 'done',
     },
     campus_reveal: {
       id: 'campus_reveal',

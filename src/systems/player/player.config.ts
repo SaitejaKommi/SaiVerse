@@ -9,5 +9,5 @@ export const PLAYER_CONFIG = {
   RADIUS: 0.4,
   MASS: 75,
   CAMERA_HEIGHT_OFFSET: 0.8,
-  INITIAL_POSITION: [0, 2, 0] as [number, number, number],
+  INITIAL_POSITION: [3, 0, 7] as [number, number, number],
 } as const
