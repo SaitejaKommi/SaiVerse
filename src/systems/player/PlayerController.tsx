@@ -56,7 +56,7 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     const gameState = useGameStore.getState()
 
-    if (gameState.isCinematic) {
+    if (gameState.isCinematic || gameState.isPaused) {
       body.setLinvel({ x: 0, y: 0, z: 0 }, true)
       const pos = body.translation()
       setPlayer({ position: [pos.x, pos.y, pos.z], velocity: [0, 0, 0], rotation: [0, 0, 0], state: 'idle', isGrounded: true })

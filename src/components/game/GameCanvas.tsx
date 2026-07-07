@@ -30,7 +30,12 @@ class CanvasErrorBoundary extends Component<
   }
 }
 
-export default function GameCanvas() {
+interface GameCanvasProps {
+  showInventory?: boolean
+  onToggleInventory?: () => void
+}
+
+export default function GameCanvas({ showInventory, onToggleInventory }: GameCanvasProps = {}) {
   const canvasRef = useRef<HTMLDivElement>(null)
 
   const handleLoadComplete = useCallback(() => {}, [])
@@ -91,7 +96,7 @@ export default function GameCanvas() {
           />
         </Canvas>
       </div>
-      <HUDWrapper />
+      <HUDWrapper showInventory={showInventory} onToggleInventory={onToggleInventory} />
       <ChapterFinale />
       <ControlsOverlay />
     </CanvasErrorBoundary>

@@ -7,6 +7,7 @@ export const DEFAULT_KEY_BINDINGS = {
   jump: 'Space',
   interact: 'KeyE',
   pause: 'Escape',
+  inventory: 'KeyI',
   debug: 'Backquote',
   photoMode: 'KeyP',
 } as const
