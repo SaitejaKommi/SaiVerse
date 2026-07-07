@@ -43,35 +43,35 @@ export function DialogueBox() {
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center pb-8 pointer-events-none">
       <div className="pointer-events-auto w-full max-w-[700px] mx-4">
-        <GlassPanel padding="lg" rounded="xl" glow="blue" className="space-y-4">
+        <GlassPanel padding="lg" rounded="xl" glow="blue" className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-blue/30 to-neon-purple/30 border border-white/10 flex items-center justify-center text-sm">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-blue/30 to-neon-purple/30 border border-white/10 flex items-center justify-center text-sm shrink-0">
               {currentNode.portrait ? (
                 <img src={currentNode.portrait} alt="" className="w-full h-full rounded-full object-cover" />
               ) : (
-                <span className="text-neon-blue">◆</span>
+                <span className="text-neon-blue text-lg">◆</span>
               )}
             </div>
             <div>
-              <div className="text-sm font-medium text-white/90">{currentNode.speaker}</div>
-              <div className="text-[10px] text-white/40">{isTyping ? 'typing...' : ''}</div>
+              <div className="text-base font-semibold text-white/95 font-mono tracking-wide">{currentNode.speaker}</div>
+              <div className="text-[10px] text-white/40 font-mono">{isTyping ? 'speaking...' : ''}</div>
             </div>
 
             <div className="flex-1" />
 
             <button
               onClick={skip}
-              className="text-[10px] text-white/30 hover:text-white/60 transition-colors"
+              className="text-xs text-white/30 hover:text-white/60 transition-colors font-mono"
               title="Skip dialogue"
             >
-              Skip »
+              skip »
             </button>
           </div>
 
-          <div className="min-h-[60px]">
-            <p className="text-sm text-white/80 leading-relaxed">
+          <div className="min-h-[72px]">
+            <p className="text-base text-white/85 leading-relaxed font-mono">
               {displayedText}
-              {isTyping && <span className="animate-pulse text-neon-blue">▌</span>}
+              {isTyping && <span className="animate-pulse text-neon-blue font-bold">▌</span>}
             </p>
           </div>
 
@@ -95,9 +95,13 @@ export function DialogueBox() {
 
             {(!currentNode.choices || currentNode.choices.length === 0) && (
               <GlassButton size="sm" variant="default" onClick={advance}>
-                {isTyping ? 'Show All' : currentNode.nextNodeId ? 'Continue' : 'End'}
+                {isTyping ? 'Show All' : currentNode.nextNodeId ? 'Continue →' : 'Close'}
               </GlassButton>
             )}
+          </div>
+
+          <div className="text-[10px] text-white/20 text-center font-mono">
+            [E/Space/Enter] continue · [Esc] close
           </div>
         </GlassPanel>
       </div>
