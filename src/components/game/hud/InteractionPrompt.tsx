@@ -31,7 +31,7 @@ export function InteractionPrompt() {
   const action = labels[nearest.type] ?? 'Interact'
 
   return (
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] animate-float">
+    <div className="fixed bottom-3 left-3 z-[60] animate-float">
       <GlassPanel padding="md" rounded="xl" glow="blue" className="flex items-center gap-3">
         <kbd className="px-2 py-1 text-xs font-mono bg-white/10 rounded border border-white/20 text-white/80">
           E
