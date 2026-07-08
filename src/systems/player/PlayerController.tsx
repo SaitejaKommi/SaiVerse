@@ -20,6 +20,8 @@ const VELOCITY = new Vector3()
 const CAM_FWD = new Vector3()
 const CAM_RIGHT = new Vector3()
 const UP = new Vector3(0, 1, 0)
+const _moveVel = new Vector3()
+const _posVec = new Vector3()
 const HALF_HEIGHT = PLAYER_CONFIG.HEIGHT / 2
 const GROUND_RAY_LENGTH = 0.6
 
@@ -36,6 +38,8 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
   const { interact, nearestObject } = useInteractionSystem()
   const wasInteractingRef = useRef(false)
   const lastInteractTime = useRef(0)
+  const rayOriginRef = useRef({ x: 0, y: 0, z: 0 })
+  const rayDirRef = useRef({ x: 0, y: -1, z: 0 })
 
   const handleInteractKey = useCallback(() => {
     const input = InputManager.getInstance()
@@ -60,7 +64,10 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
       body.setLinvel({ x: 0, y: 0, z: 0 }, true)
       const pos = body.translation()
       setPlayer({ position: [pos.x, pos.y, pos.z], velocity: [0, 0, 0], rotation: [0, 0, 0], state: 'idle', isGrounded: true })
-      onPositionChange?.(new Vector3(pos.x, pos.y, pos.z))
+      if (onPositionChange) {
+        _posVec.set(pos.x, pos.y, pos.z)
+        onPositionChange(_posVec)
+      }
       const input = InputManager.getInstance()
       input.getFrameInput()
       input.endFrame()
@@ -84,9 +91,10 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     const pos = body.translation()
 
-    const rayOrigin = { x: pos.x, y: pos.y - HALF_HEIGHT + 0.05, z: pos.z }
-    const rayDir = { x: 0, y: -1, z: 0 }
-    const ray = new rapier.Ray(rayOrigin, rayDir)
+    rayOriginRef.current.x = pos.x
+    rayOriginRef.current.y = pos.y - HALF_HEIGHT + 0.05
+    rayOriginRef.current.z = pos.z
+    const ray = new rapier.Ray(rayOriginRef.current, rayDirRef.current)
     const hit = world.castRay(ray, GROUND_RAY_LENGTH, true)
     const isGrounded = hit !== null
 
@@ -107,13 +115,14 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     VELOCITY.copy(MOVE_DIR).multiplyScalar(currentSpeed.current)
     const linvel = body.linvel()
-    const moveVel = new Vector3(VELOCITY.x, isGrounded ? 0 : linvel.y, VELOCITY.z)
+
+    _moveVel.set(VELOCITY.x, isGrounded ? 0 : linvel.y, VELOCITY.z)
 
     if (playerInput.jump && isGrounded) {
-      moveVel.y = PLAYER_CONFIG.JUMP_FORCE
+      _moveVel.y = PLAYER_CONFIG.JUMP_FORCE
     }
 
-    body.setLinvel(moveVel, true)
+    body.setLinvel(_moveVel, true)
 
     let playerState: PlayerState = 'idle'
     if (!isGrounded) playerState = 'jumping'
@@ -122,13 +131,16 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
 
     setPlayer({
       position: [pos.x, pos.y, pos.z],
-      velocity: [moveVel.x, moveVel.y, moveVel.z],
+      velocity: [_moveVel.x, _moveVel.y, _moveVel.z],
       rotation: [0, 0, 0],
       state: playerState,
       isGrounded,
     })
 
-    onPositionChange?.(new Vector3(pos.x, pos.y, pos.z))
+    if (onPositionChange) {
+      _posVec.set(pos.x, pos.y, pos.z)
+      onPositionChange(_posVec)
+    }
 
     if (isGrounded && (playerState === 'walking' || playerState === 'running')) {
       footstepTimer.current += dt

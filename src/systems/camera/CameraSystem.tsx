@@ -14,13 +14,19 @@ import { InputManager } from '@/systems/input/InputManager'
 import { PLAYER_CONFIG } from '@/systems/player/player.config'
 
 const UP = new Vector3(0, 1, 0)
-const TEMP_VEC = new Vector3()
 const AXIS = new Vector3()
+const _cameraOffset = new Vector3()
+const _targetPosition = new Vector3()
+const _acc = new Vector3()
+const _lookTarget = new Vector3()
+const _velClone = new Vector3()
+const _posClone = new Vector3()
+const _rightDir = new Vector3()
+const _direction = new Vector3()
 
 interface CameraSystemProps {
   target?: Vector3
   mode?: CameraMode
-  onModeChange?: (mode: CameraMode) => void
 }
 
 export function CameraSystem({ target: externalTarget, mode: initialMode }: CameraSystemProps) {
@@ -33,11 +39,11 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
 
   const stateRef = useRef({
     angle: 0,
-    elevation: Math.PI / 8,
+    elevation: Math.PI / 10,
     distance: CAMERA_CONFIG.DEFAULT_DISTANCE,
     targetDistance: CAMERA_CONFIG.DEFAULT_DISTANCE,
     targetAngle: 0,
-    targetElevation: Math.PI / 8,
+    targetElevation: Math.PI / 10,
     mode: (initialMode ?? 'third-person') as CameraMode,
     fov: CAMERA_CONFIG.DEFAULT_FOV,
   })
@@ -50,85 +56,70 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
   const raycaster = useRef(new Raycaster())
   const collisionEnabled = useRef(true)
   const sceneRef = useRef<Object3D[]>([])
+  const sprintDistance = useRef(0)
+  const frameCount = useRef(0)
 
   const updateCamera = useCallback((delta: number, targetPos: Vector3) => {
     const state = stateRef.current
-    const cam = camera as PerspectiveCamera
 
     state.angle = dampAngle(state.angle, state.targetAngle, CAMERA_CONFIG.LOOK_SMOOTHING, delta)
-    state.elevation = dampAngle(
-      state.elevation,
-      state.targetElevation,
-      CAMERA_CONFIG.LOOK_SMOOTHING,
-      delta,
-    )
-    state.distance = state.distance + (state.targetDistance - state.distance) *
-      (1 - Math.exp(-CAMERA_CONFIG.COLLISION_SMOOTHING * delta))
+    state.elevation = dampAngle(state.elevation, state.targetElevation, CAMERA_CONFIG.LOOK_SMOOTHING, delta)
 
-    const idealDistance = state.distance
+    const springDt = 1 - Math.exp(-CAMERA_CONFIG.COLLISION_SMOOTHING * delta)
+    state.distance += (state.targetDistance + sprintDistance.current - state.distance) * springDt
 
-    let finalDistance = idealDistance
+    let finalDistance = state.distance
     if (collisionEnabled.current) {
       AXIS.set(1, 0, 0).applyAxisAngle(UP, state.angle)
-      const cameraOffset = TEMP_VEC.set(0, 0, idealDistance)
+      _cameraOffset.set(0, 0, finalDistance)
         .applyAxisAngle(UP, state.angle)
         .applyAxisAngle(AXIS, -state.elevation)
 
-      const cameraPos = TEMP_VEC.copy(targetPos).add(cameraOffset)
-      const direction = TEMP_VEC.copy(cameraPos).sub(targetPos).normalize()
+      _direction.copy(_cameraOffset).normalize()
 
-      raycaster.current.set(targetPos, direction)
-      raycaster.current.far = idealDistance + 0.5
-      raycaster.current.camera = camera
+      frameCount.current = (frameCount.current + 1) % 3
+      if (frameCount.current === 0) {
+        raycaster.current.set(targetPos, _direction)
+        raycaster.current.far = finalDistance + 0.5
+        raycaster.current.camera = camera
 
-      try {
-        const intersects = raycaster.current.intersectObjects(sceneRef.current, true)
-        if (intersects.length > 0) {
-          const hit = intersects[0]
-          if (hit && hit.distance < idealDistance) {
-            finalDistance = Math.max(hit.distance - CAMERA_CONFIG.COLLISION_RADIUS, CAMERA_CONFIG.MIN_DISTANCE)
+        try {
+          const intersects = raycaster.current.intersectObjects(sceneRef.current, true)
+          if (intersects.length > 0) {
+            const hit = intersects[0]
+            if (hit && hit.distance < finalDistance) {
+              finalDistance = Math.max(hit.distance - CAMERA_CONFIG.COLLISION_RADIUS, CAMERA_CONFIG.MIN_DISTANCE)
+            }
           }
-        }
-      } catch {
-        /* collsion check best-effort */
+        } catch { /* collsion check best-effort */ }
       }
     }
 
-    const rightDir = new Vector3(1, 0, 0).applyAxisAngle(UP, state.angle).multiplyScalar(CAMERA_CONFIG.SHOULDER_OFFSET)
+    _rightDir.set(1, 0, 0).applyAxisAngle(UP, state.angle).multiplyScalar(CAMERA_CONFIG.SHOULDER_OFFSET)
     AXIS.set(1, 0, 0).applyAxisAngle(UP, state.angle)
-    const cameraOffset = TEMP_VEC.set(0, 0, finalDistance)
+    _cameraOffset.set(0, 0, finalDistance)
       .applyAxisAngle(UP, state.angle)
       .applyAxisAngle(AXIS, -state.elevation)
-      .add(rightDir)
+      .add(_rightDir)
 
-    const targetPosition = new Vector3().copy(targetPos).add(cameraOffset)
+    _targetPosition.copy(targetPos).add(_cameraOffset)
 
     const vel = velRef.current
     const currentPos = posRef.current
-    const springK = CAMERA_CONFIG.SPRING_STIFFNESS
-    const springD = CAMERA_CONFIG.SPRING_DAMPING
 
-    const acc = new Vector3()
-      .copy(targetPosition)
-      .sub(currentPos)
-      .multiplyScalar(springK)
-      .sub(vel.clone().multiplyScalar(springD))
+    _acc.copy(_targetPosition).sub(currentPos).multiplyScalar(CAMERA_CONFIG.SPRING_STIFFNESS)
+    _velClone.copy(vel).multiplyScalar(CAMERA_CONFIG.SPRING_DAMPING)
+    _acc.sub(_velClone)
+    _acc.multiplyScalar(delta)
+    vel.add(_acc)
 
-    vel.add(acc.multiplyScalar(delta))
-    currentPos.add(vel.clone().multiplyScalar(delta))
+    _posClone.copy(vel).multiplyScalar(delta)
+    currentPos.add(_posClone)
+
     camera.position.copy(currentPos)
 
-    const lookTarget = new Vector3(
-      targetPos.x,
-      targetPos.y + CAMERA_CONFIG.DEFAULT_HEIGHT_OFFSET,
-      targetPos.z,
-    )
-    camera.lookAt(lookTarget)
-
-    if (state.fov !== cam.fov) {
-      cam.fov += (state.fov - cam.fov) * (1 - Math.exp(-CAMERA_CONFIG.LOOK_SMOOTHING * delta))
-      cam.updateProjectionMatrix()
-    }
+    _lookTarget.set(targetPos.x, targetPos.y + CAMERA_CONFIG.DEFAULT_HEIGHT_OFFSET, targetPos.z)
+    camera.lookAt(_lookTarget)
 
     const shakeOffset = shakeRef.current.update(delta)
     if (shakeOffset.lengthSq() > 0) {
@@ -156,7 +147,13 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
       sceneRef.current = result
     }
 
-    const { isCinematic, isPaused } = useGameStore.getState()
+    const { isCinematic, isPaused, player } = useGameStore.getState()
+    const cam = camera as PerspectiveCamera
+
+    const isSprinting = player.state === 'running'
+    sprintDistance.current = isSprinting
+      ? CAMERA_CONFIG.SPRINT_DISTANCE_BOOST
+      : 0
 
     const input = InputManager.getInstance()
     const mouseDelta = input.getMouseManager().consumeFrame()
@@ -171,6 +168,13 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
           stateRef.current.targetElevation - mouseDelta.y * settings.sensitivity,
         ),
       )
+
+      const targetFov = CAMERA_CONFIG.DEFAULT_FOV
+        + (isSprinting ? CAMERA_CONFIG.SPRINT_FOV_BOOST : 0)
+      if (cam.fov !== targetFov) {
+        cam.fov += (targetFov - cam.fov) * (1 - Math.exp(-CAMERA_CONFIG.COLLISION_SMOOTHING * dt))
+        cam.updateProjectionMatrix()
+      }
 
       if (scrollDelta !== 0) {
         stateRef.current.targetDistance = Math.max(
@@ -197,26 +201,18 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     switch (mode) {
       case 'third-person': {
         state.targetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE
-        state.fov = CAMERA_CONFIG.DEFAULT_FOV
         break
       }
       case 'first-person': {
         state.targetDistance = 0
-        state.fov = CAMERA_CONFIG.DEFAULT_FOV
         break
       }
       case 'cinematic': {
         state.targetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE * 1.5
-        state.fov = CAMERA_CONFIG.CINEMATIC_FOV
-        break
-      }
-      case 'photo': {
-        state.fov = CAMERA_CONFIG.PHOTO_FOV
         break
       }
       case 'dialogue': {
         state.targetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE * 0.8
-        state.fov = CAMERA_CONFIG.DEFAULT_FOV
         break
       }
     }
