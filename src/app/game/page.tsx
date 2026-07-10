@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useGameStore } from '@/stores/gameStore'
 import { useDialogueStore } from '@/stores/dialogueStore'
 import GameCanvas from '@/components/game/GameCanvas'
 
 export default function GamePage() {
   const setPaused = useGameStore((s) => s.setPaused)
-  const [showInventory, setShowInventory] = React.useState(false)
+  const [showInventory, setShowInventory] = useState(false)
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
