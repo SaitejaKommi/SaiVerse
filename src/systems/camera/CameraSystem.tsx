@@ -45,7 +45,7 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     targetAngle: 0,
     targetElevation: Math.PI / 10,
     mode: (initialMode ?? 'third-person') as CameraMode,
-    fov: CAMERA_CONFIG.DEFAULT_FOV,
+    lastMouseTime: 0,
   })
 
   const internalTarget = useRef(new Vector3(
@@ -58,6 +58,7 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
   const sceneRef = useRef<Object3D[]>([])
   const sprintDistance = useRef(0)
   const frameCount = useRef(0)
+  const collisionDistance = useRef(CAMERA_CONFIG.DEFAULT_DISTANCE)
 
   const updateCamera = useCallback((delta: number, targetPos: Vector3) => {
     const state = stateRef.current
@@ -68,7 +69,7 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     const springDt = 1 - Math.exp(-CAMERA_CONFIG.COLLISION_SMOOTHING * delta)
     state.distance += (state.targetDistance + sprintDistance.current - state.distance) * springDt
 
-    let finalDistance = state.distance
+    let finalDistance = Math.min(state.distance, collisionDistance.current)
     if (collisionEnabled.current) {
       AXIS.set(1, 0, 0).applyAxisAngle(UP, state.angle)
       _cameraOffset.set(0, 0, finalDistance)
@@ -88,8 +89,14 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
           if (intersects.length > 0) {
             const hit = intersects[0]
             if (hit && hit.distance < finalDistance) {
-              finalDistance = Math.max(hit.distance - CAMERA_CONFIG.COLLISION_RADIUS, CAMERA_CONFIG.MIN_DISTANCE)
+              const newDist = Math.max(hit.distance - CAMERA_CONFIG.COLLISION_RADIUS, CAMERA_CONFIG.MIN_DISTANCE)
+              collisionDistance.current = newDist
+              finalDistance = newDist
+            } else {
+              collisionDistance.current = finalDistance
             }
+          } else {
+            collisionDistance.current = finalDistance
           }
         } catch { /* collsion check best-effort */ }
       }
@@ -104,6 +111,8 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
 
     _targetPosition.copy(targetPos).add(_cameraOffset)
 
+    _targetPosition.y = Math.max(_targetPosition.y, targetPos.y + CAMERA_CONFIG.CAMERA_MIN_Y_OFFSET)
+
     const vel = velRef.current
     const currentPos = posRef.current
 
@@ -115,6 +124,8 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
 
     _posClone.copy(vel).multiplyScalar(delta)
     currentPos.add(_posClone)
+
+    currentPos.y = Math.max(currentPos.y, targetPos.y + CAMERA_CONFIG.CAMERA_MIN_Y_OFFSET)
 
     camera.position.copy(currentPos)
 
@@ -160,7 +171,12 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     const scrollDelta = input.getMouseManager().consumeScroll()
 
     if (!isCinematic && !isPaused) {
-      stateRef.current.targetAngle += mouseDelta.x * settings.sensitivity
+      const hasMouseInput = Math.abs(mouseDelta.x) > 0.001 || Math.abs(mouseDelta.y) > 0.001
+      if (hasMouseInput) {
+        stateRef.current.lastMouseTime = performance.now()
+        stateRef.current.targetAngle += mouseDelta.x * settings.sensitivity
+      }
+
       stateRef.current.targetElevation = Math.max(
         CAMERA_CONFIG.MIN_ELEVATION,
         Math.min(
@@ -184,6 +200,15 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
             stateRef.current.targetDistance + scrollDelta * CAMERA_CONFIG.ZOOM_SPEED,
           ),
         )
+      }
+
+      const isForwardPressed = input.isActionPressed('forward')
+      const timeSinceMouse = (performance.now() - stateRef.current.lastMouseTime) / 1000
+
+      if (isForwardPressed && timeSinceMouse > CAMERA_CONFIG.AUTO_REALIGN_DELAY) {
+        const shortest = -stateRef.current.targetAngle
+        const wrapped = ((shortest % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI
+        stateRef.current.targetAngle += wrapped * CAMERA_CONFIG.AUTO_REALIGN_SPEED * dt
       }
     }
 
