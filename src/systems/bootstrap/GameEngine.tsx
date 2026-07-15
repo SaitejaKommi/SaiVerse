@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useCallback, useState, Suspense } from 'react'
+import { useEffect, Suspense } from 'react'
 import type { ReactNode } from 'react'
 import { Physics as RapierPhysics, CuboidCollider } from '@react-three/rapier'
-import type { Vector3 } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { InputManager } from '@/systems/input/InputManager'
 import { SceneProvider } from '@/systems/scene/SceneManager'
@@ -42,7 +41,6 @@ export function GameEngine({
   environmentPreset = 'night',
 }: GameEngineProps) {
   const setInitialized = useGameStore((s) => s.setInitialized)
-  const [playerTarget, setPlayerTarget] = useState<Vector3 | undefined>(undefined)
 
   useEffect(() => {
     const input = InputManager.getInstance()
@@ -69,10 +67,6 @@ export function GameEngine({
     }
   }, [setInitialized, enableAudio])
 
-  const handlePlayerPosition = useCallback((pos: Vector3) => {
-    setPlayerTarget(pos)
-  }, [])
-
   return (
     <>
       <SceneProvider>
@@ -83,14 +77,14 @@ export function GameEngine({
             <RapierPhysics gravity={[0, -9.81, 0]} colliders={false}>
               <InteractionProvider>
                 <CuboidCollider position={[0, -0.5, 0]} args={[200, 0.5, 200]} />
-                {enablePlayer && <PlayerController onPositionChange={handlePlayerPosition} />}
+                {enablePlayer && <PlayerController />}
                 {enableWorld && <BengaluruHub />}
                 {children}
               </InteractionProvider>
             </RapierPhysics>
           </Suspense>
         )}
-        {enableCamera && <CameraSystem target={playerTarget} />}
+        {enableCamera && <CameraSystem />}
       </SceneProvider>
       {enableDebug && <DebugOverlay />}
     </>
