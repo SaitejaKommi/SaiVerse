@@ -144,20 +144,65 @@ function ProjectorScreen({ seconds, phase, setback }: { seconds: number; phase: 
 
     // Timer number
     if (!setback) {
-      ctx.fillStyle = phase === 'complete' ? '#ffd700' : seconds <= 10 ? '#ff3333' : '#ffffff'
-      ctx.font = `bold ${seconds <= 10 ? 140 : 120}px monospace`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.shadowColor = seconds <= 10 ? '#ff0000' : borderColor
-      ctx.shadowBlur = seconds <= 10 ? 40 : 20
-      ctx.fillText(phase === 'complete' ? 'DONE' : String(seconds), 512, 130)
-      ctx.shadowBlur = 0
+      if (phase === 'complete') {
+        // Champion screen
+        ctx.fillStyle = '#ffd700'
+        ctx.font = 'bold 48px monospace'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.shadowColor = '#ffd700'
+        ctx.shadowBlur = 40 + Math.sin(state.clock.elapsedTime * 3) * 10
+        ctx.fillText('MONAD BLITZ', 512, 70)
+        ctx.fillText('CHAMPION', 512, 130)
+        ctx.shadowBlur = 0
 
-      // Phase label
-      ctx.fillStyle = '#888899'
-      ctx.font = '16px monospace'
-      ctx.textAlign = 'center'
-      ctx.fillText(phaseLabel(phase), 512, 35)
+        ctx.fillStyle = '#888899'
+        ctx.font = '14px monospace'
+        ctx.fillText('Congratulations — you built it all under pressure.', 512, 185)
+        ctx.fillText('The Valley celebrates your victory.', 512, 210)
+      } else if (phase === 'presentation') {
+        // Presentation screen
+        ctx.fillStyle = '#ffffff'
+        ctx.font = 'bold 32px monospace'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText('TIME TO PRESENT', 512, 60)
+
+        ctx.fillStyle = '#a855f7'
+        ctx.font = '18px monospace'
+        const scoreStore = useHackathonStore.getState()
+        const timeBonus = Math.floor(scoreStore.timeRemaining * 0.5)
+        const energyBonus = Math.floor(scoreStore.teamEnergy * 0.3 + 30)
+        const resolveBonus = (scoreStore.totalSetbacksResolved ?? 0) * 15
+        const total = timeBonus + energyBonus + resolveBonus + 50
+
+        ctx.fillText('INNOVATION    EXECUTION    PRESENTATION', 512, 110)
+        ctx.fillStyle = '#ffd700'
+        ctx.font = '24px monospace'
+        ctx.fillText(`${timeBonus}         ${energyBonus}         ${resolveBonus}`, 512, 145)
+        ctx.fillStyle = '#888899'
+        ctx.font = '12px monospace'
+        ctx.fillText('(time)        (energy)      (setbacks)', 512, 170)
+        ctx.fillStyle = '#00ff88'
+        ctx.font = 'bold 28px monospace'
+        ctx.fillText(`TOTAL SCORE: ${total}`, 512, 220)
+      } else {
+        // Normal timer display
+        ctx.fillStyle = seconds <= 10 ? '#ff3333' : '#ffffff'
+        ctx.font = `bold ${seconds <= 10 ? 140 : 120}px monospace`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.shadowColor = seconds <= 10 ? '#ff0000' : borderColor
+        ctx.shadowBlur = seconds <= 10 ? 40 : 20
+        ctx.fillText(String(seconds), 512, 130)
+        ctx.shadowBlur = 0
+
+        // Phase label
+        ctx.fillStyle = '#888899'
+        ctx.font = '16px monospace'
+        ctx.textAlign = 'center'
+        ctx.fillText(phaseLabel(phase), 512, 35)
+      }
     } else {
       // Setback warning
       ctx.fillStyle = '#ff3333'

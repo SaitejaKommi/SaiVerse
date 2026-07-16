@@ -10,7 +10,9 @@ import { CountdownTimer } from './CountdownTimer'
 import { BossEventSystem } from './BossEventSystem'
 import { CodeStation } from './CodeStation'
 import { DebugStation } from './DebugStation'
+import { PresentationConsole } from './PresentationConsole'
 import { QuestAutoAcceptorHA } from './QuestAutoAcceptorHA'
+import { Chapter5FinaleCamera } from '@/features/cinematics/Chapter5FinaleCamera'
 import {
   HA_BUILDINGS,
   HA_TREES,
@@ -43,6 +45,8 @@ export function HackathonArenaEnvironment() {
 
       <CodeStation />
       <DebugStation />
+      <PresentationConsole />
+      <Chapter5FinaleCamera />
     </group>
   )
 }
