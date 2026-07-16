@@ -11,6 +11,7 @@ import { BossEventSystem } from './BossEventSystem'
 import { CodeStation } from './CodeStation'
 import { DebugStation } from './DebugStation'
 import { PresentationConsole } from './PresentationConsole'
+import { HackathonAudio } from './HackathonAudio'
 import { QuestAutoAcceptorHA } from './QuestAutoAcceptorHA'
 import { Chapter5FinaleCamera } from '@/features/cinematics/Chapter5FinaleCamera'
 import {
@@ -28,6 +29,7 @@ export function HackathonArenaEnvironment() {
       <AmbientTeams />
       <CountdownTimer />
       <BossEventSystem />
+      <HackathonAudio />
 
       {HA_BUILDINGS.map((b, i) => (
         <Building key={`ha-building-${i}`} position={b.position} width={b.width} depth={b.depth} height={b.height} color={b.color} roofColor={b.roofColor} windowsColor={b.windowsColor} style={b.style} />

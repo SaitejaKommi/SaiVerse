@@ -14,6 +14,7 @@ import { TimeWeather } from './TimeWeather'
 import { PauseMenu } from '@/components/game/menu/PauseMenu'
 import { InventoryUI } from '@/components/game/inventory/InventoryUI'
 import { DialogueBox } from '@/components/game/dialogue/DialogueBox'
+import { TeamEnergyBar } from '@/features/hackathon-arena/TeamEnergyBar'
 
 interface HUDProps {
   showInventory?: boolean
@@ -165,7 +166,7 @@ export function HUD({ showInventory = false, onToggleInventory }: HUDProps) {
   return (
     <>
       <div className="fixed inset-0 z-40 pointer-events-none">
-        {/* Top Left — Level, XP, Chapter */}
+        {/* Top Left — Level, XP, Chapter, Team Energy */}
         <div className="absolute top-3 left-3 flex flex-col gap-1">
           <GlassPanel padding="sm" rounded="lg" glow="blue" className="flex items-center gap-3 min-w-[140px]">
             <NeonText color="blue" size="xs">KNOWLEDGE</NeonText>
@@ -173,6 +174,9 @@ export function HUD({ showInventory = false, onToggleInventory }: HUDProps) {
           </GlassPanel>
           <GlassPanel padding="sm" rounded="lg" className="text-center">
             <CurrentChapter />
+          </GlassPanel>
+          <GlassPanel padding="sm" rounded="lg" glow="green" className="flex items-center gap-2 min-w-[120px]">
+            <TeamEnergyBar />
           </GlassPanel>
         </div>
 
