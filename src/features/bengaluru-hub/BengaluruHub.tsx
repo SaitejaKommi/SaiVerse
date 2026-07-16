@@ -29,10 +29,12 @@ import { CampusEnvironment } from '@/features/campus/CampusEnvironment'
 import { SoftwareCitySkyline } from '@/features/world/SoftwareCitySkyline'
 import { SoftwareCityEnvironment } from '@/features/software-city/SoftwareCityEnvironment'
 import { AIDistrictEnvironment } from '@/features/ai-district/AIDistrictEnvironment'
+import { OSVEnvironment } from '@/features/open-source-valley/OSVEnvironment'
 import { SkillUnlockEffect } from '@/features/effects/SkillUnlockEffect'
 import { CAMPUS_BOUNDS } from '@/data/bengaluru/campus-layout'
 import { SOFTWARE_CITY_BOUNDS, SC_TERRAIN_TILES } from '@/data/software-city/sc-layout'
 import { AI_BOUNDS, AI_TERRAIN_TILES } from '@/data/ai-district/ai-layout'
+import { OSV_BOUNDS, OSV_TERRAIN_TILES } from '@/data/open-source-valley/osv-layout'
 
 import {
   TERRAIN_TILES,
@@ -79,6 +81,7 @@ function HubAssets() {
 function HubEnvironment() {
   const chapter2Status = useChapterStore.getState().getStatus('chapter-2')
   const chapter3Status = useChapterStore.getState().getStatus('chapter-3')
+  const chapter4Status = useChapterStore.getState().getStatus('chapter-4')
 
   return (
     <group>
@@ -141,6 +144,7 @@ function HubEnvironment() {
       <CampusEnvironment />
       {chapter2Status !== 'locked' && <SoftwareCityEnvironment />}
       {chapter3Status !== 'locked' && <AIDistrictEnvironment />}
+      {chapter4Status !== 'locked' && <OSVEnvironment />}
       <SoftwareCitySkyline />
       <SkillUnlockEffect />
     </group>
@@ -158,8 +162,10 @@ export function BengaluruHub() {
       z >= SOFTWARE_CITY_BOUNDS.minZ && z <= SOFTWARE_CITY_BOUNDS.maxZ
     const inAi = x >= AI_BOUNDS.minX && x <= AI_BOUNDS.maxX &&
       z >= AI_BOUNDS.minZ && z <= AI_BOUNDS.maxZ
-    if (!inHub && !inCampus && !inSc && !inAi) return false
-    if (inCampus || inSc || inAi) return true
+    const inOsv = x >= OSV_BOUNDS.minX && x <= OSV_BOUNDS.maxX &&
+      z >= OSV_BOUNDS.minZ && z <= OSV_BOUNDS.maxZ
+    if (!inHub && !inCampus && !inSc && !inAi && !inOsv) return false
+    if (inCampus || inSc || inAi || inOsv) return true
     const centerDist = Math.sqrt(x * x + z * z)
     return centerDist < 70
   }
@@ -178,6 +184,7 @@ export function BengaluruHub() {
           <Terrain tiles={TERRAIN_TILES} size={50} />
           <Terrain tiles={SC_TERRAIN_TILES} size={50} />
           <Terrain tiles={AI_TERRAIN_TILES} size={50} />
+          <Terrain tiles={OSV_TERRAIN_TILES} size={50} />
           <RoadSystem segments={ROAD_SEGMENTS} />
 
           <HubEnvironment />
