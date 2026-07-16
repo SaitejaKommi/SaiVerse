@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { SpawnProvider, useSpawnSystem } from '@/systems/world/SpawnPoint'
 import { FastTravelProvider, useFastTravel } from '@/systems/world/FastTravel'
 import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
+import { useChapterStore } from '@/systems/chapter/ChapterStore'
 import { Terrain } from '@/systems/world/Terrain'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { WorldStreamer } from '@/systems/world/WorldStreamer'
@@ -23,10 +24,13 @@ import { PlaceholderNPC } from '@/features/npc/PlaceholderNPC'
 import { CampusEntrance } from '@/features/bengaluru-hub/CampusEntrance'
 import { CampusRevealCinematic } from '@/features/cinematics/CampusRevealCinematic'
 import { ChapterFinaleCamera } from '@/features/cinematics/ChapterFinaleCamera'
+import { Chapter2FinaleCamera } from '@/features/cinematics/Chapter2FinaleCamera'
 import { CampusEnvironment } from '@/features/campus/CampusEnvironment'
 import { SoftwareCitySkyline } from '@/features/world/SoftwareCitySkyline'
+import { SoftwareCityEnvironment } from '@/features/software-city/SoftwareCityEnvironment'
 import { SkillUnlockEffect } from '@/features/effects/SkillUnlockEffect'
 import { CAMPUS_BOUNDS } from '@/data/bengaluru/campus-layout'
+import { SOFTWARE_CITY_BOUNDS, SC_TERRAIN_TILES } from '@/data/software-city/sc-layout'
 
 import {
   TERRAIN_TILES,
@@ -71,6 +75,8 @@ function HubAssets() {
 }
 
 function HubEnvironment() {
+  const chapter2Status = useChapterStore.getState().getStatus('chapter-2')
+
   return (
     <group>
       {BUILDINGS.map((b, i) => (
@@ -128,7 +134,9 @@ function HubEnvironment() {
       <CampusEntrance />
       <CampusRevealCinematic />
       <ChapterFinaleCamera />
+      {chapter2Status !== 'locked' && <Chapter2FinaleCamera />}
       <CampusEnvironment />
+      {chapter2Status !== 'locked' && <SoftwareCityEnvironment />}
       <SoftwareCitySkyline />
       <SkillUnlockEffect />
     </group>
@@ -142,8 +150,10 @@ export function BengaluruHub() {
       z >= HUB_BOUNDS.minZ && z <= HUB_BOUNDS.maxZ
     const inCampus = x >= CAMPUS_BOUNDS.minX && x <= CAMPUS_BOUNDS.maxX &&
       z >= CAMPUS_BOUNDS.minZ && z <= CAMPUS_BOUNDS.maxZ
-    if (!inHub && !inCampus) return false
-    if (inCampus) return true
+    const inSc = x >= SOFTWARE_CITY_BOUNDS.minX && x <= SOFTWARE_CITY_BOUNDS.maxX &&
+      z >= SOFTWARE_CITY_BOUNDS.minZ && z <= SOFTWARE_CITY_BOUNDS.maxZ
+    if (!inHub && !inCampus && !inSc) return false
+    if (inCampus || inSc) return true
     const centerDist = Math.sqrt(x * x + z * z)
     return centerDist < 70
   }
@@ -160,6 +170,7 @@ export function BengaluruHub() {
           <ParticleManager maxParticles={2000} rainArea={80} />
 
           <Terrain tiles={TERRAIN_TILES} size={50} />
+          <Terrain tiles={SC_TERRAIN_TILES} size={50} />
           <RoadSystem segments={ROAD_SEGMENTS} />
 
           <HubEnvironment />
