@@ -7,6 +7,7 @@ import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { AmbientTeams } from './AmbientTeams'
 import { ArenaLighting } from './ArenaLighting'
+import { CountdownTimer } from './CountdownTimer'
 import { buildHAQuest } from '@/data/hackathon-arena/ha-quest'
 import { QuestManager } from '@/systems/quest/QuestManager'
 import {
@@ -44,7 +45,9 @@ export function HackathonArenaEnvironment() {
 
       <RoadSystem segments={HA_ROADS as any} />
 
-      {/* Milestone 2+: CountdownTimer, CodeStation, DebugStation, etc. */}
+      <CountdownTimer />
+
+      {/* Milestone 3+: CodeStation, DebugStation, etc. */}
     </group>
   )
 }
