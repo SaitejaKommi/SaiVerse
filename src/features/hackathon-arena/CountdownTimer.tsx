@@ -105,11 +105,12 @@ export function CountdownTimer() {
 
   const seconds = Math.max(0, Math.ceil(useHackathonStore.getState().timeRemaining))
   const phase = useHackathonStore.getState().phase
+  const setback = useHackathonStore.getState().activeSetback
 
-  return <ProjectorScreen seconds={seconds} phase={phase} />
+  return <ProjectorScreen seconds={seconds} phase={phase} setback={setback} />
 }
 
-function ProjectorScreen({ seconds, phase }: { seconds: number; phase: string }) {
+function ProjectorScreen({ seconds, phase, setback }: { seconds: number; phase: string; setback: { name: string; description: string } | null }) {
   const ref = useRef<THREE.Mesh>(null)
 
   const texture = useRef(new THREE.CanvasTexture((() => {
@@ -118,7 +119,7 @@ function ProjectorScreen({ seconds, phase }: { seconds: number; phase: string })
     return c
   })()))
 
-  useFrame(() => {
+  useFrame((state) => {
     if (!ref.current) return
     const tex = texture.current
     const c = tex.image as HTMLCanvasElement
@@ -128,32 +129,54 @@ function ProjectorScreen({ seconds, phase }: { seconds: number; phase: string })
     ctx.clearRect(0, 0, 1024, 256)
 
     // Background
-    ctx.fillStyle = '#0a0a1a'
+    ctx.fillStyle = setback ? '#1a0a0a' : '#0a0a1a'
     ctx.roundRect(4, 4, 1016, 248, 12)
     ctx.fill()
 
     // Border
-    const borderColor = phase === 'complete' ? '#ffd700' : seconds <= 10 ? '#ff0000' : seconds <= 30 ? '#ff6600' : '#00d4ff'
+    const borderColor = setback
+      ? '#ff0000'
+      : phase === 'complete' ? '#ffd700' : seconds <= 10 ? '#ff0000' : seconds <= 30 ? '#ff6600' : '#00d4ff'
     ctx.strokeStyle = borderColor
-    ctx.lineWidth = 3
+    ctx.lineWidth = setback ? 5 : 3
     ctx.roundRect(4, 4, 1016, 248, 12)
     ctx.stroke()
 
     // Timer number
-    ctx.fillStyle = phase === 'complete' ? '#ffd700' : seconds <= 10 ? '#ff3333' : '#ffffff'
-    ctx.font = `bold ${seconds <= 10 ? 140 : 120}px monospace`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.shadowColor = seconds <= 10 ? '#ff0000' : borderColor
-    ctx.shadowBlur = seconds <= 10 ? 40 : 20
-    ctx.fillText(phase === 'complete' ? 'DONE' : String(seconds), 512, 130)
-    ctx.shadowBlur = 0
+    if (!setback) {
+      ctx.fillStyle = phase === 'complete' ? '#ffd700' : seconds <= 10 ? '#ff3333' : '#ffffff'
+      ctx.font = `bold ${seconds <= 10 ? 140 : 120}px monospace`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.shadowColor = seconds <= 10 ? '#ff0000' : borderColor
+      ctx.shadowBlur = seconds <= 10 ? 40 : 20
+      ctx.fillText(phase === 'complete' ? 'DONE' : String(seconds), 512, 130)
+      ctx.shadowBlur = 0
 
-    // Phase label
-    ctx.fillStyle = '#888899'
-    ctx.font = '16px monospace'
-    ctx.textAlign = 'center'
-    ctx.fillText(phaseLabel(phase), 512, 35)
+      // Phase label
+      ctx.fillStyle = '#888899'
+      ctx.font = '16px monospace'
+      ctx.textAlign = 'center'
+      ctx.fillText(phaseLabel(phase), 512, 35)
+    } else {
+      // Setback warning
+      ctx.fillStyle = '#ff3333'
+      ctx.font = 'bold 36px monospace'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.shadowColor = '#ff0000'
+      ctx.shadowBlur = 30 + Math.sin(state.clock.elapsedTime * 6) * 10
+      ctx.fillText('! ' + setback.name.toUpperCase() + ' !', 512, 80)
+      ctx.shadowBlur = 0
+
+      ctx.fillStyle = '#ff8888'
+      ctx.font = '16px monospace'
+      ctx.fillText(setback.description, 512, 140)
+
+      ctx.fillStyle = '#ff4444'
+      ctx.font = '12px monospace'
+      ctx.fillText('FIX THE ISSUE AT THE DEBUG CONSOLE', 512, 190)
+    }
 
     tex.needsUpdate = true
   })

@@ -60,7 +60,7 @@ export function CodeStation() {
     const store = useHackathonStore.getState()
     const phase = store.phase
     if (phase !== 'sprint-1' && phase !== 'sprint-2' && phase !== 'sprint-3') return
-    if (store.activeSetback && store.activeSetback.station === 'code') return
+    if (store.activeSetback) return
 
     const player = useGameStore.getState().player
     if (!player) return

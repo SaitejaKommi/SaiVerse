@@ -7,6 +7,7 @@ import { RoadSystem } from '@/systems/world/RoadSystem'
 import { AmbientTeams } from './AmbientTeams'
 import { ArenaLighting } from './ArenaLighting'
 import { CountdownTimer } from './CountdownTimer'
+import { BossEventSystem } from './BossEventSystem'
 import { CodeStation } from './CodeStation'
 import { DebugStation } from './DebugStation'
 import { QuestAutoAcceptorHA } from './QuestAutoAcceptorHA'
@@ -24,6 +25,7 @@ export function HackathonArenaEnvironment() {
       <ArenaLighting />
       <AmbientTeams />
       <CountdownTimer />
+      <BossEventSystem />
 
       {HA_BUILDINGS.map((b, i) => (
         <Building key={`ha-building-${i}`} position={b.position} width={b.width} depth={b.depth} height={b.height} color={b.color} roofColor={b.roofColor} windowsColor={b.windowsColor} style={b.style} />
