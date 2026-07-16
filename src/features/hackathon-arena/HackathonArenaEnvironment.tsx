@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
@@ -8,8 +7,9 @@ import { RoadSystem } from '@/systems/world/RoadSystem'
 import { AmbientTeams } from './AmbientTeams'
 import { ArenaLighting } from './ArenaLighting'
 import { CountdownTimer } from './CountdownTimer'
-import { buildHAQuest } from '@/data/hackathon-arena/ha-quest'
-import { QuestManager } from '@/systems/quest/QuestManager'
+import { CodeStation } from './CodeStation'
+import { DebugStation } from './DebugStation'
+import { QuestAutoAcceptorHA } from './QuestAutoAcceptorHA'
 import {
   HA_BUILDINGS,
   HA_TREES,
@@ -17,19 +17,13 @@ import {
   HA_ROADS,
 } from '@/data/hackathon-arena/ha-layout'
 
-function QuestRegistrar() {
-  useEffect(() => {
-    QuestManager.registerQuest(buildHAQuest())
-  }, [])
-  return null
-}
-
 export function HackathonArenaEnvironment() {
   return (
     <group>
-      <QuestRegistrar />
+      <QuestAutoAcceptorHA />
       <ArenaLighting />
       <AmbientTeams />
+      <CountdownTimer />
 
       {HA_BUILDINGS.map((b, i) => (
         <Building key={`ha-building-${i}`} position={b.position} width={b.width} depth={b.depth} height={b.height} color={b.color} roofColor={b.roofColor} windowsColor={b.windowsColor} style={b.style} />
@@ -45,9 +39,8 @@ export function HackathonArenaEnvironment() {
 
       <RoadSystem segments={HA_ROADS as any} />
 
-      <CountdownTimer />
-
-      {/* Milestone 3+: CodeStation, DebugStation, etc. */}
+      <CodeStation />
+      <DebugStation />
     </group>
   )
 }
