@@ -8,6 +8,7 @@ import { HUDWrapper } from '@/components/game/hud/HUD'
 import { IntroOverlay } from '@/features/intro/IntroOverlay'
 import { ChapterFinale } from '@/features/cinematics/ChapterFinale'
 import { Chapter2Finale } from '@/features/cinematics/Chapter2Finale'
+import { Chapter3Finale } from '@/features/cinematics/Chapter3Finale'
 import { ControlsOverlay } from '@/features/ui/ControlsOverlay'
 
 class CanvasErrorBoundary extends Component<
@@ -100,6 +101,7 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
       <HUDWrapper showInventory={showInventory} onToggleInventory={onToggleInventory} />
       <ChapterFinale />
       <Chapter2Finale />
+      <Chapter3Finale />
       <ControlsOverlay />
     </CanvasErrorBoundary>
   )
