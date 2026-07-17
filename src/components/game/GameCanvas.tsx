@@ -10,6 +10,7 @@ import { ChapterFinale } from '@/features/cinematics/ChapterFinale'
 import { Chapter2Finale } from '@/features/cinematics/Chapter2Finale'
 import { Chapter3Finale } from '@/features/cinematics/Chapter3Finale'
 import { ControlsOverlay } from '@/features/ui/ControlsOverlay'
+import { FinalSummitCredits } from '@/features/final-summit/FinalSummitCredits'
 
 class CanvasErrorBoundary extends Component<
   { children: ReactNode; onError: () => void },
@@ -103,6 +104,7 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
       <Chapter2Finale />
       <Chapter3Finale />
       <ControlsOverlay />
+      <FinalSummitCredits />
     </CanvasErrorBoundary>
   )
 }

@@ -32,6 +32,7 @@ import { AIDistrictEnvironment } from '@/features/ai-district/AIDistrictEnvironm
 import { OSVEnvironment } from '@/features/open-source-valley/OSVEnvironment'
 import { HackathonArenaEnvironment } from '@/features/hackathon-arena/HackathonArenaEnvironment'
 import { CareerDistrictEnvironment } from '@/features/career-district/CareerDistrictEnvironment'
+import { FinalSummitEnvironment } from '@/features/final-summit/FinalSummitEnvironment'
 import { SkillUnlockEffect } from '@/features/effects/SkillUnlockEffect'
 import { CAMPUS_BOUNDS } from '@/data/bengaluru/campus-layout'
 import { SOFTWARE_CITY_BOUNDS, SC_TERRAIN_TILES } from '@/data/software-city/sc-layout'
@@ -39,6 +40,7 @@ import { AI_BOUNDS, AI_TERRAIN_TILES } from '@/data/ai-district/ai-layout'
 import { OSV_BOUNDS, OSV_TERRAIN_TILES } from '@/data/open-source-valley/osv-layout'
 import { HA_BOUNDS, HA_TERRAIN_TILES } from '@/data/hackathon-arena/ha-layout'
 import { CD_BOUNDS, CD_TERRAIN_TILES } from '@/data/career-district/cd-layout'
+import { FS_BOUNDS, FS_TERRAIN_TILES } from '@/data/final-summit/fs-layout'
 
 import {
   TERRAIN_TILES,
@@ -88,6 +90,7 @@ function HubEnvironment() {
   const chapter4Status = useChapterStore.getState().getStatus('chapter-4')
   const chapter5Status = useChapterStore.getState().getStatus('chapter-5')
   const chapter6Status = useChapterStore.getState().getStatus('chapter-6')
+  const chapter7Status = useChapterStore.getState().getStatus('chapter-7')
 
   return (
     <group>
@@ -153,6 +156,7 @@ function HubEnvironment() {
       {chapter4Status !== 'locked' && <OSVEnvironment />}
       {chapter5Status !== 'locked' && <HackathonArenaEnvironment />}
       {chapter6Status !== 'locked' && <CareerDistrictEnvironment />}
+      {chapter7Status !== 'locked' && <FinalSummitEnvironment />}
       <SoftwareCitySkyline />
       <SkillUnlockEffect />
     </group>
@@ -176,8 +180,10 @@ export function BengaluruHub() {
       z >= HA_BOUNDS.minZ && z <= HA_BOUNDS.maxZ
     const inCd = x >= CD_BOUNDS.minX && x <= CD_BOUNDS.maxX &&
       z >= CD_BOUNDS.minZ && z <= CD_BOUNDS.maxZ
-    if (!inHub && !inCampus && !inSc && !inAi && !inOsv && !inHa && !inCd) return false
-    if (inCampus || inSc || inAi || inOsv || inHa || inCd) return true
+    const inFs = x >= FS_BOUNDS.minX && x <= FS_BOUNDS.maxX &&
+      z >= FS_BOUNDS.minZ && z <= FS_BOUNDS.maxZ
+    if (!inHub && !inCampus && !inSc && !inAi && !inOsv && !inHa && !inCd && !inFs) return false
+    if (inCampus || inSc || inAi || inOsv || inHa || inCd || inFs) return true
     const centerDist = Math.sqrt(x * x + z * z)
     return centerDist < 70
   }
@@ -199,6 +205,7 @@ export function BengaluruHub() {
           <Terrain tiles={OSV_TERRAIN_TILES} size={50} />
           <Terrain tiles={HA_TERRAIN_TILES} size={50} />
           <Terrain tiles={CD_TERRAIN_TILES} size={50} />
+          <Terrain tiles={FS_TERRAIN_TILES} size={50} />
           <RoadSystem segments={ROAD_SEGMENTS} />
 
           <HubEnvironment />

@@ -327,7 +327,7 @@ export function ProfessorNPC() {
       }
     })
 
-    const unsubAdvance = EventBus.on(GameEvents.DIALOGUE_ADVANCE, (payload: any) => {
+    const unsubDialogueStart = EventBus.on(GameEvents.DIALOGUE_START, (payload: any) => {
       if (payload?.dialogueId !== NPC_DIALOGUE_ID) return
 
       if (payload?.nodeId === 'intro') {
@@ -337,6 +337,12 @@ export function ProfessorNPC() {
           notif.addNotification('quest', 'Quest Started', 'The First Lesson — Study, write, and show your work')
         }
       }
+    })
+
+    const unsubAdvance = EventBus.on(GameEvents.DIALOGUE_ADVANCE, (payload: any) => {
+      if (payload?.dialogueId !== NPC_DIALOGUE_ID) return
+
+
 
       if (payload?.nodeId === 'whiteboard') {
         QuestManager.completeObjective(NPC_QUEST_ID, 'obj-study-whiteboard')
@@ -357,7 +363,7 @@ export function ProfessorNPC() {
     })
 
     return () => {
-      unsubStart()
+      unsubDialogueStart()
       unsubAdvance()
       unsubEnd()
     }
