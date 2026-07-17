@@ -55,6 +55,10 @@ function buildDialogue(): DialogueDef {
       id: 'intro',
       speaker: 'Tech Lead',
       text: 'Welcome to Software City — Sai\'s frontier of modern engineering. Here we build with JavaScript, React, and Next.js. Before you ship anything, you need the right tools and the right mindset. I\'ve set up a terminal for environment setup and a code editor with a real bug to fix. Complete both and show me your work.',
+      choices: [
+        { text: 'What do I do first?', nextNodeId: 'explore' },
+        { text: 'Got it, starting now', nextNodeId: 'explore' },
+      ],
     },
     intro_accepted: {
       id: 'intro_accepted',

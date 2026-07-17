@@ -55,6 +55,10 @@ function buildDialogue(): DialogueDef {
       id: 'intro',
       speaker: 'Prof. Mehta',
       text: 'Welcome to the Classroom Wing. I\'m Professor Mehta — and this is where Sai wrote his very first Java program. Today, you\'ll follow the same path. I\'ve set up three stations: study the whiteboard, write code on the terminal, then show me what you\'ve created. Let\'s begin.',
+      choices: [
+        { text: 'Tell me about the stations', nextNodeId: 'explore' },
+        { text: 'I understand, let me start', nextNodeId: 'explore' },
+      ],
     },
     intro_accepted: {
       id: 'intro_accepted',
