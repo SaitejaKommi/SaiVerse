@@ -146,7 +146,7 @@ export function TrainingConsole() {
         visitedZones.current.add(zone.id)
         const val = paramValues.current[zone.id as keyof typeof paramValues.current]
         paramValues.current[zone.id as keyof typeof paramValues.current] =
-          Math.min(1, Math.max(0, val + Math.sin(state.clock.elapsedTime * 2) * delta * 0.5))
+          Math.min(1, Math.max(0, val + delta * 0.5))
       }
     }
 
