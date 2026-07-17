@@ -159,7 +159,7 @@ export class ChapterManager {
         (qid) => questStore.completedQuestIds.includes(qid)
       )
       if (allQuestsComplete && store.getStatus(chapter.id) !== 'completed') {
-        store.completeChapter(chapter.id)
+        this.completeChapter(chapter.id)
       }
     }
     store.persist()

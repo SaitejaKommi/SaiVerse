@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
+import { ChapterManager } from '@/systems/chapter/ChapterManager'
 import { useHackathonStore } from '@/features/hackathon-arena/HackathonStore'
 import { HA_CENTER } from '@/data/hackathon-arena/ha-layout'
 
@@ -29,6 +30,7 @@ export function Chapter5FinaleCamera() {
         holdTimerRef.current = 0
         initializedRef.current = false
         useGameStore.getState().setCinematic(true)
+        ChapterManager.completeChapter('chapter-5')
       }
     })
     return unsub
