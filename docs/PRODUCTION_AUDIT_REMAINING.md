@@ -23,7 +23,9 @@
 
 ## HIGH
 
-### H1. `ProfessorNPC.tsx` / `TechMentorNPC.tsx` — Store objects as `useEffect` dependencies
+### H1. `ProfessorNPC.tsx` / `TechMentorNPC.tsx` — Store objects as `useEffect` dependencies `[FIXED]`
+
+> Fixed in commit `e2c8643`. Removed `dialogueStore` and `playerStore` from the dependency arrays — Zustand store references are stable and don't need to trigger re-subscription.
 
 | Field | Value |
 |---|---|

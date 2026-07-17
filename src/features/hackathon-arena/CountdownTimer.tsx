@@ -103,9 +103,9 @@ export function CountdownTimer() {
     }
   })
 
-  const seconds = Math.max(0, Math.ceil(useHackathonStore.getState().timeRemaining))
-  const phase = useHackathonStore.getState().phase
-  const setback = useHackathonStore.getState().activeSetback
+  const seconds = Math.max(0, Math.ceil(useHackathonStore((s) => s.timeRemaining)))
+  const phase = useHackathonStore((s) => s.phase)
+  const setback = useHackathonStore((s) => s.activeSetback)
 
   return <ProjectorScreen seconds={seconds} phase={phase} setback={setback} />
 }
