@@ -80,10 +80,13 @@ export function FinalSummitCredits() {
   const [scrollPhase, setScrollPhase] = useState<'scrolling' | 'fade' | 'final' | 'done'>('scrolling')
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef(0)
+  const scrollPhaseRef = useRef<'scrolling' | 'fade' | 'final' | 'done'>('scrolling')
 
   useEffect(() => {
     if (finalePhase !== 'complete_show') return
 
+    scrollPhaseRef.current = 'scrolling'
+    scrollRef.current = 0
     let animId: number
     const startTime = Date.now()
     const totalDuration = CREDITS.length * 2000 + 3000
@@ -95,24 +98,28 @@ export function FinalSummitCredits() {
         containerRef.current.style.transform = `translateY(${-scrollRef.current * 60}vh)`
       }
 
-      if (scrollRef.current >= 0.85 && scrollPhase === 'scrolling') {
+      const phase = scrollPhaseRef.current
+      if (scrollRef.current >= 0.85 && phase === 'scrolling') {
+        scrollPhaseRef.current = 'fade'
         setScrollPhase('fade')
       }
 
-      if (scrollRef.current >= 1 && scrollPhase !== 'final') {
+      if (scrollRef.current >= 1 && phase !== 'final') {
+        scrollPhaseRef.current = 'final'
         setScrollPhase('final')
-        setTimeout(() => setScrollPhase('done'), 100)
+        setTimeout(() => {
+          scrollPhaseRef.current = 'done'
+          setScrollPhase('done')
+        }, 100)
         return
       }
 
-      if (scrollRef.current < 1) {
-        animId = requestAnimationFrame(tick)
-      }
+      animId = requestAnimationFrame(tick)
     }
     animId = requestAnimationFrame(tick)
 
     return () => cancelAnimationFrame(animId)
-  }, [finalePhase, scrollPhase])
+  }, [finalePhase])
 
   const handleExplore = () => {
     window.open('https://github.com/SaitejaKommi', '_blank')
