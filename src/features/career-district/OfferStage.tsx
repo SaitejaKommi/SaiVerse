@@ -25,24 +25,25 @@ export function OfferStage() {
   const groupRef = useRef<THREE.Group>(null)
   const notif = useNotificationStore()
 
-  const questStore = useQuestStore
-  const playerStore = usePlayerStore
+  const completedQuestIds = useQuestStore((s) => s.completedQuestIds)
+  const knowledge = usePlayerStore((s) => s.knowledge)
+  const badges = usePlayerStore((s) => s.badges)
+  const traits = usePlayerStore((s) => s.traits)
 
   const stats = useMemo(() => {
-    const qStore = questStore.getState()
-    const pStore = playerStore.getState()
-    const completedChapters = CHAPTER_QUEST_IDS.filter((qid) => qStore.completedQuestIds.includes(qid)).length
-    const totalKnowledge = pStore.knowledge
-    const totalBadges = pStore.badges.length
-    const totalTraits = pStore.traits.length
+    const completedChapters = CHAPTER_QUEST_IDS.filter((qid) => completedQuestIds.includes(qid)).length
+    const totalKnowledge = knowledge
+    const totalBadges = badges.length
+    const totalTraits = traits.length
     return { completedChapters, totalKnowledge, totalBadges, totalTraits }
-  }, [])
+  }, [completedQuestIds, knowledge, badges, traits])
+
+  const cdQuest = useQuestStore((s) => s.quests[CD_QUEST_ID])
 
   const needsInterview = useMemo(() => {
-    const quest = questStore.getState().quests[CD_QUEST_ID]
-    const obj = quest?.objectives.find((o) => o.id === 'obj-interview')
+    const obj = cdQuest?.objectives.find((o) => o.id === 'obj-interview')
     return obj && obj.current < obj.count
-  }, [])
+  }, [cdQuest])
 
   const handleActivate = useCallback(() => {
     if (phase !== 'idle' || done) return

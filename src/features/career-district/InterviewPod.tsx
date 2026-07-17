@@ -81,16 +81,14 @@ const RECRUITERS: RecruiterDef[] = [
 
 export function InterviewPod() {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set())
-  const playerStore = usePlayerStore
-  const questStore = useQuestStore
+  const traits = usePlayerStore((s) => s.traits)
+  const badges = usePlayerStore((s) => s.badges)
+  const completedQuestIds = useQuestStore((s) => s.completedQuestIds)
 
   const recruiterStates = useMemo(() => RECRUITERS.map((r) => {
-    const pStore = playerStore.getState()
-    const qStore = questStore.getState()
-
-    const matchedTraits = r.askTraits.filter((t) => pStore.traits.includes(t))
-    const matchedBadges = r.askBadges.filter((b) => pStore.badges.includes(b))
-    const matchedQuests = r.askQuests.filter((q) => qStore.completedQuestIds.includes(q))
+    const matchedTraits = r.askTraits.filter((t) => traits.includes(t))
+    const matchedBadges = r.askBadges.filter((b) => badges.includes(b))
+    const matchedQuests = r.askQuests.filter((q) => completedQuestIds.includes(q))
 
     const matchCount = matchedTraits.length + matchedBadges.length + matchedQuests.length
     const totalPossible = r.askTraits.length + r.askBadges.length + r.askQuests.length
@@ -101,7 +99,7 @@ export function InterviewPod() {
     else if (ratio <= 0.2) response = r.lines.negative
 
     return { ...r, matchCount, totalPossible, ratio, response, matchedTraits, matchedBadges, matchedQuests }
-  }), [])
+  }), [traits, badges, completedQuestIds])
 
   const handleInterview = useCallback((index: number) => {
     const key = `interview-${index}`

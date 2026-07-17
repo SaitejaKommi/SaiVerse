@@ -87,15 +87,16 @@ function HolographicRing({ color, activated }: { color: string; activated: boole
 
 export function PortfolioPlinth() {
   const [activatedMap, setActivatedMap] = useState<Record<string, boolean>>({})
-  const playerStore = usePlayerStore
-  const questStore = useQuestStore
+  const quests = useQuestStore((s) => s.quests)
+  const completedQuestIds = useQuestStore((s) => s.completedQuestIds)
+  const badges = usePlayerStore((s) => s.badges)
+  const traits = usePlayerStore((s) => s.traits)
 
   const plinths = useMemo(() => PLINTH_DATA.map((pd) => {
-    const qStore = questStore.getState()
-    const quest = qStore.quests[pd.questId]
-    const isCompleted = quest?.status === 'completed' || qStore.completedQuestIds.includes(pd.questId)
-    const hasBadge = playerStore.getState().badges.includes(pd.badgeId)
-    const hasTraits = pd.traitIds.some((t) => playerStore.getState().traits.includes(t))
+    const quest = quests[pd.questId]
+    const isCompleted = quest?.status === 'completed' || completedQuestIds.includes(pd.questId)
+    const hasBadge = badges.includes(pd.badgeId)
+    const hasTraits = pd.traitIds.some((t) => traits.includes(t))
 
     const label = CHAPTER_LABELS[pd.id] ?? ''
 
@@ -104,7 +105,7 @@ export function PortfolioPlinth() {
     else if (quest?.status === 'accepted') statusText = 'IN PROGRESS'
 
     return { ...pd, isCompleted, hasBadge, hasTraits, label, statusText }
-  }), [])
+  }), [quests, completedQuestIds, badges, traits])
 
   const handleActivate = useCallback((index: number) => {
     const pd = plinths[index]
