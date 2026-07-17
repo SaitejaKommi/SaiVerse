@@ -22,9 +22,9 @@ interface PlinthData {
 }
 
 const PLINTH_DATA: PlinthData[] = [
-  { id: 'plinth-0', chapterTitle: 'The Beginning', chapterSubtitle: 'Campus', questId: 'quest-campus', badgeId: 'chapter-0-complete', traitIds: ['first-steps'], color: '#00d4ff', dioramaColor: '#0088cc', position: [80, 0, -8] },
-  { id: 'plinth-1', chapterTitle: 'Software City', chapterSubtitle: 'Foundations', questId: 'quest-software-city', badgeId: 'chapter-1-complete', traitIds: ['code-artisan'], color: '#ff6600', dioramaColor: '#cc4400', position: [85, 0, -8] },
-  { id: 'plinth-2', chapterTitle: 'Bengaluru Hub', chapterSubtitle: 'Heritage', questId: 'quest-bengaluru-hub', badgeId: 'chapter-2-complete', traitIds: ['community-builder'], color: '#ffd700', dioramaColor: '#ccaa00', position: [90, 0, -8] },
+  { id: 'plinth-0', chapterTitle: 'The Beginning', chapterSubtitle: 'Campus', questId: 'quest-first-step', badgeId: 'chapter-0-complete', traitIds: ['first-steps'], color: '#00d4ff', dioramaColor: '#0088cc', position: [80, 0, -8] },
+  { id: 'plinth-1', chapterTitle: 'The First Lesson', chapterSubtitle: 'Campus', questId: 'quest-first-lesson', badgeId: 'chapter-1-complete', traitIds: ['java-basics'], color: '#ff6600', dioramaColor: '#cc4400', position: [85, 0, -8] },
+  { id: 'plinth-2', chapterTitle: 'Software City', chapterSubtitle: 'Foundations', questId: 'quest-software-project', badgeId: 'chapter-2-complete', traitIds: ['javascript-basics'], color: '#ffd700', dioramaColor: '#ccaa00', position: [90, 0, -8] },
   { id: 'plinth-3', chapterTitle: 'AI District', chapterSubtitle: 'Innovation', questId: 'quest-ai-exploration', badgeId: 'chapter-3-complete', traitIds: ['ai-innovator'], color: '#ff00ff', dioramaColor: '#cc00cc', position: [95, 0, -8] },
   { id: 'plinth-4', chapterTitle: 'Open Source Valley', chapterSubtitle: 'Community', questId: 'quest-open-source-valley', badgeId: 'open-source-contributor', traitIds: ['open-source-advocate'], color: '#00ff88', dioramaColor: '#00cc66', position: [100, 0, -8] },
   { id: 'plinth-5', chapterTitle: 'Hackathon Arena', chapterSubtitle: 'Pressure', questId: 'quest-hackathon-arena', badgeId: 'monad-blitz-champion', traitIds: ['hackathon-champion', 'resilience'], color: '#a855f7', dioramaColor: '#8833cc', position: [105, 0, -8] },

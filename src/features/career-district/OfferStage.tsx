@@ -13,7 +13,7 @@ import { OFFER_STAGE_POSITION } from '@/data/career-district/cd-layout'
 
 type AnalysisPhase = 'idle' | 'scanning' | 'analyzing' | 'complete'
 
-const CHAPTER_QUEST_IDS = ['quest-campus', 'quest-software-city', 'quest-bengaluru-hub', 'quest-ai-exploration', 'quest-open-source-valley', 'quest-hackathon-arena']
+const CHAPTER_QUEST_IDS = ['quest-first-step', 'quest-first-lesson', 'quest-software-project', 'quest-ai-exploration', 'quest-open-source-valley', 'quest-hackathon-arena']
 const CHAPTER_TITLES = ['Campus', 'Software City', 'Bengaluru Hub', 'AI District', 'Open Source Valley', 'Hackathon Arena']
 
 export function OfferStage() {

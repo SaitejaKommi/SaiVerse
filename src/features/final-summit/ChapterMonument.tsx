@@ -21,9 +21,9 @@ interface MonumentDef {
 }
 
 const MONUMENT_DATA: MonumentDef[] = [
-  { id: 'fs-monument-0', chapterIndex: 0, title: 'The Beginning', subtitle: 'Where it all started', questId: 'quest-first-lesson', badgeId: 'chapter-0-complete', emotionalLine: '"Every expert was once a beginner."', color: '#00d4ff', position: MONUMENT_POSITIONS[0]! },
-  { id: 'fs-monument-1', chapterIndex: 2, title: 'Software City', subtitle: 'Foundations of code', questId: 'quest-software-city', badgeId: 'chapter-1-complete', emotionalLine: '"Code is poetry in motion."', color: '#ff6600', position: MONUMENT_POSITIONS[1]! },
-  { id: 'fs-monument-2', chapterIndex: 1, title: 'Bengaluru Hub', subtitle: 'The heart of innovation', questId: 'quest-bengaluru-hub', badgeId: 'chapter-2-complete', emotionalLine: '"A city that never stops dreaming."', color: '#ffd700', position: MONUMENT_POSITIONS[2]! },
+  { id: 'fs-monument-0', chapterIndex: 0, title: 'The Beginning', subtitle: 'Where it all started', questId: 'quest-first-step', badgeId: 'chapter-0-complete', emotionalLine: '"Every expert was once a beginner."', color: '#00d4ff', position: MONUMENT_POSITIONS[0]! },
+  { id: 'fs-monument-1', chapterIndex: 1, title: 'The First Lesson', subtitle: 'Campus foundations', questId: 'quest-first-lesson', badgeId: 'chapter-1-complete', emotionalLine: '"Every expert was once a beginner."', color: '#ff6600', position: MONUMENT_POSITIONS[1]! },
+  { id: 'fs-monument-2', chapterIndex: 2, title: 'Software City', subtitle: 'Foundations of code', questId: 'quest-software-project', badgeId: 'chapter-2-complete', emotionalLine: '"Code is poetry in motion."', color: '#ffd700', position: MONUMENT_POSITIONS[2]! },
   { id: 'fs-monument-3', chapterIndex: 3, title: 'AI District', subtitle: 'Into the future', questId: 'quest-ai-exploration', badgeId: 'chapter-3-complete', emotionalLine: '"Intelligence is the art of learning."', color: '#ff00ff', position: MONUMENT_POSITIONS[3]! },
   { id: 'fs-monument-4', chapterIndex: 4, title: 'Open Source Valley', subtitle: 'Building together', questId: 'quest-open-source-valley', badgeId: 'open-source-contributor', emotionalLine: '"Alone we code, together we build."', color: '#00ff88', position: MONUMENT_POSITIONS[4]! },
   { id: 'fs-monument-5', chapterIndex: 5, title: 'Hackathon Arena', subtitle: 'Under pressure', questId: 'quest-hackathon-arena', badgeId: 'monad-blitz-champion', emotionalLine: '"Pressure breeds diamonds."', color: '#a855f7', position: MONUMENT_POSITIONS[5]! },

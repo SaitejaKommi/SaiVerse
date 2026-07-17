@@ -35,7 +35,7 @@ const RECRUITERS: RecruiterDef[] = [
     role: 'UI & Experience',
     askTraits: ['code-artisan', 'community-builder'],
     askBadges: ['chapter-1-complete', 'chapter-2-complete'],
-    askQuests: ['quest-software-city', 'quest-bengaluru-hub'],
+    askQuests: ['quest-software-project', 'quest-first-lesson'],
     lines: {
       greeting: 'Welcome. I see you have experience building interfaces. Tell me about your approach.',
       positive: 'Your portfolio shows real craftsmanship. The Software City work is impressive. I think you would be a great fit.',
@@ -67,7 +67,7 @@ const RECRUITERS: RecruiterDef[] = [
     role: 'AI & Intelligence',
     askTraits: ['ai-innovator', 'first-steps'],
     askBadges: ['chapter-3-complete', 'chapter-0-complete'],
-    askQuests: ['quest-ai-exploration', 'quest-campus'],
+    askQuests: ['quest-ai-exploration', 'quest-first-step'],
     lines: {
       greeting: 'AI is transforming everything. What is your experience with intelligent systems?',
       neutral: 'I see the foundations are there. The AI field moves fast — keep experimenting.',
