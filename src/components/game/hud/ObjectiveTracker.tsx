@@ -5,7 +5,22 @@ import { GlassPanel } from '@/components/ui/GlassPanel'
 import type { QuestDef } from '@/systems/quest/quest.types'
 import { CAMPUS_ENTRANCE_POSITION } from '@/data/bengaluru/hub-layout'
 
-const CAMPUS_QUEST_ID = 'quest-first-step'
+const TARGET_POSITIONS: Record<string, [number, number, number]> = {
+  'campus-entrance': CAMPUS_ENTRANCE_POSITION,
+  'professor-npc': [22.5, 0.5, -145.2],
+  'professor': [22.5, 0.5, -145.2],
+  'data-terminal': [-30, 0, -360],
+  'training-console': [30, 0, -360],
+  'prompt-lab': [0, 0, -395],
+  'neural-core': [0, 0, -370],
+  'garden-plot': [-25, 0, -515],
+  'pr-bridge': [25, 0, -515],
+  'knowledge-archive': [0, 0, -555],
+  'code-station': [-15, 0, -635],
+  'presentation-stage': [0, 0, -638],
+  'interview-pod': [90, 0, -8],
+  'offer-stage': [95, 0, -8],
+}
 
 function getDistanceToTarget(targetPos: [number, number, number]): number | null {
   const player = useGameStore.getState().player
@@ -20,31 +35,28 @@ export function ObjectiveTracker() {
   const activeQuestIds = useQuestStore((s) => s.activeQuestIds)
   const quests = useQuestStore((s) => s.quests)
 
+  const primaryQuestId = activeQuestIds?.[0]
+  const quest: QuestDef | undefined = primaryQuestId ? quests[primaryQuestId] : undefined
+  const incomplete = quest ? quest.objectives.filter((o) => o.current < o.count) : []
+  const targetPos = incomplete[0] ? TARGET_POSITIONS[incomplete[0].targetId] : undefined
+
   useEffect(() => {
     const interval = setInterval(() => {
-      const quest = quests[CAMPUS_QUEST_ID]
-      if (quest?.status === 'accepted') {
-        setDistance(getDistanceToTarget(CAMPUS_ENTRANCE_POSITION))
+      if (targetPos) {
+        setDistance(getDistanceToTarget(targetPos))
       } else {
         setDistance(null)
       }
     }, 200)
     return () => clearInterval(interval)
-  }, [quests])
+  }, [targetPos])
 
   if (!activeQuestIds || activeQuestIds.length === 0) return null
-
-  const primaryQuestId = activeQuestIds[0]
-  if (!primaryQuestId) return null
-  const quest: QuestDef | undefined = quests[primaryQuestId]
-  if (!quest) return null
-
-  const incomplete = quest.objectives.filter((o) => o.current < o.count)
 
   return (
     <GlassPanel padding="md" rounded="lg" className="max-w-[280px]">
       <div className="text-[10px] text-neon-blue uppercase tracking-wider mb-1">Objective</div>
-      <div className="text-xs text-white/90 font-medium mb-1">{quest.title}</div>
+      <div className="text-xs text-white/90 font-medium mb-1">{quest?.title}</div>
       {incomplete.length > 0 && (
         <>
           <div className="text-[11px] text-white/60">
