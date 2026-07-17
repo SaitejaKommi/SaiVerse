@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
+import { ChapterManager } from '@/systems/chapter/ChapterManager'
 import { soundFX } from '@/systems/audio/SoundFX'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { EventBus } from '@/lib/events/EventBus'
@@ -263,6 +264,7 @@ export function NeuralCore() {
         finaleTriggered.current = true
         soundFX.playQuestComplete()
         QuestManager.completeObjective(AI_QUEST_ID, 'obj-witness-core')
+        ChapterManager.completeChapter('chapter-3')
         notif.addNotification('discovery', 'Neural Core', 'AI research complete')
         EventBus.emit(GameEvents.CELEBRATION_TRIGGER, { type: 'ai_unlock' })
 
