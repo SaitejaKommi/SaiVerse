@@ -14,7 +14,7 @@ export const AI_TERRAIN_TILES: TerrainTile[] = (() => {
   const tiles: TerrainTile[] = []
   const size = 50
   for (let i = -1; i <= 1; i++) {
-    for (let j = -8; j >= -8; j--) {
+    for (let j = -8; j <= 8; j++) {
       const cx = i * size + size / 2
       const cz = j * size + size / 2
       const dist = Math.sqrt(cx * cx + (cz + 370) * (cz + 370))
