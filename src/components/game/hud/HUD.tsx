@@ -8,7 +8,6 @@ import { useChapterStore } from '@/systems/chapter/ChapterStore'
 import { ChapterManager } from '@/systems/chapter/ChapterManager'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { NeonText } from '@/components/ui/NeonText'
-import { CAMPUS_ENTRANCE_POSITION } from '@/data/bengaluru/hub-layout'
 import { InteractionPrompt } from './InteractionPrompt'
 import { NotificationContainer } from './NotificationContainer'
 import { TimeWeather } from './TimeWeather'
@@ -74,10 +73,34 @@ function ObjectiveTracker() {
   const [distance, setDistance] = useState<number | null>(null)
   const [direction, setDirection] = useState(0)
 
-  const targetPos = useMemo(() => CAMPUS_ENTRANCE_POSITION, [])
+  const primaryQuestId = activeQuestIds?.[0]
+  const quest = primaryQuestId ? quests[primaryQuestId] : undefined
+  const incomplete = quest ? quest.objectives.filter((o) => o.current < o.count) : []
+  const targetId = incomplete[0]?.targetId
+  const targetPos = useMemo<[number, number, number] | undefined>(() => {
+    if (!targetId) return undefined
+    const CAMPUS_ENTRANCE: [number, number, number] = [0, 0, -100]
+    const MAP: Record<string, [number, number, number]> = {
+      'campus-entrance': CAMPUS_ENTRANCE,
+      'professor-npc': [22.5, 0.5, -145.2],
+      'data-terminal': [-30, 0, -360],
+      'training-console': [30, 0, -360],
+      'prompt-lab': [0, 0, -395],
+      'neural-core': [0, 0, -370],
+      'garden-plot': [-25, 0, -515],
+      'pr-bridge': [25, 0, -515],
+      'knowledge-archive': [0, 0, -555],
+      'code-station': [-15, 0, -635],
+      'presentation-stage': [0, 0, -638],
+    }
+    return MAP[targetId]
+  }, [targetId])
 
   useEffect(() => {
-    if (!playerPos) return
+    if (!playerPos || !targetPos) {
+      setDistance(null)
+      return
+    }
     const dx = playerPos[0] - targetPos[0]
     const dz = playerPos[2] - targetPos[2]
     const dist = Math.sqrt(dx * dx + dz * dz)
@@ -85,14 +108,8 @@ function ObjectiveTracker() {
     setDirection(Math.atan2(dz, dx))
   }, [playerPos, targetPos])
 
-  if (!activeQuestIds || activeQuestIds.length === 0) return null
+  if (!activeQuestIds || activeQuestIds.length === 0 || !quest) return null
 
-  const primaryQuestId = activeQuestIds[0]
-  if (!primaryQuestId) return null
-  const quest = quests[primaryQuestId]
-  if (!quest) return null
-
-  const incomplete = quest.objectives.filter((o) => o.current < o.count)
   const totalObjectives = quest.objectives.length
   const completedObjectives = quest.objectives.filter((o) => o.current >= o.count).length
 
