@@ -1,19 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useHackathonStore } from './HackathonStore'
 
 export function TeamEnergyBar() {
-  const [energy, setEnergy] = useState(100)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const unsub = useHackathonStore.subscribe((state) => {
-      setEnergy(state.teamEnergy)
-      setVisible(state.phase !== 'waiting' && state.phase !== 'complete')
-    })
-    return unsub
-  }, [])
+  const energy = useHackathonStore((s) => s.teamEnergy)
+  const phase = useHackathonStore((s) => s.phase)
+  const visible = phase !== 'waiting' && phase !== 'complete'
 
   if (!visible) return null
 

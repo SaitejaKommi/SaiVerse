@@ -49,14 +49,9 @@
 
 > Fixed in commit `efc8f49`. Updated arrays to include all 8 main quests and titles, and made display counts dynamic.
 
-### H4. `PresentationConsole.tsx` — No visual prompt telling the player to activate
+### H4. `PresentationConsole.tsx` — No visual prompt telling the player to activate `[FIXED]`
 
-| Field | Value |
-|---|---|
-| **File** | `src/features/hackathon-arena/PresentationConsole.tsx` |
-| **Root Cause** | When phase transitions to `'presentation'`, the projector screen shows "TIME TO PRESENT" but the PresentationConsole itself has no interactivity hint. Its screen is dark (`color: '#0a0a1a'`) until clicked, and the clickable button is a tiny cylinder (radius 0.06) with no glow or label. |
-| **User Impact** | Players may not know they need to click the console to start the presentation. They could be stuck waiting indefinitely. |
-| **Recommended Fix** | Add a pulsating glow or label on the console when phase is `'presentation'`, and/or show a "PRESENT YOUR PROJECT" HUD prompt. |
+> Fixed in commit `b0ff051`. Added pulsing "CLICK TO PRESENT" label sprite that appears during the presentation phase, and the screen now glows purple to draw attention.
 
 
 ## MEDIUM
@@ -134,8 +129,8 @@
 
 | Severity | Count |
 |---|---|
-| CRITICAL | 1 |
-| HIGH | 5 |
+| CRITICAL | 0 |
+| HIGH | 0 |
 | MEDIUM | 4 |
 | LOW | 3 |
-| **Total** | **13** |
+| **Total** | **7** |

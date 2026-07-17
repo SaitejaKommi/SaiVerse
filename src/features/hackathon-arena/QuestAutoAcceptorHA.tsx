@@ -10,8 +10,11 @@ import { HA_QUEST_ID, buildHAQuest } from '@/data/hackathon-arena/ha-quest'
 
 export function QuestAutoAcceptorHA() {
   const acceptedRef = useRef(false)
+  const registeredRef = useRef(false)
 
   useEffect(() => {
+    if (registeredRef.current) return
+    registeredRef.current = true
     QuestManager.registerQuest(buildHAQuest())
   }, [])
 

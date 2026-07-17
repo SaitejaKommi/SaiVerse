@@ -9,7 +9,12 @@ export function ArenaLighting() {
   const ambientRef = useRef<THREE.AmbientLight>(null)
   const fillRef = useRef<THREE.DirectionalLight>(null)
   const stageRef = useRef<THREE.SpotLight>(null)
-  const stripRefs = useRef<THREE.Mesh[]>([])
+  const stripMap = useRef<Map<number, THREE.Mesh>>(new Map())
+
+  const registerStrip = (mesh: THREE.Mesh | null, id: number) => {
+    if (mesh) stripMap.current.set(id, mesh)
+    else stripMap.current.delete(id)
+  }
 
   useFrame((state) => {
     const store = useHackathonStore.getState()
@@ -67,17 +72,12 @@ export function ArenaLighting() {
       stageRef.current.intensity = phase === 'complete' ? 2 : phase === 'presentation' ? 1.5 : 0.8
     }
 
-    stripRefs.current.forEach((mesh) => {
-      if (!mesh) return
+    stripMap.current.forEach((mesh) => {
       const mat = mesh.material as THREE.MeshBasicMaterial
       mat.color.copy(stripColor)
       mat.opacity = stripIntensity
     })
   })
-
-  const registerStrip = (mesh: THREE.Mesh | null, i: number) => {
-    if (mesh) stripRefs.current[i] = mesh
-  }
 
   return (
     <group>

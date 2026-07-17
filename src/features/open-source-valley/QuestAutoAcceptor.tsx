@@ -10,8 +10,11 @@ import { OSV_QUEST_ID, buildOSVQuest } from '@/data/open-source-valley/osv-quest
 
 export function QuestAutoAcceptorOSV() {
   const acceptedRef = useRef(false)
+  const registeredRef = useRef(false)
 
   useEffect(() => {
+    if (registeredRef.current) return
+    registeredRef.current = true
     QuestManager.registerQuest(buildOSVQuest())
   }, [])
 

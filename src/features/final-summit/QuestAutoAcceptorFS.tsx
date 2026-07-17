@@ -10,8 +10,11 @@ import { FS_QUEST_ID, buildFSQuest } from '@/data/final-summit/fs-quest'
 
 export function QuestAutoAcceptorFS() {
   const acceptedRef = useRef(false)
+  const registeredRef = useRef(false)
 
   useEffect(() => {
+    if (registeredRef.current) return
+    registeredRef.current = true
     QuestManager.registerQuest(buildFSQuest())
   }, [])
 

@@ -10,8 +10,11 @@ import { CD_QUEST_ID, buildCDQuest } from '@/data/career-district/cd-quest'
 
 export function QuestAutoAcceptorCD() {
   const acceptedRef = useRef(false)
+  const registeredRef = useRef(false)
 
   useEffect(() => {
+    if (registeredRef.current) return
+    registeredRef.current = true
     QuestManager.registerQuest(buildCDQuest())
   }, [])
 

@@ -62,18 +62,21 @@ export function CountdownTimer() {
       const t = Math.max(0, store.timeRemaining - delta)
       store.setTimeRemaining(t)
 
-      if (t <= SPRINT_3_END && !store.sprint3Done && phase === 'sprint-3') {
+      if (t <= SPRINT_3_END && phase === 'sprint-3') {
+        if (!store.sprint3Done) store.setSprint3Done(true)
         countdownActiveRef.current = false
         store.setPhase('presentation')
         store.setMusicState('silence')
         return
       }
-      if (t <= SPRINT_2_END && !store.sprint2Done && phase === 'sprint-2') {
+      if (t <= SPRINT_2_END && phase === 'sprint-2') {
+        if (!store.sprint2Done) store.setSprint2Done(true)
         store.setPhase('sprint-3')
         store.setMusicState('panic')
         notif.addNotification('quest', 'FINAL SPRINT!', 'Sprint 3: Ship it!')
       }
-      if (t <= SPRINT_1_END && !store.sprint1Done && phase === 'sprint-1') {
+      if (t <= SPRINT_1_END && phase === 'sprint-1') {
+        if (!store.sprint1Done) store.setSprint1Done(true)
         store.setPhase('sprint-2')
         store.setMusicState('pressure')
         notif.addNotification('quest', 'Sprint 2: Features!', 'Keep building!')
