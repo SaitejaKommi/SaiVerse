@@ -34,7 +34,9 @@
 | **User Impact** | Unnecessary churn in event subscriptions; rare edge case where a dialogue event fires between unsubscribe and re-subscribe and is lost. |
 | **Recommended Fix** | Remove `dialogueStore` and `playerStore` from the dependency array. Use `useRef` for stable references or individual selectors (`usePlayerStore((s) => s.traits)`). |
 
-### H2. `CountdownTimer.tsx` — Timer display reads `getState()` at render time, not reactively
+### H2. `CountdownTimer.tsx` — Timer display reads `getState()` at render time, not reactively `[FIXED]`
+
+> Fixed in commit `a96af12`. Replaced `useHackathonStore.getState()` with reactive Zustand selectors so the component re-renders when timer/phase/setback change.
 
 | Field | Value |
 |---|---|

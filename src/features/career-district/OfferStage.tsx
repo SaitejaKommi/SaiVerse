@@ -13,8 +13,8 @@ import { OFFER_STAGE_POSITION } from '@/data/career-district/cd-layout'
 
 type AnalysisPhase = 'idle' | 'scanning' | 'analyzing' | 'complete'
 
-const CHAPTER_QUEST_IDS = ['quest-first-step', 'quest-first-lesson', 'quest-software-project', 'quest-ai-exploration', 'quest-open-source-valley', 'quest-hackathon-arena']
-const CHAPTER_TITLES = ['Campus', 'Software City', 'Bengaluru Hub', 'AI District', 'Open Source Valley', 'Hackathon Arena']
+const CHAPTER_QUEST_IDS = ['quest-first-step', 'quest-first-lesson', 'quest-software-project', 'quest-ai-exploration', 'quest-open-source-valley', 'quest-hackathon-arena', 'quest-career-district', 'quest-final-summit']
+const CHAPTER_TITLES = ['The First Step', 'The First Lesson', 'Software City', 'AI District', 'Open Source Valley', 'Hackathon Arena', 'Career District', 'The Summit']
 
 export function OfferStage() {
   const [phase, setPhase] = useState<AnalysisPhase>('idle')
@@ -64,12 +64,12 @@ export function OfferStage() {
         scanLineRef.current = 0
         analysisRef.current++
         const chapterIdx = analysisRef.current - 1
-        if (chapterIdx < 6) {
+        if (chapterIdx < CHAPTER_QUEST_IDS.length) {
           notif.addNotification('quest', 'Portfolio Analysis', `Scanning: ${CHAPTER_TITLES[chapterIdx]}...`)
           soundFX.playUIBeep(600 + chapterIdx * 80, 0.1, 0.08)
         }
       }
-      if (analysisRef.current >= 7) {
+      if (analysisRef.current >= CHAPTER_QUEST_IDS.length + 1) {
         setPhase('analyzing')
         setTimeout(() => {
           setPhase('complete')
@@ -100,7 +100,7 @@ export function OfferStage() {
     ctx.fillStyle = '#ffffff'
     ctx.font = '12px monospace'
     ctx.fillText(`To: Sai — Builder, Developer, Creator`, 256, 65)
-    ctx.fillText(`Chapters Completed: ${stats.completedChapters} / 6`, 256, 90)
+    ctx.fillText(`Chapters Completed: ${stats.completedChapters} / ${CHAPTER_QUEST_IDS.length}`, 256, 90)
     ctx.fillText(`Knowledge Score: ${stats.totalKnowledge} XP`, 256, 110)
     ctx.fillText(`Badges Earned: ${stats.totalBadges}`, 256, 130)
     ctx.fillText(`Traits Recognized: ${stats.totalTraits}`, 256, 150)
