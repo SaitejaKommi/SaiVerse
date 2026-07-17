@@ -15,18 +15,19 @@ const BOOK_POSITIONS = STATION_POSITIONS.archive.books
 export function KnowledgeArchive() {
   const completedRef = useRef(false)
   const collectedRef = useRef<boolean[]>([false, false, false, false, false])
-  const shelfCountRef = useRef(0)
+  const shelvedRef = useRef<boolean[]>([false, false, false, false, false])
+  const prevShelvedRef = useRef(0)
   const [returned, setReturned] = useState(0)
   const notif = useNotificationStore()
 
   useFrame(() => {
     if (completedRef.current) return
-    const c = collectedRef.current.filter(Boolean).length
-    if (c > shelfCountRef.current) {
-      shelfCountRef.current = c
-      setReturned(c)
+    const s = shelvedRef.current.filter(Boolean).length
+    if (s > prevShelvedRef.current) {
+      prevShelvedRef.current = s
+      setReturned(s)
       soundFX.playQuestComplete()
-      if (c >= 5) {
+      if (s >= 5) {
         completedRef.current = true
         notif.addNotification('discovery', 'Archive Complete', 'All knowledge has been returned to the archive')
         QuestManager.completeObjective(OSV_QUEST_ID, 'obj-restock-archive')
@@ -49,6 +50,10 @@ export function KnowledgeArchive() {
     const carrying = useCarryStore.getState().carrying
     if (carrying === 'book') {
       useCarryStore.getState().setCarrying(null)
+      const nextSlot = shelvedRef.current.findIndex((v) => !v)
+      if (nextSlot >= 0) {
+        shelvedRef.current[nextSlot] = true
+      }
     }
   }, [])
 
