@@ -45,25 +45,11 @@
 | **User Impact** | Timer display on the projector screen may visually lag 1-2 frames behind the actual timer value. Noticeable during the final 10-second countdown. |
 | **Recommended Fix** | Subscribe to the relevant store slices: `const seconds = useHackathonStore((s) => Math.max(0, Math.ceil(s.timeRemaining)))` and `const phase = useHackathonStore((s) => s.phase)`. |
 
-### H3. `OfferStage.tsx` — `CHAPTER_QUEST_IDS` / `CHAPTER_TITLES` hardcoded and incomplete
+### H3. `OfferStage.tsx` — `CHAPTER_QUEST_IDS` / `CHAPTER_TITLES` hardcoded and incomplete `[FIXED]`
 
-| Field | Value |
-|---|---|
-| **File** | `src/features/career-district/OfferStage.tsx:16-17` |
-| **Root Cause** | `CHAPTER_QUEST_IDS` lists 6 quests but omits `quest-career-district` and `quest-final-summit`. `CHAPTER_TITLES` includes "Bengaluru Hub" which has no associated quest. The display shows "6 completed" as the maximum, but there are actually 8 chapters (0-7) with 8 quests across the main storyline. |
-| **User Impact** | The offer letter screen shows incorrect "Chapters Completed: N / 6" when the player may have completed up to 8 chapters. Misleading for final-summit players. |
-| **Recommended Fix** | Align `CHAPTER_QUEST_IDS` to include all main quests in order, and update `CHAPTER_TITLES` to match actual chapter names. |
+> Fixed in commit `efc8f49`. Updated arrays to include all 8 main quests and titles, and made display counts dynamic.
 
-### H4. `FinalSummitCinematic.tsx` — Uses stale `quests` snapshot via `getState()` to check completion
-
-| Field | Value |
-|---|---|
-| **File** | `src/features/final-summit/FinalSummitCinematic.tsx` |
-| **Root Cause** | The component reads `useQuestStore.getState().quests[FS_QUEST_ID]` inside `useFrame` imperatively, instead of subscribing via a selector. If the quest updates between frames (which is possible via EventBus-triggered objective completions), the cinematic will miss the transition. |
-| **User Impact** | Rare edge case: final pedestal activation may not trigger the credits sequence if the quest status check misses the update. |
-| **Recommended Fix** | Subscribe to the quest with `const fsQuest = useQuestStore((s) => s.quests[FS_QUEST_ID])` and read status from that reactive variable. |
-
-### H5. `PresentationConsole.tsx` — No visual prompt telling the player to activate
+### H4. `PresentationConsole.tsx` — No visual prompt telling the player to activate
 
 | Field | Value |
 |---|---|
@@ -72,7 +58,6 @@
 | **User Impact** | Players may not know they need to click the console to start the presentation. They could be stuck waiting indefinitely. |
 | **Recommended Fix** | Add a pulsating glow or label on the console when phase is `'presentation'`, and/or show a "PRESENT YOUR PROJECT" HUD prompt. |
 
----
 
 ## MEDIUM
 
