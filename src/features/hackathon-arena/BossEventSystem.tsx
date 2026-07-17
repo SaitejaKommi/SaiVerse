@@ -12,6 +12,7 @@ export function BossEventSystem() {
   const assignedRef = useRef<Record<string, string[]>>({})
   const triggeredRef = useRef<Set<string>>(new Set())
   const sprintEventIdxRef = useRef<Record<string, number>>({})
+  const cooldownRef = useRef(0)
 
   useEffect(() => {
     eventsRef.current = pickBossEvents()
@@ -32,7 +33,7 @@ export function BossEventSystem() {
     assignedRef.current = assigned
   }, [])
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     const store = useHackathonStore.getState()
     const phase = store.phase
     const currentProgress = store.sprintProgress
@@ -64,6 +65,12 @@ export function BossEventSystem() {
     // Don't trigger if already handling a setback
     if (activeSetback) return
 
+    // Enforce cooldown between boss events
+    if (cooldownRef.current > 0) {
+      cooldownRef.current -= delta
+      return
+    }
+
     // Trigger event when progress crosses 40% and we have events left
     const eventId = sprintEvents[currentIdx]
     if (eventId && currentProgress >= 0.4 && !triggeredRef.current.has(eventId)) {
@@ -84,6 +91,7 @@ export function BossEventSystem() {
     // Detect resolution (setback cleared by DebugStation)
     if (!store.activeSetback && eventId && triggeredRef.current.has(eventId)) {
       sprintEventIdxRef.current[phase] = currentIdx + 1
+      cooldownRef.current = 5
     }
   })
 
