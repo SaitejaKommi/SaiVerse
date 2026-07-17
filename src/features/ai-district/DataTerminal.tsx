@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useMemo, useCallback } from 'react'
+import { useRef, useMemo, useCallback } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
@@ -39,10 +39,19 @@ export function DataTerminal() {
   const completedRef = useRef(false)
   const playerNearRef = useRef(false)
   const organizedRef = useRef(false)
-  const dataPoints = useRef<ReturnType<typeof createDataPoint>[]>([])
   const notifyDone = useRef(false)
   const notif = useNotificationStore()
   const meshRefs = useRef<THREE.Mesh[]>([])
+
+  const dataPoints = useMemo(() => {
+    const points: ReturnType<typeof createDataPoint>[] = []
+    for (let c = 0; c < CLUSTER_COLORS.length; c++) {
+      for (let i = 0; i < POINTS_PER_CLUSTER; i++) {
+        points.push(createDataPoint(CLUSTER_COLORS[c]!, c))
+      }
+    }
+    return points
+  }, [])
 
   const domeMat = useMemo(() => new THREE.MeshBasicMaterial({
     color: '#00d4ff',
@@ -61,15 +70,7 @@ export function DataTerminal() {
     depthWrite: false,
   }), [])
 
-  useEffect(() => {
-    const points: ReturnType<typeof createDataPoint>[] = []
-    for (let c = 0; c < CLUSTER_COLORS.length; c++) {
-      for (let i = 0; i < POINTS_PER_CLUSTER; i++) {
-        points.push(createDataPoint(CLUSTER_COLORS[c]!, c))
-      }
-    }
-    dataPoints.current = points
-  }, [])
+
 
   useFrame((state, delta) => {
     const player = useGameStore.getState().player
@@ -105,7 +106,7 @@ export function DataTerminal() {
       for (let i = 0; i < meshRefs.current.length; i++) {
         const mesh = meshRefs.current[i]
         if (!mesh) continue
-        const dp = dataPoints.current[i]
+        const dp = dataPoints[i]
         if (!dp) continue
 
         const ease = Math.min(1, progressRef.current * 2)
@@ -124,7 +125,7 @@ export function DataTerminal() {
       for (let i = 0; i < meshRefs.current.length; i++) {
         const mesh = meshRefs.current[i]
         if (!mesh) continue
-        const dp = dataPoints.current[i]
+        const dp = dataPoints[i]
         if (!dp) continue
         mesh.position.set(
           dp.pos.x + Math.sin(t * dp.speed + dp.offset) * 0.3,
@@ -144,10 +145,10 @@ export function DataTerminal() {
   })
 
   const registerMesh = useCallback((mesh: THREE.Mesh | null) => {
-    if (mesh && meshRefs.current.length < dataPoints.current.length) {
+    if (mesh && meshRefs.current.length < dataPoints.length) {
       meshRefs.current.push(mesh)
     }
-  }, [])
+  }, [dataPoints.length])
 
   return (
     <group ref={groupRef} position={STATION_POS}>
