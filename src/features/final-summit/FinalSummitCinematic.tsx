@@ -5,13 +5,11 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
-import { ChapterManager } from '@/systems/chapter/ChapterManager'
 import { soundFX } from '@/systems/audio/SoundFX'
 import { EventBus } from '@/lib/events/EventBus'
 import { GameEvents } from '@/lib/events/events.types'
 import { FS_QUEST_ID } from '@/data/final-summit/fs-quest'
 
-const CHAPTER_ID = 'chapter-7'
 const CAMERA_PULLBACK_DURATION = 6
 
 const CINEMATIC_START = new THREE.Vector3(0, 2, -348)
@@ -40,8 +38,6 @@ export function FinalSummitCinematic() {
       rewardsApplied.current = true
 
       QuestManager.completeObjective(FS_QUEST_ID, 'obj-pedestal')
-
-      ChapterManager.completeChapter(CHAPTER_ID)
 
       soundFX.playBadgeEarned()
 
