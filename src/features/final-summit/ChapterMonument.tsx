@@ -181,21 +181,21 @@ export function ChapterMonument({ monument, onActivate, activated }: {
 export function Monuments() {
   const [activatedMap, setActivatedMap] = useState<Record<string, boolean>>({})
   const groupRef = useRef<THREE.Group>(null)
+  const activatedRef = useRef<Set<string>>(new Set())
 
   const handleActivate = useCallback((id: string) => {
-    setActivatedMap((prev) => {
-      if (prev[id]) return prev
+    if (activatedRef.current.has(id)) return
+    activatedRef.current.add(id)
 
-      const index = MONUMENT_DATA.findIndex((m) => m.id === id)
-      soundFX.playQuestComplete()
+    const index = MONUMENT_DATA.findIndex((m) => m.id === id)
+    if (index === -1) return
 
-      const qKey = `obj-monument-${index}` as const
-      QuestManager.completeObjective(FS_QUEST_ID, qKey)
+    setActivatedMap((prev) => ({ ...prev, [id]: true }))
 
-      soundFX.playUIBeep(800, 0.15, 0.1)
-
-      return { ...prev, [id]: true }
-    })
+    const qKey = `obj-monument-${index}` as const
+    QuestManager.completeObjective(FS_QUEST_ID, qKey)
+    soundFX.playQuestComplete()
+    soundFX.playUIBeep(800, 0.15, 0.1)
   }, [])
 
   return (
