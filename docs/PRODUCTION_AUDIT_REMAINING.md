@@ -8,7 +8,9 @@
 
 ## CRITICAL
 
-### C1. `ChapterMonument.tsx` — Side effects inside `setActivatedMap` updater
+### C1. `ChapterMonument.tsx` — Side effects inside `setActivatedMap` updater `[FIXED]`
+
+> Fixed in commit `5f3a844`. Replaced impure `setActivatedMap((prev) => { sideEffects; return newState })` with a ref-based guard (`activatedRef`) and separate setState + side effect calls.
 
 | Field | Value |
 |---|---|

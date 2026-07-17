@@ -362,7 +362,7 @@ export function TechMentorNPC() {
       unsubAdvance()
       unsubEnd()
     }
-  }, [dialogueStore, notif, endInteraction, playerStore])
+  }, [notif, endInteraction])
 
   return (
     <group position={NPC_POSITION}>
