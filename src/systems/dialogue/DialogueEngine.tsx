@@ -19,6 +19,7 @@ export function useDialogueEngine() {
 
   const timerRef = useRef<ReturnType<typeof setInterval>>(null)
   const charIndexRef = useRef(0)
+  const textRevealedAtRef = useRef(0)
 
   const stopTyping = useCallback(() => {
     if (timerRef.current) {
@@ -31,6 +32,7 @@ export function useDialogueEngine() {
   const startTyping = useCallback((text: string, fast = false) => {
     stopTyping()
     charIndexRef.current = 0
+    textRevealedAtRef.current = 0
     setDisplayedText('')
     setIsTyping(true)
 
@@ -40,6 +42,7 @@ export function useDialogueEngine() {
       charIndexRef.current++
       if (charIndexRef.current >= text.length) {
         setDisplayedText(text)
+        textRevealedAtRef.current = Date.now()
         stopTyping()
         return
       }
@@ -50,6 +53,7 @@ export function useDialogueEngine() {
   const advance = useCallback(() => {
     if (isTyping) {
       stopTyping()
+      textRevealedAtRef.current = Date.now()
       setDisplayedText(currentNode?.text ?? '')
       return
     }
@@ -61,6 +65,9 @@ export function useDialogueEngine() {
     if (currentNode?.nextNodeId) {
       goToNode(currentNode.nextNodeId)
     } else {
+      if (Date.now() - textRevealedAtRef.current < 400) {
+        return
+      }
       closeDialogue()
     }
   }, [isTyping, currentNode, stopTyping, setDisplayedText, goToNode, closeDialogue])
