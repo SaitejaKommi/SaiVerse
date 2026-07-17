@@ -66,31 +66,27 @@ export function DebugStation() {
 
   const handleToggle = useCallback((index: number) => {
     if (!isActive || solved) return
-    setSwitches((prev) => {
-      const next = [...prev]
-      next[index] = !next[index]
+    const next = [...switches]
+    next[index] = !next[index]
+    setSwitches(next)
 
-      // Check if solved
-      const allMatch = next.every((v, i) => v === solution[i])
-      if (allMatch) {
-        setSolved(true)
-        soundFX.playQuestComplete()
-        const store = useHackathonStore.getState()
-        store.setActiveSetback(null)
-        store.modifyTeamEnergy(10)
-        store.incrementSetbacksResolved()
+    const allMatch = next.every((v, i) => v === solution[i])
+    if (allMatch) {
+      setSolved(true)
+      soundFX.playQuestComplete()
+      const store = useHackathonStore.getState()
+      store.setActiveSetback(null)
+      store.modifyTeamEnergy(10)
+      store.incrementSetbacksResolved()
 
-        setTimeout(() => {
-          setSolved(false)
-          setSwitches([false, false, false])
-        }, 1500)
-      } else {
-        soundFX.playQuestAccept()
-      }
-
-      return next
-    })
-  }, [isActive, solved, solution])
+      setTimeout(() => {
+        setSolved(false)
+        setSwitches([false, false, false])
+      }, 1500)
+    } else {
+      soundFX.playQuestAccept()
+    }
+  }, [isActive, solved, solution, switches])
 
   const labelTexture = useMemo(() => {
     const c = document.createElement('canvas'); c.width = 256; c.height = 32
