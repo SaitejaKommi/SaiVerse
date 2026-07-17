@@ -191,7 +191,7 @@ function SwitchMesh({ position, toggled, onClick, isActive }: {
   })
 
   return (
-    <mesh ref={ref} position={position} onClick={isActive ? onClick : undefined}>
+    <mesh ref={ref} position={position} onClick={() => isActive && onClick()}>
       <boxGeometry args={[0.08, 0.12, 0.04]} />
       <meshStandardMaterial color="#333344" metalness={0.5} roughness={0.4} />
     </mesh>

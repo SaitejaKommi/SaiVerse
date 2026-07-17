@@ -339,6 +339,8 @@ export function ProfessorNPC() {
         if (accepted) {
           soundFX.playQuestAccept()
           notif.addNotification('quest', 'Quest Started', 'The First Lesson — Study, write, and show your work')
+        } else {
+          notif.addNotification('system', 'Cannot start quest', 'Complete active quests first', undefined, 5000)
         }
       }
     })

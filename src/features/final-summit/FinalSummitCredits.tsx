@@ -1,29 +1,42 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { useGameStore } from '@/stores/gameStore'
+import { useQuestStore } from '@/stores/questStore'
+import { usePlayerStore } from '@/stores/playerStore'
 
-const CREDITS = [
-  { type: 'title', text: 'SAIVERSE' },
-  { type: 'subtitle', text: 'An Interactive 3D Adventure Game' },
-  { type: 'spacer' },
-  { type: 'label', text: 'Created by' },
-  { type: 'name', text: 'Saiteja Kommi' },
-  { type: 'spacer' },
-  { type: 'label', text: 'Built with' },
-  { type: 'tech', text: 'Next.js \u00b7 React Three Fiber \u00b7 Three.js' },
-  { type: 'tech', text: 'Rapier \u00b7 GSAP \u00b7 Framer Motion \u00b7 Zustand' },
-  { type: 'spacer' },
-  { type: 'label', text: 'Special Thanks' },
-  { type: 'thanks', text: 'To everyone who believed in the journey.' },
-  { type: 'spacer' },
-  { type: 'spacer' },
-  { type: 'final-line', text: 'Every project began as an idea.' },
-  { type: 'final-line', text: 'Every skill began with a first attempt.' },
-  { type: 'final-line', text: 'This was my journey.' },
-  { type: 'spacer' },
-  { type: 'final-line-em', text: 'Now go build yours.' },
-]
+function buildCredits() {
+  const questCount = useQuestStore.getState().completedQuestIds.length
+  const knowledge = usePlayerStore.getState().knowledge
+  const badges = usePlayerStore.getState().badges
+
+  return [
+    { type: 'title', text: 'SAIVERSE' },
+    { type: 'subtitle', text: 'An Interactive 3D Adventure Game' },
+    { type: 'spacer' },
+    { type: 'label', text: 'Created by' },
+    { type: 'name', text: 'Saiteja Kommi' },
+    { type: 'spacer' },
+    { type: 'label', text: 'Your Journey' },
+    { type: 'stat', text: `Quests Completed: ${questCount}` },
+    { type: 'stat', text: `Knowledge Gained: ${knowledge}` },
+    { type: 'stat', text: `Badges Earned: ${badges.length}` },
+    { type: 'spacer' },
+    { type: 'label', text: 'Built with' },
+    { type: 'tech', text: 'Next.js · React Three Fiber · Three.js' },
+    { type: 'tech', text: 'Rapier · GSAP · Framer Motion · Zustand' },
+    { type: 'spacer' },
+    { type: 'label', text: 'Special Thanks' },
+    { type: 'thanks', text: 'To everyone who believed in the journey.' },
+    { type: 'spacer' },
+    { type: 'spacer' },
+    { type: 'final-line', text: 'Every project began as an idea.' },
+    { type: 'final-line', text: 'Every skill began with a first attempt.' },
+    { type: 'final-line', text: 'This was my journey.' },
+    { type: 'spacer' },
+    { type: 'final-line-em', text: 'Now go build yours.' },
+  ]
+}
 
 function FinalMessageOverlay({ onExplore }: { onExplore: () => void }) {
   const [visible, setVisible] = useState(false)
@@ -81,6 +94,7 @@ export function FinalSummitCredits() {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef(0)
   const scrollPhaseRef = useRef<'scrolling' | 'fade' | 'final' | 'done'>('scrolling')
+  const credits = useMemo(() => buildCredits(), [])
 
   useEffect(() => {
     if (finalePhase !== 'complete_show') return
@@ -89,7 +103,7 @@ export function FinalSummitCredits() {
     scrollRef.current = 0
     let animId: number
     const startTime = Date.now()
-    const totalDuration = CREDITS.length * 2000 + 3000
+    const totalDuration = credits.length * 2000 + 3000
 
     const tick = () => {
       const elapsed = Date.now() - startTime
@@ -119,7 +133,7 @@ export function FinalSummitCredits() {
     animId = requestAnimationFrame(tick)
 
     return () => cancelAnimationFrame(animId)
-  }, [finalePhase])
+  }, [finalePhase, credits])
 
   const handleExplore = () => {
     window.open('https://github.com/SaitejaKommi', '_blank')
@@ -134,7 +148,7 @@ export function FinalSummitCredits() {
       {finalePhase === 'complete_show' && scrollPhase !== 'final' && scrollPhase !== 'done' && (
         <div className="fixed inset-0 z-[100] bg-[#020617] overflow-hidden">
           <div ref={containerRef} className="flex flex-col items-center pt-[50vh] gap-6">
-            {CREDITS.map((item, i) => {
+            {credits.map((item: any, i: number) => {
               if (item.type === 'spacer') return <div key={i} className="h-8" />
               if (item.type === 'title') {
                 return (
@@ -151,6 +165,9 @@ export function FinalSummitCredits() {
               }
               if (item.type === 'name') {
                 return <div key={i} className="text-white/90 text-xl font-mono">{item.text}</div>
+              }
+              if (item.type === 'stat') {
+                return <div key={i} className="text-white/70 text-sm font-mono">{item.text}</div>
               }
               if (item.type === 'tech') {
                 return <div key={i} className="text-white/60 text-sm font-mono">{item.text}</div>
