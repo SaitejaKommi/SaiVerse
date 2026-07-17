@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useGameStore } from '@/stores/gameStore'
 import { usePlayerStore } from '@/stores/playerStore'
 import { useQuestStore } from '@/stores/questStore'
+import { useChapterStore } from '@/systems/chapter/ChapterStore'
 import { ChapterManager } from '@/systems/chapter/ChapterManager'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { NeonText } from '@/components/ui/NeonText'
@@ -41,28 +42,23 @@ function KnowledgeBar() {
 }
 
 function CurrentChapter() {
-  const [chapterText, setChapterText] = useState('')
+  const entries = useChapterStore((s) => s.entries)
 
-  useEffect(() => {
+  const chapterText = useMemo(() => {
     const current = ChapterManager.getCurrentChapter()
-    if (current) {
-      setChapterText(current.title)
-      return
-    }
+    if (current) return current.title
     const completed = ChapterManager.getCompletedIds()
     const lastId = completed.length > 0 ? completed[completed.length - 1] : undefined
     if (lastId) {
       const last = ChapterManager.getConfig(lastId)
       if (last?.nextChapterId) {
         const next = ChapterManager.getConfig(last.nextChapterId)
-        if (next) {
-          setChapterText(`Next: ${next.title}`)
-          return
-        }
+        if (next) return `Next: ${next.title}`
       }
-      setChapterText(`${last?.title ?? 'Complete'} ✓`)
+      return `${last?.title ?? 'Complete'} ✓`
     }
-  }, [])
+    return ''
+  }, [entries])
 
   if (!chapterText) return null
 
