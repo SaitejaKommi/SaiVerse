@@ -11,20 +11,20 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 0 |
-| Remaining Issues | 56 |
+| Completed Issues | 1 |
+| Remaining Issues | 55 |
 | Current Phase | Phase 1 — Sky |
-| Completion | 0% |
+| Completion | 1.8% |
 
 ---
 
 ## Progress By Phase
 
-### Phase 1 — Immediate Visual Impact (0 / 6 issues)
+### Phase 1 — Immediate Visual Impact (1 / 6 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
-| 1 | Skybox clouds, stars, moon | `Skybox.tsx` | ⏳ Pending | — |
+| 1 | Skybox clouds, stars, moon | `Skybox.tsx` | ✅ Done | `47469ee` |
 | 2 | Lighting preset & day/ncycle | `LightingManager.tsx`, `DayNightCycle.ts` | ⏳ Pending | — |
 | 3 | Fog visual application | `WeatherManager.tsx` | ⏳ Pending | — |
 | 4 | Water surfaces | New water component | ⏳ Pending | — |
@@ -115,4 +115,4 @@
 
 | Date | Commit | Phase | Issue | Description |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| 2026-07-18 | `47469ee` | Phase 1 | #1 | Skybox: clouds, stars, moon, sun glow |
