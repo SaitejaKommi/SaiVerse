@@ -14,15 +14,16 @@ interface LightingManagerProps {
 }
 
 export function LightingManager({
-  preset = 'night',
+  preset = 'city',
   enableShadows = true,
   enableDayNight = true,
 }: LightingManagerProps) {
   const directionalRef = useRef<DirectionalLight>(null)
+  const moonRef = useRef<DirectionalLight>(null)
 
   return (
     <>
-      {enableDayNight && <DayNightCycle />}
+      {enableDayNight && <DayNightCycle sunRef={directionalRef} moonRef={moonRef} />}
 
       <ambientLight
         intensity={LIGHTING_CONFIG.AMBIENT_INTENSITY}
@@ -39,7 +40,7 @@ export function LightingManager({
 
       <directionalLight
         ref={directionalRef}
-        position={LIGHTING_CONFIG.SUN_POSITION}
+        position={[LIGHTING_CONFIG.SUN_ORBIT_RADIUS, LIGHTING_CONFIG.SUN_HEIGHT_OFFSET, -30]}
         intensity={LIGHTING_CONFIG.SUN_INTENSITY}
         castShadow={enableShadows}
         shadow-mapSize-width={LIGHTING_CONFIG.SHADOW_MAP_SIZE}
@@ -51,6 +52,13 @@ export function LightingManager({
         shadow-camera-bottom={-50}
         shadow-bias={LIGHTING_CONFIG.SHADOW_BIAS}
         shadow-normalBias={LIGHTING_CONFIG.SHADOW_NORMAL_BIAS}
+      />
+
+      <directionalLight
+        ref={moonRef}
+        position={[-LIGHTING_CONFIG.SUN_ORBIT_RADIUS, -LIGHTING_CONFIG.SUN_HEIGHT_OFFSET, -30]}
+        intensity={0}
+        color={LIGHTING_CONFIG.MOON_COLOR}
       />
 
       <Environment preset={preset} />
