@@ -11,22 +11,22 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 1 |
-| Remaining Issues | 55 |
-| Current Phase | Phase 1 — Sky |
-| Completion | 1.8% |
+| Completed Issues | 3 |
+| Remaining Issues | 53 |
+| Current Phase | Phase 1 — Water |
+| Completion | 5.4% |
 
 ---
 
 ## Progress By Phase
 
-### Phase 1 — Immediate Visual Impact (1 / 6 issues)
+### Phase 1 — Immediate Visual Impact (3 / 6 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
 | 1 | Skybox clouds, stars, moon | `Skybox.tsx` | ✅ Done | `47469ee` |
 | 2 | Lighting preset & day/ncycle | `LightingManager.tsx`, `DayNightCycle.ts` | ⏳ Pending | — |
-| 3 | Fog visual application | `WeatherManager.tsx` | ⏳ Pending | — |
+| 3 | Fog visual application | `WeatherManager.tsx` | ✅ Done | `32a798f` |
 | 4 | Water surfaces | New water component | ⏳ Pending | — |
 | 5 | Terrain textures | `Terrain.tsx` | ⏳ Pending | — |
 | 6 | Post-processing stack | New post-processing setup | ⏳ Pending | — |
@@ -116,3 +116,5 @@
 | Date | Commit | Phase | Issue | Description |
 |---|---|---|---|---|
 | 2026-07-18 | `47469ee` | Phase 1 | #1 | Skybox: clouds, stars, moon, sun glow |
+| 2026-07-18 | `e64505b` | Phase 1 | #2 | Lighting: dynamic sun, moon light, neutral preset |
+| 2026-07-18 | `32a798f` | Phase 1 | #3 | Fog: volumetric fog applied based on weather |

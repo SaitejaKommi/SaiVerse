@@ -10,6 +10,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
+import { Water } from '@/systems/environment/Water'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { DataTerminal } from '@/features/ai-district/DataTerminal'
 import { TrainingConsole } from '@/features/ai-district/TrainingConsole'
@@ -153,6 +154,14 @@ export function AIDistrictEnvironment() {
 
       {/* Roads */}
       <RoadSystem segments={AI_ROADS as any} />
+
+      {/* Reflective water surface around AI district */}
+      <Water
+        position={[0, -0.08, -370]}
+        size={[100, 120]}
+        color='#0a2a4a'
+        opacity={0.55}
+      />
 
       {/* Neon signs */}
       <DistrictNeonSign position={[0, 8, -370]} text="AI RESEARCH DISTRICT" color="#a855f7" />
