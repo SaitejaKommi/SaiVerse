@@ -11,16 +11,16 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 4 |
-| Remaining Issues | 52 |
-| Current Phase | Phase 1 — Terrain |
-| Completion | 7.1% |
+| Completed Issues | 5 |
+| Remaining Issues | 51 |
+| Current Phase | Phase 1 — Post-processing |
+| Completion | 8.9% |
 
 ---
 
 ## Progress By Phase
 
-### Phase 1 — Immediate Visual Impact (4 / 6 issues)
+### Phase 1 — Immediate Visual Impact (5 / 6 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
@@ -28,7 +28,7 @@
 | 2 | Lighting preset & day/ncycle | `LightingManager.tsx`, `DayNightCycle.ts` | ✅ Done | `e64505b` |
 | 3 | Fog visual application | `WeatherManager.tsx` | ✅ Done | `32a798f` |
 | 4 | Water surfaces | `Water.tsx`, `Fountain.tsx`, `AIDistrictEnvironment.tsx` | ✅ Done | `3117e52` |
-| 5 | Terrain textures | `Terrain.tsx` | ⏳ Pending | — |
+| 5 | Terrain textures | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `3f5d8ad` |
 | 6 | Post-processing stack | New post-processing setup | ⏳ Pending | — |
 
 ### Phase 2 — Environment Identity (0 / 8 issues)
@@ -119,3 +119,4 @@
 | 2026-07-18 | `e64505b` | Phase 1 | #2 | Lighting: dynamic sun, moon light, neutral preset |
 | 2026-07-18 | `32a798f` | Phase 1 | #3 | Fog: volumetric fog applied based on weather |
 | 2026-07-18 | `3117e52` | Phase 1 | #4 | Water: animated Water component, Fountain + AI District lake |
+| 2026-07-18 | `3f5d8ad` | Phase 1 | #5 | Terrain: segments 8, vertex displacement, district-specific colors |
