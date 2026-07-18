@@ -6,6 +6,7 @@ import { FastTravelProvider, useFastTravel } from '@/systems/world/FastTravel'
 import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
 import { useChapterStore } from '@/systems/chapter/ChapterStore'
 import { Terrain } from '@/systems/world/Terrain'
+import { DISTRICT_TERRAIN_COLORS } from '@/systems/world/world.config'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { WorldStreamer } from '@/systems/world/WorldStreamer'
 import { Building } from '@/systems/environment/Building'
@@ -199,13 +200,13 @@ export function BengaluruHub() {
           <WeatherManager enableCycle={true} initialWeather="clear" />
           <ParticleManager maxParticles={2000} rainArea={80} />
 
-          <Terrain tiles={TERRAIN_TILES} size={50} />
-          <Terrain tiles={SC_TERRAIN_TILES} size={50} />
-          <Terrain tiles={AI_TERRAIN_TILES} size={50} />
-          <Terrain tiles={OSV_TERRAIN_TILES} size={50} />
-          <Terrain tiles={HA_TERRAIN_TILES} size={50} />
-          <Terrain tiles={CD_TERRAIN_TILES} size={50} />
-          <Terrain tiles={FS_TERRAIN_TILES} size={50} />
+          <Terrain tiles={TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS.hub} />
+          <Terrain tiles={SC_TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS['software-city']} />
+          <Terrain tiles={AI_TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS['ai-district']} />
+          <Terrain tiles={OSV_TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS['open-source-valley']} />
+          <Terrain tiles={HA_TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS['hackathon-arena']} />
+          <Terrain tiles={CD_TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS['career-district']} />
+          <Terrain tiles={FS_TERRAIN_TILES} size={50} colors={DISTRICT_TERRAIN_COLORS['final-summit']} />
           <RoadSystem segments={ROAD_SEGMENTS} />
 
           <HubEnvironment />

@@ -62,7 +62,7 @@ export const WORLD_CONFIG: WorldConfig = {
   UNLOAD_RADIUS: 5,
   MAX_LOADED_CHUNKS: 25,
   CHUNK_UNLOAD_DELAY: 5000,
-  TERRAIN_SEGMENTS: 1,
+  TERRAIN_SEGMENTS: 8,
   TERRAIN_SIZE: 50,
 }
 
@@ -72,6 +72,80 @@ export const TERRAIN_COLORS: TerrainColors = {
   pavement: '#5a5a5a',
   plaza: '#6a6a6a',
   dirt: '#6b4a3a',
+}
+
+export type DistrictTerrainColors = {
+  grass: string
+  road: string
+  pavement: string
+  plaza: string
+  dirt: string
+}
+
+export const DISTRICT_TERRAIN_COLORS: Record<string, DistrictTerrainColors> = {
+  default: {
+    grass: '#4a7c59',
+    road: '#3a3a3a',
+    pavement: '#5a5a5a',
+    plaza: '#6a6a6a',
+    dirt: '#6b4a3a',
+  },
+  hub: {
+    grass: '#4a7c59',
+    road: '#3a3a3a',
+    pavement: '#5a5a5a',
+    plaza: '#7a7a6a',
+    dirt: '#6b4a3a',
+  },
+  campus: {
+    grass: '#3a7a33',
+    road: '#3a3a3a',
+    pavement: '#5a5a5a',
+    plaza: '#6a7a5a',
+    dirt: '#6b4a3a',
+  },
+  'software-city': {
+    grass: '#3a6a5a',
+    road: '#2a2a3a',
+    pavement: '#4a4a5a',
+    plaza: '#5a5a7a',
+    dirt: '#4a3a3a',
+  },
+  'ai-district': {
+    grass: '#1a1a2e',
+    road: '#1a1a2a',
+    pavement: '#2a2a4a',
+    plaza: '#2a2a3e',
+    dirt: '#1a1a2e',
+  },
+  'open-source-valley': {
+    grass: '#4a8a5a',
+    road: '#3a3a3a',
+    pavement: '#5a6a5a',
+    plaza: '#6a8a6a',
+    dirt: '#5a4a3a',
+  },
+  'hackathon-arena': {
+    grass: '#3a5a4a',
+    road: '#2a3a3a',
+    pavement: '#4a5a5a',
+    plaza: '#5a6a6a',
+    dirt: '#3a4a3a',
+  },
+  'career-district': {
+    grass: '#4a6a5a',
+    road: '#3a3a4a',
+    pavement: '#5a5a6a',
+    plaza: '#6a6a7a',
+    dirt: '#4a3a4a',
+  },
+  'final-summit': {
+    grass: '#2a4a3a',
+    road: '#2a2a3a',
+    pavement: '#3a3a5a',
+    plaza: '#4a4a6a',
+    dirt: '#2a3a2a',
+  },
 }
 
 export const ROAD_CONFIG: RoadConfig = {
