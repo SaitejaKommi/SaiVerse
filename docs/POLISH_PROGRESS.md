@@ -11,23 +11,23 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 3 |
-| Remaining Issues | 53 |
-| Current Phase | Phase 1 — Water |
-| Completion | 5.4% |
+| Completed Issues | 4 |
+| Remaining Issues | 52 |
+| Current Phase | Phase 1 — Terrain |
+| Completion | 7.1% |
 
 ---
 
 ## Progress By Phase
 
-### Phase 1 — Immediate Visual Impact (3 / 6 issues)
+### Phase 1 — Immediate Visual Impact (4 / 6 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
 | 1 | Skybox clouds, stars, moon | `Skybox.tsx` | ✅ Done | `47469ee` |
-| 2 | Lighting preset & day/ncycle | `LightingManager.tsx`, `DayNightCycle.ts` | ⏳ Pending | — |
+| 2 | Lighting preset & day/ncycle | `LightingManager.tsx`, `DayNightCycle.ts` | ✅ Done | `e64505b` |
 | 3 | Fog visual application | `WeatherManager.tsx` | ✅ Done | `32a798f` |
-| 4 | Water surfaces | New water component | ⏳ Pending | — |
+| 4 | Water surfaces | `Water.tsx`, `Fountain.tsx`, `AIDistrictEnvironment.tsx` | ✅ Done | `3117e52` |
 | 5 | Terrain textures | `Terrain.tsx` | ⏳ Pending | — |
 | 6 | Post-processing stack | New post-processing setup | ⏳ Pending | — |
 
@@ -118,3 +118,4 @@
 | 2026-07-18 | `47469ee` | Phase 1 | #1 | Skybox: clouds, stars, moon, sun glow |
 | 2026-07-18 | `e64505b` | Phase 1 | #2 | Lighting: dynamic sun, moon light, neutral preset |
 | 2026-07-18 | `32a798f` | Phase 1 | #3 | Fog: volumetric fog applied based on weather |
+| 2026-07-18 | `3117e52` | Phase 1 | #4 | Water: animated Water component, Fountain + AI District lake |
