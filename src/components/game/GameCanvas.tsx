@@ -11,6 +11,7 @@ import { Chapter2Finale } from '@/features/cinematics/Chapter2Finale'
 import { Chapter3Finale } from '@/features/cinematics/Chapter3Finale'
 import { ControlsOverlay } from '@/features/ui/ControlsOverlay'
 import { FinalSummitCredits } from '@/features/final-summit/FinalSummitCredits'
+import { PostProcessing } from '@/systems/effects/PostProcessing'
 
 class CanvasErrorBoundary extends Component<
   { children: ReactNode; onError: () => void },
@@ -75,8 +76,6 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
           dpr={[1, 2]}
           gl={{
             antialias: true,
-            toneMapping: 3,
-            toneMappingExposure: 1.0,
             powerPreference: 'high-performance',
             failIfMajorPerformanceCaveat: false,
           }}
@@ -88,6 +87,7 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
           }}
           onCreated={handleCreated}
         >
+          <PostProcessing />
           <GameEngine
             enableDebug={process.env.NODE_ENV === 'development'}
             enablePhysics={true}
