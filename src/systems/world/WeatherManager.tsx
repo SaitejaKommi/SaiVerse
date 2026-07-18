@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
+import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { WEATHER_CONFIG } from './world.config'
 import type { WeatherType } from './world.types'
@@ -19,6 +20,14 @@ interface WeatherManagerProps {
   cycleInterval?: [number, number]
 }
 
+const FOG_DENSITY_MAP: Record<WeatherType, number> = {
+  clear: 0,
+  cloudy: 0.002,
+  foggy: 0.014,
+  rainy: 0.005,
+  stormy: 0.008,
+}
+
 export function WeatherManager({
   enableCycle = true,
   initialWeather,
@@ -33,6 +42,9 @@ export function WeatherManager({
   const isTransitioning = useRef(false)
   const timeInWeather = useRef(0)
   const nextChangeTime = useRef(60)
+  const { scene } = useThree()
+  const currentFogDensity = useRef(0)
+  const fogRef = useRef<THREE.FogExp2 | null>(null)
 
   useEffect(() => {
     if (initialWeather) {
@@ -62,6 +74,7 @@ export function WeatherManager({
       }
     }
 
+    let targetFogDensity: number
     if (isTransitioning.current) {
       transitionRef.current += dt / WEATHER_CONFIG.TRANSITION_DURATION
 
@@ -77,12 +90,30 @@ export function WeatherManager({
       const targetIntensity = getWeatherIntensity(targetWeatherRef.current)
       const intensity = currentIntensity + (targetIntensity - currentIntensity) * t
 
+      const currentFog = FOG_DENSITY_MAP[currentWeatherRef.current]
+      const nextFog = FOG_DENSITY_MAP[targetWeatherRef.current]
+      targetFogDensity = currentFog + (nextFog - currentFog) * t
+
       setWeatherIntensity(intensity)
       setWindStrength(getWindStrength(currentWeatherRef.current, targetWeatherRef.current, t))
     } else {
       const steadyIntensity = getWeatherIntensity(currentWeatherRef.current)
+      targetFogDensity = FOG_DENSITY_MAP[currentWeatherRef.current]
       setWeatherIntensity(steadyIntensity)
       setWindStrength(getWindStrength(currentWeatherRef.current, currentWeatherRef.current, 0))
+    }
+
+    currentFogDensity.current += (targetFogDensity - currentFogDensity.current) * Math.min(dt * 2, 1)
+    if (currentFogDensity.current > 0.001) {
+      if (!fogRef.current) {
+        fogRef.current = new THREE.FogExp2(0x0a0a1e, currentFogDensity.current)
+        scene.fog = fogRef.current
+      } else {
+        fogRef.current.density = currentFogDensity.current
+      }
+    } else if (fogRef.current) {
+      scene.fog = null
+      fogRef.current = null
     }
   })
 
