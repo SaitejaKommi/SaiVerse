@@ -8,14 +8,6 @@ interface WorldConfig {
   TERRAIN_SIZE: number
 }
 
-interface TerrainColors {
-  grass: string
-  road: string
-  pavement: string
-  plaza: string
-  dirt: string
-}
-
 interface RoadConfig {
   DEFAULT_WIDTH: number
   MIN_SEGMENT_LENGTH: number
@@ -66,85 +58,124 @@ export const WORLD_CONFIG: WorldConfig = {
   TERRAIN_SIZE: 50,
 }
 
-export const TERRAIN_COLORS: TerrainColors = {
-  grass: '#4a7c59',
-  road: '#3a3a3a',
-  pavement: '#5a5a5a',
-  plaza: '#6a6a6a',
-  dirt: '#6b4a3a',
+export type TextureStyle = 'none' | 'noise' | 'grid'
+
+export interface SurfaceMaterialConfig {
+  color: string
+  roughness: number
+  metalness: number
+  texture?: TextureStyle
 }
 
-export type DistrictTerrainColors = {
-  grass: string
-  road: string
-  pavement: string
-  plaza: string
-  dirt: string
+export type DistrictTerrainConfig = {
+  grass: SurfaceMaterialConfig
+  road: SurfaceMaterialConfig
+  pavement: SurfaceMaterialConfig
+  plaza: SurfaceMaterialConfig
+  dirt: SurfaceMaterialConfig
 }
 
-export const DISTRICT_TERRAIN_COLORS: Record<string, DistrictTerrainColors> = {
+const defaultSurface = (color: string, extra?: Partial<SurfaceMaterialConfig>): SurfaceMaterialConfig => ({
+  color,
+  roughness: 0.9,
+  metalness: 0,
+  texture: 'noise',
+  ...extra,
+})
+
+const roadSurface = (color: string): SurfaceMaterialConfig => ({
+  color,
+  roughness: 0.8,
+  metalness: 0.1,
+  texture: 'none',
+})
+
+const pavementSurface = (color: string, extra?: Partial<SurfaceMaterialConfig>): SurfaceMaterialConfig => ({
+  color,
+  roughness: 0.7,
+  metalness: 0.05,
+  texture: 'none',
+  ...extra,
+})
+
+const plazaSurface = (color: string, extra?: Partial<SurfaceMaterialConfig>): SurfaceMaterialConfig => ({
+  color,
+  roughness: 0.6,
+  metalness: 0.1,
+  texture: 'none',
+  ...extra,
+})
+
+const dirtSurface = (color: string): SurfaceMaterialConfig => ({
+  color,
+  roughness: 1,
+  metalness: 0,
+  texture: 'none',
+})
+
+export const DISTRICT_TERRAIN_CONFIG: Record<string, DistrictTerrainConfig> = {
   default: {
-    grass: '#4a7c59',
-    road: '#3a3a3a',
-    pavement: '#5a5a5a',
-    plaza: '#6a6a6a',
-    dirt: '#6b4a3a',
+    grass: defaultSurface('#4a7c59'),
+    road: roadSurface('#3a3a3a'),
+    pavement: pavementSurface('#5a5a5a'),
+    plaza: plazaSurface('#6a6a6a'),
+    dirt: dirtSurface('#6b4a3a'),
   },
   hub: {
-    grass: '#4a7c59',
-    road: '#3a3a3a',
-    pavement: '#5a5a5a',
-    plaza: '#7a7a6a',
-    dirt: '#6b4a3a',
+    grass: defaultSurface('#4a7c59'),
+    road: roadSurface('#3a3a3a'),
+    pavement: pavementSurface('#5a5a5a'),
+    plaza: plazaSurface('#7a7a6a'),
+    dirt: dirtSurface('#6b4a3a'),
   },
   campus: {
-    grass: '#3a7a33',
-    road: '#3a3a3a',
-    pavement: '#5a5a5a',
-    plaza: '#6a7a5a',
-    dirt: '#6b4a3a',
+    grass: defaultSurface('#3a7a33'),
+    road: roadSurface('#3a3a3a'),
+    pavement: pavementSurface('#5a5a5a'),
+    plaza: plazaSurface('#6a7a5a', { roughness: 0.7, metalness: 0.05 }),
+    dirt: dirtSurface('#6b4a3a'),
   },
   'software-city': {
-    grass: '#3a6a5a',
-    road: '#2a2a3a',
-    pavement: '#4a4a5a',
-    plaza: '#5a5a7a',
-    dirt: '#4a3a3a',
+    grass: defaultSurface('#3a6a5a', { roughness: 0.85 }),
+    road: roadSurface('#2a2a3a'),
+    pavement: pavementSurface('#4a4a5a'),
+    plaza: plazaSurface('#5a5a7a', { roughness: 0.5, metalness: 0.2 }),
+    dirt: dirtSurface('#4a3a3a'),
   },
   'ai-district': {
-    grass: '#1a1a2e',
-    road: '#1a1a2a',
-    pavement: '#2a2a4a',
-    plaza: '#2a2a3e',
-    dirt: '#1a1a2e',
+    grass: defaultSurface('#1a1a2e', { roughness: 0.7 }),
+    road: roadSurface('#1a1a2a'),
+    pavement: pavementSurface('#2a2a4a', { roughness: 0.5, metalness: 0.3 }),
+    plaza: plazaSurface('#2a2a3e', { roughness: 0.4, metalness: 0.4, texture: 'grid' }),
+    dirt: dirtSurface('#1a1a2e'),
   },
   'open-source-valley': {
-    grass: '#4a8a5a',
-    road: '#3a3a3a',
-    pavement: '#5a6a5a',
-    plaza: '#6a8a6a',
-    dirt: '#5a4a3a',
+    grass: defaultSurface('#4a8a5a'),
+    road: roadSurface('#3a3a3a'),
+    pavement: pavementSurface('#5a6a5a', { roughness: 0.75, metalness: 0.05 }),
+    plaza: plazaSurface('#6a8a6a', { roughness: 0.65, metalness: 0.05 }),
+    dirt: dirtSurface('#5a4a3a'),
   },
   'hackathon-arena': {
-    grass: '#3a5a4a',
-    road: '#2a3a3a',
-    pavement: '#4a5a5a',
-    plaza: '#5a6a6a',
-    dirt: '#3a4a3a',
+    grass: defaultSurface('#3a5a4a'),
+    road: roadSurface('#2a3a3a'),
+    pavement: pavementSurface('#4a5a5a'),
+    plaza: plazaSurface('#5a6a6a', { roughness: 0.55, metalness: 0.15 }),
+    dirt: dirtSurface('#3a4a3a'),
   },
   'career-district': {
-    grass: '#4a6a5a',
-    road: '#3a3a4a',
-    pavement: '#5a5a6a',
-    plaza: '#6a6a7a',
-    dirt: '#4a3a4a',
+    grass: defaultSurface('#4a6a5a'),
+    road: roadSurface('#3a3a4a'),
+    pavement: pavementSurface('#5a5a6a', { roughness: 0.5, metalness: 0.2 }),
+    plaza: plazaSurface('#6a6a7a', { roughness: 0.4, metalness: 0.25 }),
+    dirt: dirtSurface('#4a3a4a'),
   },
   'final-summit': {
-    grass: '#2a4a3a',
-    road: '#2a2a3a',
-    pavement: '#3a3a5a',
-    plaza: '#4a4a6a',
-    dirt: '#2a3a2a',
+    grass: defaultSurface('#2a4a3a'),
+    road: roadSurface('#2a2a3a'),
+    pavement: pavementSurface('#3a3a5a', { roughness: 0.5, metalness: 0.2 }),
+    plaza: plazaSurface('#4a4a6a', { roughness: 0.4, metalness: 0.3 }),
+    dirt: dirtSurface('#2a3a2a'),
   },
 }
 
