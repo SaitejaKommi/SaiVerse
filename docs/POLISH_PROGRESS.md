@@ -11,10 +11,10 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 7 |
-| Remaining Issues | 49 |
-| Current Phase | Phase 2 — Building variants |
-| Completion | 12.5% |
+| Completed Issues | 8 |
+| Remaining Issues | 48 |
+| Current Phase | Phase 2 — Ground vegetation |
+| Completion | 14.3% |
 
 ---
 
@@ -31,12 +31,12 @@
 | 5 | Terrain textures | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `3f5d8ad` |
 | 6 | Post-processing stack | `PostProcessing.tsx`, `GameCanvas.tsx` | ✅ Done | `aadf2cf` |
 
-### Phase 2 — Environment Identity (1 / 8 issues)
+### Phase 2 — Environment Identity (2 / 8 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
 | 7 | District-specific terrain | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `9cc71b0` |
-| 8 | District building variants | `Building.tsx` + district configs | ⏳ Pending | — |
+| 8 | District building variants | `Building.tsx` | ✅ Done | `b2ce515` |
 | 9 | Ground vegetation | New vegetation system | ⏳ Pending | — |
 | 10 | Tree variants + wind | `Tree.tsx` | ⏳ Pending | — |
 | 11 | Road markings + curbs | `RoadSystem.tsx` | ⏳ Pending | — |
@@ -122,3 +122,4 @@
 | 2026-07-18 | `3f5d8ad` | Phase 1 | #5 | Terrain: segments 8, vertex displacement, district-specific colors |
 | 2026-07-18 | `aadf2cf` | Phase 1 | #6 | Post-processing: Bloom, ToneMapping, Vignette, DepthOfField |
 | 2026-07-19 | `9cc71b0` | Phase 2 | #7 | Terrain: district-specific textures, surface material configs |
+| 2026-07-19 | `b2ce515` | Phase 2 | #8 | Buildings: gable/dome roofs, 4-face windows, trim, cornices |
