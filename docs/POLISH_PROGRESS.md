@@ -11,10 +11,10 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 6 |
-| Remaining Issues | 50 |
-| Current Phase | Phase 2 — Environment Identity |
-| Completion | 10.7% |
+| Completed Issues | 7 |
+| Remaining Issues | 49 |
+| Current Phase | Phase 2 — Building variants |
+| Completion | 12.5% |
 
 ---
 
@@ -31,11 +31,11 @@
 | 5 | Terrain textures | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `3f5d8ad` |
 | 6 | Post-processing stack | `PostProcessing.tsx`, `GameCanvas.tsx` | ✅ Done | `aadf2cf` |
 
-### Phase 2 — Environment Identity (0 / 8 issues)
+### Phase 2 — Environment Identity (1 / 8 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
-| 7 | District-specific terrain | `Terrain.tsx` + layout data | ⏳ Pending | — |
+| 7 | District-specific terrain | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `9cc71b0` |
 | 8 | District building variants | `Building.tsx` + district configs | ⏳ Pending | — |
 | 9 | Ground vegetation | New vegetation system | ⏳ Pending | — |
 | 10 | Tree variants + wind | `Tree.tsx` | ⏳ Pending | — |
@@ -121,3 +121,4 @@
 | 2026-07-18 | `3117e52` | Phase 1 | #4 | Water: animated Water component, Fountain + AI District lake |
 | 2026-07-18 | `3f5d8ad` | Phase 1 | #5 | Terrain: segments 8, vertex displacement, district-specific colors |
 | 2026-07-18 | `aadf2cf` | Phase 1 | #6 | Post-processing: Bloom, ToneMapping, Vignette, DepthOfField |
+| 2026-07-19 | `9cc71b0` | Phase 2 | #7 | Terrain: district-specific textures, surface material configs |
