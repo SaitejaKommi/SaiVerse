@@ -5,6 +5,7 @@ import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { Bench } from '@/systems/environment/Bench'
 import { Fountain } from '@/systems/environment/Fountain'
+import { GroundVegetation } from '@/systems/environment/GroundVegetation'
 import { SignPost } from '@/systems/environment/SignPost'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { ClassroomEnvironment } from '@/features/campus/ClassroomEnvironment'
@@ -64,6 +65,17 @@ export function CampusEnvironment() {
       {/* Direction signs */}
       <SignPost position={[-4, 0, -104]} rotation={0} color='#8b7355' />
       <SignPost position={[4, 0, -104]} rotation={Math.PI} color='#8b7355' />
+
+      {/* Campus vegetation */}
+      <GroundVegetation
+        bounds={{ minX: -55, maxX: 55, minZ: -205, maxZ: -110 }}
+        grassCount={250}
+        bushCount={40}
+        grassColor="#3a7a33"
+        bushColor="#2d6a2e"
+        excludePosition={[0, 0, -130]}
+        excludeRadius={20}
+      />
 
       {/* Campus roads */}
       <RoadSystem segments={CAMPUS_ROADS as any} />

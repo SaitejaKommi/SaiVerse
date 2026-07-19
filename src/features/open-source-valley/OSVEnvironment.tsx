@@ -5,6 +5,7 @@ import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { RoadSystem } from '@/systems/world/RoadSystem'
+import { GroundVegetation } from '@/systems/environment/GroundVegetation'
 import { GardenPlot } from './GardenPlot'
 import { PullRequestBridge } from './PullRequestBridge'
 import { KnowledgeArchive } from './KnowledgeArchive'
@@ -91,6 +92,17 @@ export function OSVEnvironment() {
       {OSV_LAMPS.map((l, i) => (
         <StreetLamp key={`osv-lamp-${i}`} position={l.position} />
       ))}
+
+      {/* Valley vegetation */}
+      <GroundVegetation
+        bounds={{ minX: -65, maxX: 65, minZ: -575, maxZ: -465 }}
+        grassCount={300}
+        bushCount={50}
+        grassColor="#4a8a5a"
+        bushColor="#3a7a4a"
+        excludePosition={[0, 0, -520]}
+        excludeRadius={25}
+      />
 
       {/* Roads */}
       <RoadSystem segments={OSV_ROADS as any} />

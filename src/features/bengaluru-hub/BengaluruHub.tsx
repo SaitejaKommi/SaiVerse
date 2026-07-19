@@ -8,6 +8,7 @@ import { useChapterStore } from '@/systems/chapter/ChapterStore'
 import { Terrain } from '@/systems/world/Terrain'
 import { DISTRICT_TERRAIN_CONFIG } from '@/systems/world/world.config'
 import { RoadSystem } from '@/systems/world/RoadSystem'
+import { GroundVegetation } from '@/systems/environment/GroundVegetation'
 import { WorldStreamer } from '@/systems/world/WorldStreamer'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
@@ -208,6 +209,24 @@ export function BengaluruHub() {
           <Terrain tiles={CD_TERRAIN_TILES} size={50} config={DISTRICT_TERRAIN_CONFIG['career-district']} />
           <Terrain tiles={FS_TERRAIN_TILES} size={50} config={DISTRICT_TERRAIN_CONFIG['final-summit']} />
           <RoadSystem segments={ROAD_SEGMENTS} />
+
+          <GroundVegetation
+            bounds={{ minX: -120, maxX: 120, minZ: -130, maxZ: 120 }}
+            grassCount={400}
+            bushCount={60}
+            grassColor="#4a7c59"
+            bushColor="#3a6a4a"
+            excludeRadius={35}
+          />
+          <GroundVegetation
+            bounds={{ minX: -80, maxX: 80, minZ: -430, maxZ: -330 }}
+            grassCount={150}
+            bushCount={20}
+            grassColor="#1a2a1e"
+            bushColor="#0a1a0e"
+            excludePosition={[0, 0, -370]}
+            excludeRadius={40}
+          />
 
           <HubEnvironment />
         </WorldStreamer>
