@@ -9,6 +9,7 @@ import { Terrain } from '@/systems/world/Terrain'
 import { DISTRICT_TERRAIN_CONFIG } from '@/systems/world/world.config'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { GroundVegetation } from '@/systems/environment/GroundVegetation'
+import { DistrictGateway } from '@/systems/environment/DistrictGateway'
 import { WorldStreamer } from '@/systems/world/WorldStreamer'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
@@ -149,6 +150,14 @@ function HubEnvironment() {
 
       <PlaceholderNPC />
       <CampusEntrance />
+
+      {/* District gateways */}
+      <DistrictGateway position={[0, 0, -210]} style="steel" label="Software City" />
+      <DistrictGateway position={[0, 0, -310]} style="neon" label="AI District" />
+      <DistrictGateway position={[0, 0, -460]} style="wooden" label="Open Source Valley" />
+      <DistrictGateway position={[0, 0, -590]} style="industrial" label="Hackathon Arena" />
+      <DistrictGateway position={[55, 0, 0]} style="glass" label="Career District" rotation={Math.PI / 2} />
+
       <CampusRevealCinematic />
       <ChapterFinaleCamera />
       {chapter2Status !== 'locked' && <Chapter2FinaleCamera />}
