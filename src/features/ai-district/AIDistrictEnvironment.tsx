@@ -12,6 +12,9 @@ import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { PhoneBooth } from '@/systems/environment/PhoneBooth'
 import { BusStop } from '@/systems/environment/BusStop'
+import { Hologram } from '@/systems/environment/Hologram'
+import { ServerRack } from '@/systems/environment/ServerRack'
+import { DigitalDisplay } from '@/systems/environment/DigitalDisplay'
 import { Water } from '@/systems/environment/Water'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { DataTerminal } from '@/features/ai-district/DataTerminal'
@@ -165,6 +168,22 @@ export function AIDistrictEnvironment() {
       {AI_BUS_STOPS.map((s, i) => (
         <BusStop key={`ai-bus-${i}`} position={s.position} rotation={s.rotation ?? 0} color="#0a1628" accentColor="#00d4ff" />
       ))}
+
+      {/* Holographic data visualizations */}
+      <Hologram position={[-12, 0, -370]} color="#00d4ff" shape="sphere" scale={0.8} />
+      <Hologram position={[12, 0, -370]} color="#a855f7" shape="torus" scale={0.9} />
+      <Hologram position={[0, 0, -350]} color="#00ff88" shape="cube" scale={0.7} />
+
+      {/* Server racks */}
+      <ServerRack position={[-25, 0, -370]} rotation={Math.PI / 2} />
+      <ServerRack position={[-26.5, 0, -370]} rotation={Math.PI / 2} />
+      <ServerRack position={[25, 0, -370]} rotation={-Math.PI / 2} />
+      <ServerRack position={[26.5, 0, -370]} rotation={-Math.PI / 2} />
+
+      {/* Diagnostic displays */}
+      <DigitalDisplay position={[-30, 1.8, -358]} rotation={[0, 0, 0]} color="#00d4ff" width={0.6} height={0.4} intensity={0.5} />
+      <DigitalDisplay position={[30, 1.8, -358]} rotation={[0, 0, 0]} color="#00ff88" width={0.6} height={0.4} intensity={0.5} flicker />
+      <DigitalDisplay position={[0, 2, -393]} rotation={[0, 0, 0]} color="#a855f7" width={0.8} height={0.5} intensity={0.4} />
 
       {/* Roads */}
       <RoadSystem segments={AI_ROADS as any} />

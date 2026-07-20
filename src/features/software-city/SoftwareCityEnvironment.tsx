@@ -11,6 +11,7 @@ import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { Bench } from '@/systems/environment/Bench'
 import { PhoneBooth } from '@/systems/environment/PhoneBooth'
 import { BusStop } from '@/systems/environment/BusStop'
+import { DigitalDisplay } from '@/systems/environment/DigitalDisplay'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { TechMentorNPC, NPC_DIALOGUE_ID, TERMINAL_ID, CODE_EDITOR_ID } from '@/features/npc/TechMentorNPC'
 import { SoftwareCityPortal } from '@/features/software-city/SoftwareCityPortal'
@@ -498,6 +499,15 @@ export function SoftwareCityEnvironment() {
       {SC_BUS_STOPS.map((s, i) => (
         <BusStop key={`sc-bus-${i}`} position={s.position} rotation={s.rotation ?? 0} color="#16213e" accentColor="#00ff88" />
       ))}
+
+      {/* Digital billboards */}
+      <DigitalDisplay position={[-20, 3, -240]} rotation={[0, Math.PI / 2, 0]} color="#00d4ff" width={1.5} height={1} intensity={0.4} />
+      <DigitalDisplay position={[20, 3, -240]} rotation={[0, -Math.PI / 2, 0]} color="#00ff88" width={1.5} height={1} intensity={0.4} />
+      <DigitalDisplay position={[-20, 3, -260]} rotation={[0, Math.PI / 2, 0]} color="#a855f7" width={1.5} height={1} intensity={0.3} />
+      <DigitalDisplay position={[20, 3, -260]} rotation={[0, -Math.PI / 2, 0]} color="#00d4ff" width={1.5} height={1} intensity={0.4} flicker />
+      {/* Billboard above boulevard */}
+      <DigitalDisplay position={[0, 5, -250]} rotation={[0, 0, 0]} color="#00ff88" width={2.5} height={1.2} intensity={0.5} />
+      <DigitalDisplay position={[0, 5, -250]} rotation={[0, Math.PI, 0]} color="#a855f7" width={2.5} height={1.2} intensity={0.5} />
 
       {/* Roads */}
       <RoadSystem segments={SC_ROAD_SEGMENTS as any} />

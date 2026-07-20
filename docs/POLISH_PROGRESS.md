@@ -11,10 +11,10 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 13 |
-| Remaining Issues | 43 |
-| Current Phase | Phase 2 — Environmental storytelling |
-| Completion | 23.2% |
+| Completed Issues | 14 |
+| Remaining Issues | 42 |
+| Current Phase | Phase 3 — Lighting Refinement |
+| Completion | 25% |
 
 ---
 
@@ -31,7 +31,7 @@
 | 5 | Terrain textures | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `3f5d8ad` |
 | 6 | Post-processing stack | `PostProcessing.tsx`, `GameCanvas.tsx` | ✅ Done | `aadf2cf` |
 
-### Phase 2 — Environment Identity (7 / 8 issues)
+### Phase 2 — Environment Identity (8 / 8 issues) ✅
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
@@ -41,8 +41,8 @@
 | 10 | Tree variants + wind | `Tree.tsx` | ✅ Done | `9c51755` |
 | 11 | Road markings + curbs | `RoadSystem.tsx` | ✅ Done | `5c64bdb` |
 | 12 | District entry gateways | `DistrictGateway.tsx`, `BengaluruHub.tsx` | ✅ Done | `87d5568` |
-| 13 | Decorative district props | `PhoneBooth.tsx`, `BusStop.tsx`, layout files, env files | ✅ Done | `pending` |
-| 14 | Environmental storytelling | All districts | ⏳ Pending | — |
+| 13 | Decorative district props | `PhoneBooth.tsx`, `BusStop.tsx`, layout files, env files | ✅ Done | `5657206` |
+| 14 | Environmental storytelling | `Poster`, `CoffeeCup`, `Notebook`, `DigitalDisplay`, `Hologram`, `ServerRack`, `Whiteboard`, `PizzaBox`, `Campfire`, `PaperAirplane`, `Lantern`, `BicycleRack`, `Flowers` + all 7 districts | ✅ Done | `pending` |
 
 ### Phase 3 — Lighting Refinement (0 / 7 issues)
 
@@ -127,4 +127,5 @@
 | 2026-07-19 | `9c51755` | Phase 2 | #10 | Trees: 7 variants (palm, pine, cherry, geo), dual-layer wind sway |
 | 2026-07-19 | `5c64bdb` | Phase 2 | #11 | Roads: dashed center lines, raised curbs |
 | 2026-07-20 | `87d5568` | Phase 2 | #12 | Gateways: reusable DistrictGateway component, 5 gateways placed at district transitions |
-| 2026-07-20 | `pending` | Phase 2 | #13 | Props: PhoneBooth + BusStop components, placed in Hub, SC, AI, OSV, Career districts through layout data |
+| 2026-07-20 | `5657206` | Phase 2 | #13 | Props: PhoneBooth + BusStop components, placed in Hub, SC, AI, OSV, Career districts through layout data |
+| 2026-07-20 | `pending` | Phase 2 | #14 | Storytelling: 11 new prop components across 7 districts — Campus (notebooks, coffee cups, posters, bike racks), SC (digital billboards), AI District (holograms, server racks, diagnostics), OSV (campfire, paper airplanes, community board), Arena (whiteboards, pizza boxes, debug signs), Career (career posters, portfolio screens, welcome signage), Summit (lanterns, flowers, reflection pool, stone inscriptions) |

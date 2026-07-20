@@ -6,6 +6,10 @@ import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { PhoneBooth } from '@/systems/environment/PhoneBooth'
 import { BusStop } from '@/systems/environment/BusStop'
+import { Poster } from '@/systems/environment/Poster'
+import { Campfire } from '@/systems/environment/Campfire'
+import { PaperAirplane } from '@/systems/environment/PaperAirplane'
+import { Notebook } from '@/systems/environment/Notebook'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { GroundVegetation } from '@/systems/environment/GroundVegetation'
 import { GardenPlot } from './GardenPlot'
@@ -131,6 +135,22 @@ export function OSVEnvironment() {
       <IssueBoard />
       <ContributionCounter />
       <ContributorsWall />
+
+      {/* Community campfire discussion area */}
+      <Campfire position={[-35, 0, -530]} />
+
+      {/* Community notice board */}
+      <Poster position={[-4, 1.2, -520]} rotation={[0, 0, 0]} color="#d4a373" width={0.6} height={0.8} />
+      <Poster position={[4, 1.2, -520]} rotation={[0, 0, 0]} color="#e9c46a" width={0.6} height={0.8} />
+
+      {/* Paper airplanes scattered near workspace */}
+      <PaperAirplane position={[18, 0.05, -516]} rotation={[0.2, 0.5, 0.1]} />
+      <PaperAirplane position={[-18, 0.05, -514]} rotation={[0.1, 2.8, 0.3]} />
+
+      {/* Open laptops / notebooks at workstations */}
+      <Notebook position={[22, 0, -515]} rotation={0.5} color="#5c4033" />
+      <Notebook position={[-22, 0, -515]} rotation={-0.3} color="#5c4033" />
+      <Notebook position={[0, 0, -490]} rotation={0.8} color="#8b7355" />
 
       {/* NPC */}
       <StewardNPC />

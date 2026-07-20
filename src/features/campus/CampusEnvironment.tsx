@@ -4,6 +4,10 @@ import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { Bench } from '@/systems/environment/Bench'
+import { Poster } from '@/systems/environment/Poster'
+import { CoffeeCup } from '@/systems/environment/CoffeeCup'
+import { Notebook } from '@/systems/environment/Notebook'
+import { BicycleRack } from '@/systems/environment/BicycleRack'
 import { Fountain } from '@/systems/environment/Fountain'
 import { GroundVegetation } from '@/systems/environment/GroundVegetation'
 import { SignPost } from '@/systems/environment/SignPost'
@@ -51,6 +55,36 @@ export function CampusEnvironment() {
           rotation={b.rotation ?? 0}
         />
       ))}
+
+      {/* Study notes on benches */}
+      <CoffeeCup position={[-4, 0, -126]} rotation={0.3} />
+      <Notebook position={[-3.8, 0, -126]} rotation={-0.2} />
+      <CoffeeCup position={[4, 0, -126]} rotation={-0.4} />
+      <Notebook position={[4.2, 0, -126]} rotation={0.1} />
+      <CoffeeCup position={[-26, 0, -146]} rotation={0.5} />
+      <Notebook position={[-25.8, 0, -146]} rotation={-0.3} />
+      <CoffeeCup position={[5, 0, -172]} rotation={0} />
+      <Notebook position={[4.8, 0, -172]} rotation={0.2} />
+
+      {/* Classroom posters on walls */}
+      <Poster position={[28, 2.5, -150]} rotation={[0, -Math.PI / 2, 0]} color="#e9c46a" />
+      <Poster position={[28, 1.5, -150]} rotation={[0, -Math.PI / 2, 0]} color="#f4a261" />
+      <Poster position={[-28, 2.5, -150]} rotation={[0, Math.PI / 2, 0]} color="#e9c46a" />
+      <Poster position={[-28, 1.5, -150]} rotation={[0, Math.PI / 2, 0]} color="#f4a261" />
+
+      {/* Academic block posters */}
+      <Poster position={[11, 2.5, -143]} rotation={[0, 0, 0]} color="#8b7355" />
+      <Poster position={[-11, 2.5, -143]} rotation={[0, 0, 0]} color="#8b7355" />
+      <Poster position={[11, 2.5, -157]} rotation={[0, Math.PI, 0]} color="#6b5b3d" />
+      <Poster position={[-11, 2.5, -157]} rotation={[0, Math.PI, 0]} color="#6b5b3d" />
+
+      {/* Lab posters */}
+      <Poster position={[5, 2, -171]} rotation={[0, 0, 0]} color="#e9c46a" />
+      <Poster position={[-5, 2, -171]} rotation={[0, 0, 0]} color="#e9c46a" />
+
+      {/* Bicycle rack near entrance */}
+      <BicycleRack position={[12, 0, -108]} rotation={0} />
+      <BicycleRack position={[-12, 0, -108]} rotation={0} />
 
       {CAMPUS_LAMPS.map((l, i) => (
         <StreetLamp
