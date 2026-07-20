@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
+import { useLightingStore } from '@/stores/lightingStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
 import { soundFX } from '@/systems/audio/SoundFX'
 import { useNotificationStore } from '@/stores/notificationStore'
@@ -139,6 +140,10 @@ function QuestAutoAcceptor() {
 }
 
 export function AIDistrictEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('ai-district')
+  }, [])
+
   return (
     <group>
       <QuestAutoAcceptor />

@@ -11,10 +11,10 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 14 |
-| Remaining Issues | 42 |
-| Current Phase | Phase 3 — Lighting Refinement |
-| Completion | 25% |
+| Completed Issues | 15 |
+| Remaining Issues | 41 |
+| Current Phase | Phase 3 — Dynamic sun position |
+| Completion | 26.8% |
 
 ---
 
@@ -42,13 +42,13 @@
 | 11 | Road markings + curbs | `RoadSystem.tsx` | ✅ Done | `5c64bdb` |
 | 12 | District entry gateways | `DistrictGateway.tsx`, `BengaluruHub.tsx` | ✅ Done | `87d5568` |
 | 13 | Decorative district props | `PhoneBooth.tsx`, `BusStop.tsx`, layout files, env files | ✅ Done | `5657206` |
-| 14 | Environmental storytelling | `Poster`, `CoffeeCup`, `Notebook`, `DigitalDisplay`, `Hologram`, `ServerRack`, `Whiteboard`, `PizzaBox`, `Campfire`, `PaperAirplane`, `Lantern`, `BicycleRack`, `Flowers` + all 7 districts | ✅ Done | `pending` |
+| 14 | Environmental storytelling | `Poster`, `CoffeeCup`, `Notebook`, `DigitalDisplay`, `Hologram`, `ServerRack`, `Whiteboard`, `PizzaBox`, `Campfire`, `PaperAirplane`, `Lantern`, `BicycleRack`, `Flowers` + all 7 districts | ✅ Done | `12fc47d` |
 
-### Phase 3 — Lighting Refinement (0 / 7 issues)
+### Phase 3 — Lighting Refinement (1 / 7 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
-| 15 | District environment maps | `LightingManager.tsx` | ⏳ Pending | — |
+| 15 | District environment maps | `lighting-profiles.ts`, `lighting-profiles.config.ts`, `lightingStore.ts`, `DistrictLighting.tsx`, `GameEngine.tsx`, `GameCanvas.tsx`, all 7 district env files | ✅ Done | `pending` |
 | 16 | Dynamic sun position | `DayNightCycle.ts` | ⏳ Pending | — |
 | 17 | District-specific lighting | `LightingManager.tsx` | ⏳ Pending | — |
 | 18 | PBR material audit | All material configs | ⏳ Pending | — |
@@ -128,4 +128,5 @@
 | 2026-07-19 | `5c64bdb` | Phase 2 | #11 | Roads: dashed center lines, raised curbs |
 | 2026-07-20 | `87d5568` | Phase 2 | #12 | Gateways: reusable DistrictGateway component, 5 gateways placed at district transitions |
 | 2026-07-20 | `5657206` | Phase 2 | #13 | Props: PhoneBooth + BusStop components, placed in Hub, SC, AI, OSV, Career districts through layout data |
-| 2026-07-20 | `pending` | Phase 2 | #14 | Storytelling: 11 new prop components across 7 districts — Campus (notebooks, coffee cups, posters, bike racks), SC (digital billboards), AI District (holograms, server racks, diagnostics), OSV (campfire, paper airplanes, community board), Arena (whiteboards, pizza boxes, debug signs), Career (career posters, portfolio screens, welcome signage), Summit (lanterns, flowers, reflection pool, stone inscriptions) |
+| 2026-07-20 | `12fc47d` | Phase 2 | #14 | Storytelling: 11 new prop components across 7 districts — Campus (notebooks, coffee cups, posters, bike racks), SC (digital billboards), AI District (holograms, server racks, diagnostics), OSV (campfire, paper airplanes, community board), Arena (whiteboards, pizza boxes, debug signs), Career (career posters, portfolio screens, welcome signage), Summit (lanterns, flowers, reflection pool, stone inscriptions) |
+| 2026-07-20 | `pending` | Phase 3 | #15 | Lighting: DistrictLighting component, 8 lighting profiles (7 districts + hub), per-district environment/ambient/hemisphere/sun/fog configs, Zustand lighting store, all 7 district envs wired to set profile on mount |

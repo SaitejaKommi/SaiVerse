@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useLightingStore } from '@/stores/lightingStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
@@ -26,6 +28,10 @@ import {
 } from '@/data/hackathon-arena/ha-layout'
 
 export function HackathonArenaEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('hackathon-arena')
+  }, [])
+
   return (
     <group>
       <QuestAutoAcceptorHA />

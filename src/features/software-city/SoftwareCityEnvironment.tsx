@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { CuboidCollider } from '@react-three/rapier'
 import { useInteractionSystem } from '@/systems/interaction/InteractionSystem'
+import { useLightingStore } from '@/stores/lightingStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
@@ -420,6 +421,10 @@ function ScNeonSign({ position, text, color }: { position: [number, number, numb
 }
 
 export function SoftwareCityEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('software-city')
+  }, [])
+
   const { registerObject, unregisterObject } = useInteractionSystem()
 
   const terminalPos: [number, number, number] = useMemo(() => [4, 0.6, -244], [])

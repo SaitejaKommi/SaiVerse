@@ -1,7 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
+import { useLightingStore } from '@/stores/lightingStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
@@ -45,6 +46,10 @@ function Flowers({ position }: { position: [number, number, number] }) {
 }
 
 export function FinalSummitEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('final-summit')
+  }, [])
+
   return (
     <group>
       <QuestAutoAcceptorFS />

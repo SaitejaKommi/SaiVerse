@@ -12,6 +12,7 @@ import { PaperAirplane } from '@/systems/environment/PaperAirplane'
 import { Notebook } from '@/systems/environment/Notebook'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { GroundVegetation } from '@/systems/environment/GroundVegetation'
+import { useLightingStore } from '@/stores/lightingStore'
 import { GardenPlot } from './GardenPlot'
 import { PullRequestBridge } from './PullRequestBridge'
 import { KnowledgeArchive } from './KnowledgeArchive'
@@ -80,6 +81,10 @@ function ValleyAmbientAudio() {
 }
 
 export function OSVEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('open-source-valley')
+  }, [])
+
   return (
     <group>
       <QuestAutoAcceptorOSV />

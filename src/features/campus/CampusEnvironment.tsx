@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useLightingStore } from '@/stores/lightingStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
@@ -23,6 +25,10 @@ import {
 } from '@/data/bengaluru/campus-layout'
 
 export function CampusEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('campus')
+  }, [])
+
   return (
     <group>
       {CAMPUS_BUILDINGS.map((b, i) => (

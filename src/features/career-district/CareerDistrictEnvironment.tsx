@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useLightingStore } from '@/stores/lightingStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
@@ -24,6 +26,10 @@ import {
 } from '@/data/career-district/cd-layout'
 
 export function CareerDistrictEnvironment() {
+  useEffect(() => {
+    useLightingStore.getState().setProfile('career-district')
+  }, [])
+
   return (
     <group>
       <QuestAutoAcceptorCD />

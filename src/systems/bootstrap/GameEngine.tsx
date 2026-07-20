@@ -8,7 +8,7 @@ import { InputManager } from '@/systems/input/InputManager'
 import { SceneProvider } from '@/systems/scene/SceneManager'
 import { CameraSystem } from '@/systems/camera/CameraSystem'
 import { PlayerController } from '@/systems/player/PlayerController'
-import { LightingManager } from '@/systems/lighting/LightingManager'
+import { DistrictLighting } from '@/systems/lighting/DistrictLighting'
 import { DebugOverlay } from '@/systems/debug/DebugOverlay'
 import { audioManager } from '@/systems/audio/AudioManager'
 import { soundFX } from '@/systems/audio/SoundFX'
@@ -26,7 +26,6 @@ interface GameEngineProps {
   enablePlayer?: boolean
   enableCamera?: boolean
   enableWorld?: boolean
-  environmentPreset?: 'sunset' | 'dawn' | 'night' | 'warehouse' | 'forest' | 'apartment' | 'studio' | 'city' | 'park' | 'lobby'
 }
 
 export function GameEngine({
@@ -38,7 +37,6 @@ export function GameEngine({
   enablePlayer = true,
   enableCamera = true,
   enableWorld = true,
-  environmentPreset = 'night',
 }: GameEngineProps) {
   const setInitialized = useGameStore((s) => s.setInitialized)
 
@@ -70,8 +68,7 @@ export function GameEngine({
   return (
     <>
       <SceneProvider>
-        <fog attach="fog" args={['#020617', 30, 110]} />
-        {enableLighting && <LightingManager preset={environmentPreset} />}
+        {enableLighting && <DistrictLighting />}
         {enablePhysics && (
           <Suspense fallback={null}>
             <RapierPhysics gravity={[0, -9.81, 0]} colliders={false}>

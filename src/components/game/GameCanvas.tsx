@@ -95,7 +95,6 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
             enableAudio={true}
             enablePlayer={true}
             enableCamera={true}
-            environmentPreset="night"
           />
         </Canvas>
       </div>
