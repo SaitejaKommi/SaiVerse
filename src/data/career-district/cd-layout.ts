@@ -65,6 +65,18 @@ export const CD_LAMPS: { position: [number, number, number] }[] = [
   { position: [120, 0, 8] },
 ]
 
+export const CD_PHONE_BOOTHS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [65, 0, -8], rotation: 0 },
+  { position: [65, 0, 8], rotation: Math.PI },
+  { position: [115, 0, -8], rotation: 0 },
+  { position: [115, 0, 8], rotation: Math.PI },
+]
+
+export const CD_BUS_STOPS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [55, 0, -12], rotation: Math.PI / 2 },
+  { position: [55, 0, 12], rotation: -Math.PI / 2 },
+]
+
 export const CD_ROADS: RoadSegment[] = [
   { id: 'cd-west', start: [60, -6], end: [60, 6], width: 2, surface: 'plaza' },
   { id: 'cd-east', start: [120, -6], end: [120, 6], width: 2, surface: 'plaza' },

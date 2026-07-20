@@ -10,6 +10,8 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
+import { PhoneBooth } from '@/systems/environment/PhoneBooth'
+import { BusStop } from '@/systems/environment/BusStop'
 import { Water } from '@/systems/environment/Water'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { DataTerminal } from '@/features/ai-district/DataTerminal'
@@ -21,6 +23,8 @@ import {
   AI_BUILDINGS,
   AI_TREES,
   AI_LAMPS,
+  AI_PHONE_BOOTHS,
+  AI_BUS_STOPS,
   AI_ROADS,
 } from '@/data/ai-district/ai-layout'
 
@@ -150,6 +154,16 @@ export function AIDistrictEnvironment() {
       {/* Lamps */}
       {AI_LAMPS.map((l, i) => (
         <StreetLamp key={`ai-lamp-${i}`} position={l.position} />
+      ))}
+
+      {/* Phone booths */}
+      {AI_PHONE_BOOTHS.map((p, i) => (
+        <PhoneBooth key={`ai-phone-${i}`} position={p.position} rotation={p.rotation ?? 0} color="#0a1628" accentColor="#a855f7" />
+      ))}
+
+      {/* Bus stops */}
+      {AI_BUS_STOPS.map((s, i) => (
+        <BusStop key={`ai-bus-${i}`} position={s.position} rotation={s.rotation ?? 0} color="#0a1628" accentColor="#00d4ff" />
       ))}
 
       {/* Roads */}

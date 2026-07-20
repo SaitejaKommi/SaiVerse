@@ -15,6 +15,8 @@ import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { Bench } from '@/systems/environment/Bench'
+import { PhoneBooth } from '@/systems/environment/PhoneBooth'
+import { BusStop } from '@/systems/environment/BusStop'
 import { Fountain } from '@/systems/environment/Fountain'
 import { SignPost } from '@/systems/environment/SignPost'
 import { Statue } from '@/systems/environment/Statue'
@@ -52,6 +54,8 @@ import {
   TREES,
   LAMPS,
   BENCHES,
+  PHONE_BOOTHS,
+  BUS_STOPS,
   SPAWN_POINTS,
   FAST_TRAVEL_NODES,
   INTERACTIVE_OBJECTS,
@@ -132,6 +136,22 @@ function HubEnvironment() {
           key={`bench-${i}`}
           position={b.position}
           rotation={b.rotation ?? 0}
+        />
+      ))}
+
+      {PHONE_BOOTHS.map((p, i) => (
+        <PhoneBooth
+          key={`phone-${i}`}
+          position={p.position}
+          rotation={p.rotation ?? 0}
+        />
+      ))}
+
+      {BUS_STOPS.map((s, i) => (
+        <BusStop
+          key={`bus-${i}`}
+          position={s.position}
+          rotation={s.rotation ?? 0}
         />
       ))}
 

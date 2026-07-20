@@ -9,6 +9,8 @@ import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
 import { Bench } from '@/systems/environment/Bench'
+import { PhoneBooth } from '@/systems/environment/PhoneBooth'
+import { BusStop } from '@/systems/environment/BusStop'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { TechMentorNPC, NPC_DIALOGUE_ID, TERMINAL_ID, CODE_EDITOR_ID } from '@/features/npc/TechMentorNPC'
 import { SoftwareCityPortal } from '@/features/software-city/SoftwareCityPortal'
@@ -17,6 +19,8 @@ import {
   SC_TREES,
   SC_LAMPS,
   SC_BENCHES,
+  SC_PHONE_BOOTHS,
+  SC_BUS_STOPS,
   SC_ROAD_SEGMENTS,
 } from '@/data/software-city/sc-layout'
 
@@ -483,6 +487,16 @@ export function SoftwareCityEnvironment() {
       {/* Benches */}
       {SC_BENCHES.map((b, i) => (
         <Bench key={`sc-bench-${i}`} position={b.position} rotation={b.rotation ?? 0} />
+      ))}
+
+      {/* Phone booths */}
+      {SC_PHONE_BOOTHS.map((p, i) => (
+        <PhoneBooth key={`sc-phone-${i}`} position={p.position} rotation={p.rotation ?? 0} color="#16213e" accentColor="#00d4ff" />
+      ))}
+
+      {/* Bus stops */}
+      {SC_BUS_STOPS.map((s, i) => (
+        <BusStop key={`sc-bus-${i}`} position={s.position} rotation={s.rotation ?? 0} color="#16213e" accentColor="#00ff88" />
       ))}
 
       {/* Roads */}

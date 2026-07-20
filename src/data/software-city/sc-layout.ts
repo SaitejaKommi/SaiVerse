@@ -95,6 +95,18 @@ export const SC_BENCHES: { position: [number, number, number]; rotation?: number
   { position: [10, 0, -278], rotation: -Math.PI / 2 },
 ]
 
+export const SC_PHONE_BOOTHS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-12, 0, -245], rotation: Math.PI / 2 },
+  { position: [12, 0, -245], rotation: -Math.PI / 2 },
+  { position: [-12, 0, -255], rotation: Math.PI / 2 },
+  { position: [12, 0, -255], rotation: -Math.PI / 2 },
+]
+
+export const SC_BUS_STOPS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-20, 0, -225], rotation: Math.PI / 2 },
+  { position: [20, 0, -225], rotation: -Math.PI / 2 },
+]
+
 export const SC_ROAD_SEGMENTS: RoadSegment[] = [
   // Main road from campus to Software City
   { id: 'sc-approach', start: [0, -210], end: [0, -222], width: 6, surface: 'road' },

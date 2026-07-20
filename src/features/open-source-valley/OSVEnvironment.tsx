@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react'
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
+import { PhoneBooth } from '@/systems/environment/PhoneBooth'
+import { BusStop } from '@/systems/environment/BusStop'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { GroundVegetation } from '@/systems/environment/GroundVegetation'
 import { GardenPlot } from './GardenPlot'
@@ -21,6 +23,8 @@ import {
   OSV_BUILDINGS,
   OSV_TREES,
   OSV_LAMPS,
+  OSV_PHONE_BOOTHS,
+  OSV_BUS_STOPS,
   OSV_ROADS,
 } from '@/data/open-source-valley/osv-layout'
 
@@ -91,6 +95,16 @@ export function OSVEnvironment() {
       {/* Lamps */}
       {OSV_LAMPS.map((l, i) => (
         <StreetLamp key={`osv-lamp-${i}`} position={l.position} />
+      ))}
+
+      {/* Phone booths */}
+      {OSV_PHONE_BOOTHS.map((p, i) => (
+        <PhoneBooth key={`osv-phone-${i}`} position={p.position} rotation={p.rotation ?? 0} color="#5c4033" accentColor="#3a7a33" />
+      ))}
+
+      {/* Bus stops */}
+      {OSV_BUS_STOPS.map((s, i) => (
+        <BusStop key={`osv-bus-${i}`} position={s.position} rotation={s.rotation ?? 0} color="#5c4033" accentColor="#e9c46a" />
       ))}
 
       {/* Valley vegetation */}

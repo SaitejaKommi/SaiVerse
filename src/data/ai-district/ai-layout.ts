@@ -92,6 +92,18 @@ export const AI_LAMPS: { position: [number, number, number] }[] = [
   { position: [6, 0, -398] },
 ]
 
+export const AI_PHONE_BOOTHS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-8, 0, -345], rotation: Math.PI / 2 },
+  { position: [8, 0, -345], rotation: -Math.PI / 2 },
+  { position: [-8, 0, -395], rotation: Math.PI / 2 },
+  { position: [8, 0, -395], rotation: -Math.PI / 2 },
+]
+
+export const AI_BUS_STOPS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-12, 0, -335], rotation: 0 },
+  { position: [12, 0, -335], rotation: Math.PI },
+]
+
 export const AI_ROADS: RoadSegment[] = [
   { id: 'ai-approach', start: [0, -310], end: [0, -335], width: 6, surface: 'road' },
   { id: 'ai-main-ns', start: [0, -335], end: [0, -400], width: 6, surface: 'road' },

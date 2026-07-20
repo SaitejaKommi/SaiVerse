@@ -192,6 +192,22 @@ export const BENCHES: { position: [number, number, number]; rotation?: number }[
   { position: [-30, 0, 10], rotation: -Math.PI / 2 },
 ]
 
+export const PHONE_BOOTHS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-12, 0, -22], rotation: Math.PI / 2 },
+  { position: [12, 0, -22], rotation: -Math.PI / 2 },
+  { position: [-12, 0, 22], rotation: Math.PI / 2 },
+  { position: [12, 0, 22], rotation: -Math.PI / 2 },
+  { position: [-35, 0, -8], rotation: 0 },
+  { position: [35, 0, 8], rotation: Math.PI },
+]
+
+export const BUS_STOPS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [0, 0, -28], rotation: 0 },
+  { position: [0, 0, 32], rotation: Math.PI },
+  { position: [45, 0, 0], rotation: Math.PI / 2 },
+  { position: [-45, 0, 0], rotation: -Math.PI / 2 },
+]
+
 export const SPAWN_POINTS: SpawnPoint[] = [
   { id: 'hub-center', position: [0, 0, 0], rotation: [0, 0, 0], label: 'Bengaluru Hub Center', isActive: true },
   { id: 'hub-north', position: [0, 0, -40], rotation: [0, 0, 0], label: 'Academic Row', isActive: true },

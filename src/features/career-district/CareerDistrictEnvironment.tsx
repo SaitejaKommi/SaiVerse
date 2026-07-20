@@ -3,6 +3,8 @@
 import { Building } from '@/systems/environment/Building'
 import { Tree } from '@/systems/environment/Tree'
 import { StreetLamp } from '@/systems/environment/StreetLamp'
+import { PhoneBooth } from '@/systems/environment/PhoneBooth'
+import { BusStop } from '@/systems/environment/BusStop'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { QuestAutoAcceptorCD } from './QuestAutoAcceptorCD'
 import { PortfolioPlinth } from './PortfolioPlinth'
@@ -14,6 +16,8 @@ import {
   CD_BUILDINGS,
   CD_TREES,
   CD_LAMPS,
+  CD_PHONE_BOOTHS,
+  CD_BUS_STOPS,
   CD_ROADS,
 } from '@/data/career-district/cd-layout'
 
@@ -33,6 +37,16 @@ export function CareerDistrictEnvironment() {
 
       {CD_LAMPS.map((l, i) => (
         <StreetLamp key={`cd-lamp-${i}`} position={l.position} />
+      ))}
+
+      {/* Phone booths */}
+      {CD_PHONE_BOOTHS.map((p, i) => (
+        <PhoneBooth key={`cd-phone-${i}`} position={p.position} rotation={p.rotation ?? 0} color="#2d3748" accentColor="#88ccff" />
+      ))}
+
+      {/* Bus stops */}
+      {CD_BUS_STOPS.map((s, i) => (
+        <BusStop key={`cd-bus-${i}`} position={s.position} rotation={s.rotation ?? 0} color="#2d3748" accentColor="#00ff88" />
       ))}
 
       <RoadSystem segments={CD_ROADS as any} />

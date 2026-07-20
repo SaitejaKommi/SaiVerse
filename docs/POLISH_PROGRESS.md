@@ -11,10 +11,10 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 12 |
-| Remaining Issues | 44 |
-| Current Phase | Phase 2 — Decorative district props |
-| Completion | 21.4% |
+| Completed Issues | 13 |
+| Remaining Issues | 43 |
+| Current Phase | Phase 2 — Environmental storytelling |
+| Completion | 23.2% |
 
 ---
 
@@ -31,7 +31,7 @@
 | 5 | Terrain textures | `Terrain.tsx`, `world.config.ts`, `BengaluruHub.tsx` | ✅ Done | `3f5d8ad` |
 | 6 | Post-processing stack | `PostProcessing.tsx`, `GameCanvas.tsx` | ✅ Done | `aadf2cf` |
 
-### Phase 2 — Environment Identity (6 / 8 issues)
+### Phase 2 — Environment Identity (7 / 8 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
@@ -40,8 +40,8 @@
 | 9 | Ground vegetation | `GroundVegetation.tsx`, env files | ✅ Done | `23cf663` |
 | 10 | Tree variants + wind | `Tree.tsx` | ✅ Done | `9c51755` |
 | 11 | Road markings + curbs | `RoadSystem.tsx` | ✅ Done | `5c64bdb` |
-| 12 | District entry gateways | `DistrictGateway.tsx`, `BengaluruHub.tsx` | ✅ Done | `pending` |
-| 13 | Decorative district props | New prop components | ⏳ Pending | — |
+| 12 | District entry gateways | `DistrictGateway.tsx`, `BengaluruHub.tsx` | ✅ Done | `87d5568` |
+| 13 | Decorative district props | `PhoneBooth.tsx`, `BusStop.tsx`, layout files, env files | ✅ Done | `pending` |
 | 14 | Environmental storytelling | All districts | ⏳ Pending | — |
 
 ### Phase 3 — Lighting Refinement (0 / 7 issues)
@@ -126,4 +126,5 @@
 | 2026-07-19 | `23cf663` | Phase 2 | #9 | Vegetation: instanced grass/bushes with wind sway |
 | 2026-07-19 | `9c51755` | Phase 2 | #10 | Trees: 7 variants (palm, pine, cherry, geo), dual-layer wind sway |
 | 2026-07-19 | `5c64bdb` | Phase 2 | #11 | Roads: dashed center lines, raised curbs |
-| 2026-07-20 | `pending` | Phase 2 | #12 | Gateways: reusable DistrictGateway component, 5 gateways placed at district transitions |
+| 2026-07-20 | `87d5568` | Phase 2 | #12 | Gateways: reusable DistrictGateway component, 5 gateways placed at district transitions |
+| 2026-07-20 | `pending` | Phase 2 | #13 | Props: PhoneBooth + BusStop components, placed in Hub, SC, AI, OSV, Career districts through layout data |

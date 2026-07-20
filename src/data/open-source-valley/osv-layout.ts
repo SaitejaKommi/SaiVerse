@@ -85,6 +85,16 @@ export const OSV_LAMPS: { position: [number, number, number] }[] = [
   { position: [5, 0, -545] },
 ]
 
+export const OSV_PHONE_BOOTHS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-15, 0, -512], rotation: 0 },
+  { position: [15, 0, -512], rotation: Math.PI },
+]
+
+export const OSV_BUS_STOPS: { position: [number, number, number]; rotation?: number }[] = [
+  { position: [-10, 0, -485], rotation: Math.PI / 2 },
+  { position: [10, 0, -485], rotation: -Math.PI / 2 },
+]
+
 export const OSV_ROADS: RoadSegment[] = [
   { id: 'osv-approach', start: [0, -460], end: [0, -485], width: 5, surface: 'road' },
   { id: 'osv-main-ns', start: [0, -485], end: [0, -560], width: 5, surface: 'pavement' },
