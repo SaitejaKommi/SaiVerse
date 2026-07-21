@@ -5,6 +5,7 @@ import { Environment } from '@react-three/drei'
 import * as THREE from 'three'
 import { useLightingStore } from '@/stores/lightingStore'
 import { DISTRICT_LIGHTING_PROFILES } from './lighting-profiles.config'
+import { DayNightCycle } from './DayNightCycle'
 
 export function DistrictLighting() {
   const profileId = useLightingStore((s) => s.activeProfile)
@@ -13,6 +14,8 @@ export function DistrictLighting() {
 
   return (
     <>
+      <DayNightCycle />
+
       <fog attach="fog" args={[profile.fog.color, profile.fog.near, profile.fog.far]} />
 
       <ambientLight
