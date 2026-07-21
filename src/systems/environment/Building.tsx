@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
+import { MATERIALS } from '@/systems/material'
 
 type RoofStyle = 'classic' | 'flat' | 'modern' | 'gable' | 'dome'
 
@@ -45,8 +46,8 @@ function buildWindowGrid(face: WindowFace, offsetZ: number, color: string, emiss
             emissiveIntensity={darken}
             transparent
             opacity={0.8}
-            roughness={0.1}
-            metalness={0.5}
+            roughness={MATERIALS.building.window.roughness}
+            metalness={MATERIALS.building.window.metalness}
           />
         </mesh>
       )
@@ -72,20 +73,20 @@ export function Building({
 
   const mainMat = useMemo(() => new THREE.MeshStandardMaterial({
     color,
-    roughness: 0.6,
-    metalness: 0.3,
+    roughness: MATERIALS.building.wall.roughness,
+    metalness: MATERIALS.building.wall.metalness,
   }), [color])
 
   const roofMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: roofColor,
-    roughness: 0.8,
-    metalness: 0.1,
+    roughness: MATERIALS.building.roof.roughness,
+    metalness: MATERIALS.building.roof.metalness,
   }), [roofColor])
 
   const trimMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: accentColor ?? roofColor,
-    roughness: 0.7,
-    metalness: 0.2,
+    roughness: MATERIALS.building.trim.roughness,
+    metalness: MATERIALS.building.trim.metalness,
   }), [accentColor, roofColor])
 
   const roof = useMemo(() => {
@@ -165,7 +166,7 @@ export function Building({
       {/* Base trim */}
       <mesh position={[0, 0.15, 0]} castShadow>
         <boxGeometry args={[width + 0.15, 0.3, depth + 0.15]} />
-        <meshStandardMaterial color={color} roughness={0.7} metalness={0.2} />
+        <meshStandardMaterial color={color} roughness={MATERIALS.building.trim.roughness} metalness={MATERIALS.building.trim.metalness} />
       </mesh>
       {/* Main body */}
       <mesh geometry={new THREE.BoxGeometry(width, height, depth)} material={mainMat} position={[0, halfH, 0]} castShadow receiveShadow />

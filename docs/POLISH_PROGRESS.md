@@ -11,10 +11,10 @@
 | Metric | Value |
 |---|---|
 | Total Visual Issues | 56 |
-| Completed Issues | 17 |
-| Remaining Issues | 39 |
+| Completed Issues | 18 |
+| Remaining Issues | 38 |
 | Current Phase | Phase 3 — Street lamp lights |
-| Completion | 30.4% |
+| Completion | 32.1% |
 
 ---
 
@@ -44,14 +44,14 @@
 | 13 | Decorative district props | `PhoneBooth.tsx`, `BusStop.tsx`, layout files, env files | ✅ Done | `5657206` |
 | 14 | Environmental storytelling | `Poster`, `CoffeeCup`, `Notebook`, `DigitalDisplay`, `Hologram`, `ServerRack`, `Whiteboard`, `PizzaBox`, `Campfire`, `PaperAirplane`, `Lantern`, `BicycleRack`, `Flowers` + all 7 districts | ✅ Done | `12fc47d` |
 
-### Phase 3 — Lighting Refinement (3 / 7 issues)
+### Phase 3 — Lighting Refinement (4 / 7 issues)
 
 | # | Issue | File(s) | Status | Commit |
 |---|---|---|---|---|
 | 15 | District environment maps | `lighting-profiles.ts`, `lighting-profiles.config.ts`, `lightingStore.ts`, `DistrictLighting.tsx`, `GameEngine.tsx`, `GameCanvas.tsx`, all 7 district env files | ✅ Done | `33566b0` |
 | 16 | Dynamic sun position | `DayNightCycle.ts`, `DistrictLighting.tsx`, removed `LightingManager.tsx` | ✅ Done | `pending` |
 | 17 | District-specific lighting | `lighting-profiles.ts`, `lighting-profiles.config.ts`, `DistrictLighting.tsx` | ✅ Done | `pending` |
-| 18 | PBR material audit | All material configs | ⏳ Pending | — |
+| 18 | PBR material audit | `material.config.ts`, `Building.tsx`, `Fountain.tsx`, `Statue.tsx`, `Terrain.tsx`, `RoadSystem.tsx` | ✅ Done | `pending` |
 | 19 | Emissive neon strips | Environment files | ⏳ Pending | — |
 | 20 | Window glow day/night | `Building.tsx` | ⏳ Pending | — |
 | 21 | Rain splash + ripples | `ParticleManager.tsx` | ⏳ Pending | — |
@@ -131,4 +131,5 @@
 | 2026-07-20 | `12fc47d` | Phase 2 | #14 | Storytelling: 11 new prop components across 7 districts — Campus (notebooks, coffee cups, posters, bike racks), SC (digital billboards), AI District (holograms, server racks, diagnostics), OSV (campfire, paper airplanes, community board), Arena (whiteboards, pizza boxes, debug signs), Career (career posters, portfolio screens, welcome signage), Summit (lanterns, flowers, reflection pool, stone inscriptions) |
 | 2026-07-20 | `33566b0` | Phase 3 | #15 | Lighting: DistrictLighting component, 8 lighting profiles (7 districts + hub), per-district environment/ambient/hemisphere/sun/fog configs, Zustand lighting store, all 7 district envs wired to set profile on mount |
 | 2026-07-20 | `07414e3` | Phase 3 | #16 | Sun: DayNightCycle refactored to work without refs via scene traversal, embedded in DistrictLighting, removed legacy LightingManager, sun orbits through day/night cycle per district profile |
-| 2026-07-20 | `pending` | Phase 3 | #17 | Lighting: per-district supplemental accent point lights (warm for Campus, cool blue for Software City, purple/cyan for AI District, golden for OSV, RGB for Hackathon Arena, white/gold for Career, golden ethereal for Final Summit); renders in DistrictLighting via profile.supplemental.pointLights |
+| 2026-07-20 | `c6e9b07` | Phase 3 | #17 | Lighting: per-district supplemental accent point lights (warm for Campus, cool blue for Software City, purple/cyan for AI District, golden for OSV, RGB for Hackathon Arena, white/gold for Career, golden ethereal for Final Summit); renders in DistrictLighting via profile.supplemental.pointLights |
+| 2026-07-20 | `pending` | Phase 3 | #18 | PBR: created shared material.config.ts registry with 10 material categories and physically accurate roughness/metalness; refactored Building, Fountain (MeshPhysicalMaterial), Statue (MeshPhysicalMaterial), Terrain DEFAULT_CONFIG, RoadSystem (eliminated ROAD_MATERIALS duplication) |

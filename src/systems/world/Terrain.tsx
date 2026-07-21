@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { WORLD_CONFIG } from './world.config'
 import type { DistrictTerrainConfig, SurfaceMaterialConfig } from './world.config'
 import type { SurfaceType } from './world.types'
+import { MATERIALS } from '@/systems/material'
 
 interface TerrainTileData {
   x: number
@@ -98,11 +99,11 @@ function createTileGeometry(width: number, depth: number, segments: number, offs
 }
 
 const DEFAULT_CONFIG: DistrictTerrainConfig = {
-  grass: { color: '#4a7c59', roughness: 0.9, metalness: 0, texture: 'noise' },
-  road: { color: '#3a3a3a', roughness: 0.8, metalness: 0.1 },
-  pavement: { color: '#5a5a5a', roughness: 0.7, metalness: 0.05 },
-  plaza: { color: '#6a6a6a', roughness: 0.6, metalness: 0.1 },
-  dirt: { color: '#6b4a3a', roughness: 1, metalness: 0 },
+  grass: { color: '#4a7c59', roughness: MATERIALS.terrain.grass.roughness, metalness: MATERIALS.terrain.grass.metalness, texture: 'noise' },
+  road: { color: '#3a3a3a', roughness: MATERIALS.terrain.road.roughness, metalness: MATERIALS.terrain.road.metalness },
+  pavement: { color: '#5a5a5a', roughness: MATERIALS.terrain.pavement.roughness, metalness: MATERIALS.terrain.pavement.metalness },
+  plaza: { color: '#6a6a6a', roughness: MATERIALS.terrain.plaza.roughness, metalness: MATERIALS.terrain.plaza.metalness },
+  dirt: { color: '#6b4a3a', roughness: MATERIALS.terrain.dirt.roughness, metalness: MATERIALS.terrain.dirt.metalness },
 }
 
 function DefaultTerrainGrid({ size, segments, config }: { size: number; segments: number; config: DistrictTerrainConfig }) {

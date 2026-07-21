@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import type { RoadSegment, SurfaceType } from './world.types'
+import { MATERIALS } from '@/systems/material'
 
 interface RoadSystemProps {
   segments: RoadSegment[]
@@ -122,15 +123,15 @@ function createCenterLineGeometry(
 }
 
 const ROAD_MATERIALS: Record<SurfaceType, THREE.MeshStandardMaterial> = {
-  grass: new THREE.MeshStandardMaterial({ color: '#4a7c59', roughness: 0.9 }),
-  road: new THREE.MeshStandardMaterial({ color: '#3a3a3a', roughness: 0.8, metalness: 0.1 }),
-  pavement: new THREE.MeshStandardMaterial({ color: '#5a5a5a', roughness: 0.7 }),
-  plaza: new THREE.MeshStandardMaterial({ color: '#6a6a6a', roughness: 0.6, metalness: 0.1 }),
-  dirt: new THREE.MeshStandardMaterial({ color: '#6b4a3a', roughness: 1 }),
+  grass: new THREE.MeshStandardMaterial({ color: '#4a7c59', roughness: MATERIALS.terrain.grass.roughness, metalness: MATERIALS.terrain.grass.metalness }),
+  road: new THREE.MeshStandardMaterial({ color: '#3a3a3a', roughness: MATERIALS.terrain.road.roughness, metalness: MATERIALS.terrain.road.metalness }),
+  pavement: new THREE.MeshStandardMaterial({ color: '#5a5a5a', roughness: MATERIALS.terrain.pavement.roughness, metalness: MATERIALS.terrain.pavement.metalness }),
+  plaza: new THREE.MeshStandardMaterial({ color: '#6a6a6a', roughness: MATERIALS.terrain.plaza.roughness, metalness: MATERIALS.terrain.plaza.metalness }),
+  dirt: new THREE.MeshStandardMaterial({ color: '#6b4a3a', roughness: MATERIALS.terrain.dirt.roughness, metalness: MATERIALS.terrain.dirt.metalness }),
 }
 
-const CURB_MATERIAL = new THREE.MeshStandardMaterial({ color: '#7a7a7a', roughness: 0.85, metalness: 0.05 })
-const LINE_MATERIAL = new THREE.MeshStandardMaterial({ color: '#cccccc', roughness: 0.6, metalness: 0.1 })
+const CURB_MATERIAL = new THREE.MeshStandardMaterial({ color: '#7a7a7a', roughness: MATERIALS.stone.rough.roughness, metalness: MATERIALS.stone.rough.metalness })
+const LINE_MATERIAL = new THREE.MeshStandardMaterial({ color: '#cccccc', roughness: MATERIALS.plastic.glossy.roughness, metalness: MATERIALS.plastic.glossy.metalness })
 
 export function RoadSystem({ segments, showMarkings = true, showCurbs = true }: RoadSystemProps) {
   const roadMeshes = useMemo(() => {
