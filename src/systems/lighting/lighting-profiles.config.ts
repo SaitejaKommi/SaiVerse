@@ -45,6 +45,14 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#e8d5b0', near: 40, far: 120 },
     reflectionIntensity: 0.5,
     shadowSoftness: 2.0,
+    supplemental: {
+      pointLights: [
+        { position: [0, 4, -140], color: '#ffd700', intensity: 0.8, distance: 12 },
+        { position: [23, 3, -150], color: '#ffb866', intensity: 0.6, distance: 10 },
+        { position: [-23, 3, -150], color: '#ffb866', intensity: 0.6, distance: 10 },
+        { position: [0, 2, -115], color: '#ffe4b5', intensity: 0.5, distance: 8 },
+      ],
+    },
   },
 
   'software-city': {
@@ -68,6 +76,15 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#b0c8e0', near: 50, far: 140 },
     reflectionIntensity: 1.2,
     shadowSoftness: 1.0,
+    supplemental: {
+      pointLights: [
+        { position: [0, 6, -250], color: '#00d4ff', intensity: 1.0, distance: 15 },
+        { position: [28, 4, -240], color: '#00d4ff', intensity: 0.7, distance: 12 },
+        { position: [-28, 4, -240], color: '#00ff88', intensity: 0.7, distance: 12 },
+        { position: [28, 4, -260], color: '#00ff88', intensity: 0.6, distance: 10 },
+        { position: [-28, 4, -260], color: '#00d4ff', intensity: 0.6, distance: 10 },
+      ],
+    },
   },
 
   'ai-district': {
@@ -91,6 +108,16 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#0a0a2a', near: 25, far: 90 },
     reflectionIntensity: 1.5,
     shadowSoftness: 0.5,
+    supplemental: {
+      pointLights: [
+        { position: [0, 6, 0], color: '#aa44ff', intensity: 1.5, distance: 18 },
+        { position: [30, 4, -30], color: '#00ffee', intensity: 1.0, distance: 14 },
+        { position: [-30, 4, -30], color: '#ff44ff', intensity: 1.0, distance: 14 },
+        { position: [30, 4, 30], color: '#ff44ff', intensity: 0.8, distance: 12 },
+        { position: [-30, 4, 30], color: '#00ffee', intensity: 0.8, distance: 12 },
+        { position: [0, 3, -60], color: '#8844ff', intensity: 0.6, distance: 10 },
+      ],
+    },
   },
 
   'open-source-valley': {
@@ -114,6 +141,15 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#d4b898', near: 35, far: 110 },
     reflectionIntensity: 0.6,
     shadowSoftness: 2.5,
+    supplemental: {
+      pointLights: [
+        { position: [20, 3, 30], color: '#ff8844', intensity: 1.2, distance: 14 },
+        { position: [-20, 3, 30], color: '#ff8844', intensity: 1.2, distance: 14 },
+        { position: [0, 2, 0], color: '#ff6633', intensity: 1.0, distance: 12 },
+        { position: [15, 2, 55], color: '#ffaa55', intensity: 0.7, distance: 10 },
+        { position: [-15, 2, 55], color: '#ffaa55', intensity: 0.7, distance: 10 },
+      ],
+    },
   },
 
   'hackathon-arena': {
@@ -137,6 +173,16 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#0a0510', near: 15, far: 60 },
     reflectionIntensity: 1.8,
     shadowSoftness: 0.3,
+    supplemental: {
+      pointLights: [
+        { position: [0, 8, 0], color: '#ff4488', intensity: 2.0, distance: 20 },
+        { position: [25, 5, -25], color: '#44ff44', intensity: 1.5, distance: 16 },
+        { position: [-25, 5, -25], color: '#ff44ff', intensity: 1.5, distance: 16 },
+        { position: [25, 5, 25], color: '#ffaa00', intensity: 1.5, distance: 16 },
+        { position: [-25, 5, 25], color: '#00ffff', intensity: 1.5, distance: 16 },
+        { position: [0, 3, -40], color: '#ff0044', intensity: 1.0, distance: 12 },
+      ],
+    },
   },
 
   'career-district': {
@@ -160,6 +206,15 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#e0d8d0', near: 40, far: 120 },
     reflectionIntensity: 1.0,
     shadowSoftness: 1.5,
+    supplemental: {
+      pointLights: [
+        { position: [0, 5, 0], color: '#ffd700', intensity: 1.0, distance: 14 },
+        { position: [30, 4, -20], color: '#fff8f0', intensity: 0.8, distance: 12 },
+        { position: [-30, 4, -20], color: '#ffd700', intensity: 0.8, distance: 12 },
+        { position: [30, 4, 20], color: '#ffd700', intensity: 0.6, distance: 10 },
+        { position: [-30, 4, 20], color: '#fff8f0', intensity: 0.6, distance: 10 },
+      ],
+    },
   },
 
   'final-summit': {
@@ -183,6 +238,16 @@ export const DISTRICT_LIGHTING_PROFILES: Record<DistrictProfileId, DistrictLight
     fog: { color: '#d49060', near: 60, far: 160 },
     reflectionIntensity: 0.4,
     shadowSoftness: 3.0,
+    supplemental: {
+      pointLights: [
+        { position: [0, 10, 0], color: '#ffaa44', intensity: 2.0, distance: 24 },
+        { position: [20, 6, -20], color: '#ffcc66', intensity: 1.2, distance: 16 },
+        { position: [-20, 6, -20], color: '#ffcc66', intensity: 1.2, distance: 16 },
+        { position: [20, 6, 20], color: '#ffdd88', intensity: 1.0, distance: 14 },
+        { position: [-20, 6, 20], color: '#ffdd88', intensity: 1.0, distance: 14 },
+        { position: [0, 4, -40], color: '#ff8844', intensity: 0.8, distance: 12 },
+      ],
+    },
   },
 }
 

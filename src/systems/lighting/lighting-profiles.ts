@@ -1,5 +1,13 @@
 export type EnvironmentPreset = 'sunset' | 'dawn' | 'night' | 'warehouse' | 'forest' | 'apartment' | 'studio' | 'city' | 'park' | 'lobby'
 
+export interface SupplementalPointLight {
+  position: [number, number, number]
+  color: string
+  intensity: number
+  distance: number
+  decay?: number
+}
+
 export interface DistrictLightingProfile {
   id: string
   label: string
@@ -36,6 +44,10 @@ export interface DistrictLightingProfile {
 
   reflectionIntensity?: number
   shadowSoftness?: number
+
+  supplemental?: {
+    pointLights?: SupplementalPointLight[]
+  }
 }
 
 export type DistrictProfileId =

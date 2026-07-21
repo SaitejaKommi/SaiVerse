@@ -48,6 +48,19 @@ export function DistrictLighting() {
         shadow-normalBias={profile.sun.shadowNormalBias ?? 0.02}
       />
 
+      <group key={profileId + '-supplemental'}>
+        {profile.supplemental?.pointLights?.map((pl, i) => (
+          <pointLight
+            key={i}
+            position={pl.position}
+            color={pl.color}
+            intensity={pl.intensity}
+            distance={pl.distance}
+            decay={pl.decay ?? 2}
+          />
+        ))}
+      </group>
+
       <Environment
         preset={profile.environment}
         environmentIntensity={profile.environmentIntensity ?? 1}
