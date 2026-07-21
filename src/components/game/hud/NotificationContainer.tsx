@@ -31,9 +31,6 @@ export function NotificationContainer() {
         <div
           key={notif.id}
           className={`glass rounded-xl px-4 py-3 border ${typeColors[notif.type] ?? 'border-white/10'} animate-slide-in-right`}
-          style={{
-            animation: 'slideInRight 0.3s ease-out',
-          }}
         >
           <div className="flex items-start gap-2">
             <span className="text-base leading-none mt-0.5">{typeIcons[notif.type] ?? '•'}</span>

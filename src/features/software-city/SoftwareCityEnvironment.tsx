@@ -13,6 +13,7 @@ import { Bench } from '@/systems/environment/Bench'
 import { PhoneBooth } from '@/systems/environment/PhoneBooth'
 import { BusStop } from '@/systems/environment/BusStop'
 import { DigitalDisplay } from '@/systems/environment/DigitalDisplay'
+import { NeonStrip } from '@/systems/environment/NeonStrip'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { TechMentorNPC, NPC_DIALOGUE_ID, TERMINAL_ID, CODE_EDITOR_ID } from '@/features/npc/TechMentorNPC'
 import { SoftwareCityPortal } from '@/features/software-city/SoftwareCityPortal'
@@ -546,6 +547,12 @@ export function SoftwareCityEnvironment() {
       {/* Code posters on Tech Hub walls */}
       <CodeBillboard position={[TECH_HUB_X - 6.5, 1.6, FRONT_WALL_Z - 0.5]} rotation={Math.PI / 2} />
       <CodeBillboard position={[TECH_HUB_X + 6.5, 1.6, FRONT_WALL_Z - 0.5]} rotation={-Math.PI / 2} />
+
+      {/* Neon strips along skyline edges */}
+      <NeonStrip position={[-2, 16, -261]} length={30} color="#00d4ff" rotation={[0, 0, 0]} pulseSpeed={1.1} />
+      <NeonStrip position={[2, 16, -239]} length={30} color="#00ff88" rotation={[0, 0, 0]} pulseSpeed={0.7} />
+      <NeonStrip position={[-30, 12, -250]} length={20} color="#00d4ff" rotation={[0, 0, Math.PI / 2]} pulseSpeed={1.3} />
+      <NeonStrip position={[30, 12, -250]} length={20} color="#00ff88" rotation={[0, 0, Math.PI / 2]} pulseSpeed={0.9} />
 
       {/* Neon signs */}
       <ScNeonSign position={[0, 5.5, -258]} text="SOFTWARE CITY" color="#2dd4bf" />

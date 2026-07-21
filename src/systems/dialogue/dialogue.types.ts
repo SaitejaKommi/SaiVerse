@@ -30,6 +30,7 @@ export interface DialogueState {
   displayedText: string
   isTyping: boolean
   currentNode: DialogueNode | null
+  speakerPosition: [number, number, number] | null
 }
 
 export const TYPING_SPEED_MS = 30

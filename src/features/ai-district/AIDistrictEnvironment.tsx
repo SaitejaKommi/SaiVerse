@@ -17,6 +17,7 @@ import { Hologram } from '@/systems/environment/Hologram'
 import { ServerRack } from '@/systems/environment/ServerRack'
 import { DigitalDisplay } from '@/systems/environment/DigitalDisplay'
 import { Water } from '@/systems/environment/Water'
+import { NeonStrip } from '@/systems/environment/NeonStrip'
 import { RoadSystem } from '@/systems/world/RoadSystem'
 import { DataTerminal } from '@/features/ai-district/DataTerminal'
 import { TrainingConsole } from '@/features/ai-district/TrainingConsole'
@@ -200,6 +201,12 @@ export function AIDistrictEnvironment() {
         color='#0a2a4a'
         opacity={0.55}
       />
+
+      {/* Neon strips along building edges and roads */}
+      <NeonStrip position={[-18, 0.5, -360]} length={12} color="#a855f7" rotation={[0, 0, 0]} pulseSpeed={1.2} />
+      <NeonStrip position={[18, 0.5, -360]} length={12} color="#00d4ff" rotation={[0, 0, 0]} pulseSpeed={0.8} />
+      <NeonStrip position={[0, 0.5, -385]} length={20} color="#a855f7" rotation={[Math.PI / 2, 0, 0]} pulseSpeed={1.5} />
+      <NeonStrip position={[-35, 0.5, -370]} length={16} color="#00d4ff" rotation={[0, 0, Math.PI / 2]} pulseSpeed={0.6} />
 
       {/* Neon signs */}
       <DistrictNeonSign position={[0, 8, -370]} text="AI RESEARCH DISTRICT" color="#a855f7" />

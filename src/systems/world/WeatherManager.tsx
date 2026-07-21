@@ -12,6 +12,7 @@ const WEATHER_CYCLES: { weather: WeatherType; minDuration: number; maxDuration: 
   { weather: 'cloudy', minDuration: 20, maxDuration: 60 },
   { weather: 'rainy', minDuration: 15, maxDuration: 45 },
   { weather: 'foggy', minDuration: 10, maxDuration: 30 },
+  { weather: 'snow', minDuration: 15, maxDuration: 45 },
 ]
 
 interface WeatherManagerProps {
@@ -26,6 +27,7 @@ const FOG_DENSITY_MAP: Record<WeatherType, number> = {
   foggy: 0.014,
   rainy: 0.005,
   stormy: 0.008,
+  snow: 0.6,
 }
 
 export function WeatherManager({
@@ -127,6 +129,7 @@ function getWeatherIntensity(weather: WeatherType): number {
     case 'foggy': return 0.5
     case 'rainy': return 0.7
     case 'stormy': return 1
+    case 'snow': return 0.5
     default: return 0
   }
 }
@@ -147,4 +150,5 @@ const WIND_MAP: Record<WeatherType, number> = {
   foggy: 1,
   rainy: 4,
   stormy: 8,
+  snow: 1,
 }

@@ -10,6 +10,7 @@ import { usePlayerStore } from '@/stores/playerStore'
 import { useGameStore } from '@/stores/gameStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
 import { soundFX } from '@/systems/audio/SoundFX'
+import { MATERIALS } from '@/systems/material'
 import { EventBus } from '@/lib/events/EventBus'
 import { GameEvents } from '@/lib/events/events.types'
 import type { QuestDef } from '@/systems/quest/quest.types'
@@ -133,6 +134,9 @@ function TechMentorModel() {
   const glowRef = useRef<THREE.Mesh>(null)
   const lookTarget = useRef(new THREE.Vector3())
   const visorRef = useRef<THREE.Mesh>(null)
+  const leftArmRef = useRef<THREE.Mesh>(null)
+  const rightArmRef = useRef<THREE.Mesh>(null)
+  const mouthRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
@@ -168,6 +172,19 @@ function TechMentorModel() {
       const mat = visorRef.current.material as THREE.MeshStandardMaterial
       mat.emissiveIntensity = 0.3 + Math.sin(t * 0.8) * 0.15
     }
+
+    const swing = Math.sin(t * 2) * 0.15
+    if (leftArmRef.current) {
+      leftArmRef.current.rotation.x = swing
+    }
+    if (rightArmRef.current) {
+      rightArmRef.current.rotation.x = -swing
+    }
+    if (mouthRef.current) {
+      const isOpen = useDialogueStore.getState().isOpen
+      const scale = isOpen ? Math.sin(t * 4) * 0.4 + 0.6 : 0.2
+      mouthRef.current.scale.y = scale
+    }
   })
 
   return (
@@ -184,6 +201,22 @@ function TechMentorModel() {
         <planeGeometry args={[0.18, 0.04]} />
         <meshStandardMaterial color="#00d4ff" emissive="#00d4ff" emissiveIntensity={0.3} />
       </mesh>
+      <mesh ref={leftArmRef} position={[-0.36, 1.4, 0]} castShadow>
+        <boxGeometry args={[0.06, 0.3, 0.06]} />
+        <meshStandardMaterial color="#2dd4bf" roughness={MATERIALS.metal.painted.roughness} metalness={MATERIALS.metal.painted.metalness} />
+      </mesh>
+      <mesh ref={rightArmRef} position={[0.36, 1.4, 0]} castShadow>
+        <boxGeometry args={[0.06, 0.3, 0.06]} />
+        <meshStandardMaterial color="#2dd4bf" roughness={MATERIALS.metal.painted.roughness} metalness={MATERIALS.metal.painted.metalness} />
+      </mesh>
+      <mesh position={[0, 1.2, 0.26]}>
+        <boxGeometry args={[0.15, 0.2, 0.1]} />
+        <meshStandardMaterial color="#1a1a3e" emissive="#2dd4bf" emissiveIntensity={0.1} />
+      </mesh>
+      <mesh ref={mouthRef} position={[0, 1.75, 0.25]}>
+        <sphereGeometry args={[0.05, 0.03, 0.02]} />
+        <meshBasicMaterial color="#ff6b6b" />
+      </mesh>
       <mesh ref={glowRef} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.25, 0.45, 32]} />
         <meshBasicMaterial color="#2dd4bf" transparent opacity={0.25} side={THREE.DoubleSide} />
@@ -197,25 +230,26 @@ function FloatingName() {
 
   if (!textureRef.current) {
     const canvas = document.createElement('canvas')
-    canvas.width = 512
-    canvas.height = 64
+    canvas.width = 1024
+    canvas.height = 128
     const ctx = canvas.getContext('2d')!
-    ctx.clearRect(0, 0, 512, 64)
+    ctx.clearRect(0, 0, 1024, 128)
+    ctx.textRendering = 'geometricPrecision'
 
     ctx.shadowColor = 'rgba(45,212,191,0.5)'
     ctx.shadowBlur = 10
     ctx.fillStyle = '#2dd4bf'
-    ctx.font = 'bold 28px monospace'
+    ctx.font = 'bold 36px monospace'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('◆ Tech Lead ◆', 256, 32)
+    ctx.fillText('◆ Tech Lead ◆', 512, 64)
 
     textureRef.current = new THREE.CanvasTexture(canvas)
     textureRef.current.needsUpdate = true
   }
 
   return (
-    <sprite position={[0, 2.5, 0]} scale={[2.2, 0.35, 1]}>
+    <sprite position={[0, 2.5, 0]} scale={[4.4, 0.7, 1]}>
       <spriteMaterial map={textureRef.current} transparent opacity={0.9} depthTest={false} />
     </sprite>
   )
@@ -269,17 +303,17 @@ export function TechMentorNPC() {
 
       if (payload.objectId === NPC_ID) {
         if (quest?.status === 'completed') {
-          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
           setTimeout(() => dialogueStore.goToNode('done'), 50)
           return
         }
         if (!prereqQuest || prereqQuest.status !== 'completed') {
-          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
           setTimeout(() => dialogueStore.goToNode('prereq_not_met'), 50)
           return
         }
         if (!quest || quest.status === 'available') {
-          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
           return
         }
         if (quest.status === 'accepted') {
@@ -287,42 +321,42 @@ export function TechMentorNPC() {
             isQuestObjectiveDone(NPC_QUEST_ID, 'obj-setup-env') &&
             isQuestObjectiveDone(NPC_QUEST_ID, 'obj-fix-bug')
           ) {
-            dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+            dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
             setTimeout(() => dialogueStore.goToNode('completion'), 50)
             return
           }
-          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
           setTimeout(() => dialogueStore.goToNode('explore'), 50)
           return
         }
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
         return
       }
 
       if (!quest || quest.status === 'available' || quest.status === 'completed') {
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
         setTimeout(() => dialogueStore.goToNode('no_quest'), 50)
         return
       }
 
       if (payload.objectId === TERMINAL_ID) {
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
         setTimeout(() => dialogueStore.goToNode('terminal'), 50)
         return
       }
 
       if (payload.objectId === CODE_EDITOR_ID) {
         if (!isQuestObjectiveDone(NPC_QUEST_ID, 'obj-setup-env')) {
-          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
           setTimeout(() => dialogueStore.goToNode('need_terminal'), 50)
           return
         }
         if (isQuestObjectiveDone(NPC_QUEST_ID, 'obj-fix-bug')) {
-          dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+          dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
           setTimeout(() => dialogueStore.goToNode('already_done'), 50)
           return
         }
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
         setTimeout(() => dialogueStore.goToNode('code_editor'), 50)
         return
       }

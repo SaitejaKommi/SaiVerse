@@ -5,6 +5,8 @@ import { Canvas } from '@react-three/fiber'
 import { GameEngine } from '@/systems/bootstrap/GameEngine'
 import { LoadingScreen } from '@/components/layout/LoadingScreen'
 import { HUDWrapper } from '@/components/game/hud/HUD'
+import { CinematicOverlay } from '@/components/game/hud/CinematicOverlay'
+import { LoadingOverlay } from '@/components/game/hud/LoadingOverlay'
 import { IntroOverlay } from '@/features/intro/IntroOverlay'
 import { ChapterFinale } from '@/features/cinematics/ChapterFinale'
 import { Chapter2Finale } from '@/features/cinematics/Chapter2Finale'
@@ -99,6 +101,8 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
         </Canvas>
       </div>
       <HUDWrapper showInventory={showInventory} onToggleInventory={onToggleInventory} />
+      <CinematicOverlay />
+      <LoadingOverlay />
       <ChapterFinale />
       <Chapter2Finale />
       <Chapter3Finale />

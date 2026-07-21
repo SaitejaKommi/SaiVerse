@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
 import { MATERIALS } from '@/systems/material'
+import { useGameStore } from '@/stores/gameStore'
 
 type RoofStyle = 'classic' | 'flat' | 'modern' | 'gable' | 'dome'
 
@@ -68,6 +69,7 @@ export function Building({
   style = 'classic',
   accentColor,
 }: BuildingProps) {
+  const timeOfDay = useGameStore((s) => s.world.timeOfDay)
   const halfH = height / 2
   const dim = Math.max(width, depth)
 
@@ -146,7 +148,24 @@ export function Building({
     const wCols = Math.max(1, Math.floor(width / 1.5))
     const dRows = Math.max(1, Math.floor(height / 2.5))
     const dCols = Math.max(1, Math.floor(depth / 1.5))
-    const eIntensity = 0.2 + Math.random() * 0.3
+    const nightBase = 0.4
+    const dayBase = 0.02
+    const nightRandom = Math.random() * 0.3
+    const dayRandom = Math.random() * 0.03
+
+    let eIntensity: number
+    if (timeOfDay < 6 || timeOfDay >= 22) {
+      eIntensity = nightBase + nightRandom
+    } else if (timeOfDay >= 6 && timeOfDay < 8) {
+      const t = (timeOfDay - 6) / 2
+      eIntensity = (nightBase + nightRandom) * (1 - t) + (dayBase + dayRandom) * t
+    } else if (timeOfDay >= 8 && timeOfDay < 20) {
+      eIntensity = dayBase + dayRandom
+    } else {
+      const t = (timeOfDay - 20) / 2
+      eIntensity = (dayBase + dayRandom) * (1 - t) + (nightBase + nightRandom) * t
+    }
+
     return (
       <group>
         {buildWindowGrid({ rows: wRows, cols: wCols, width, depth: height }, depth / 2 + 0.03, windowsColor, eIntensity)}
@@ -155,7 +174,7 @@ export function Building({
         {buildWindowGrid({ rows: dRows, cols: dCols, width: depth, depth: height }, -width / 2 - 0.03, windowsColor, eIntensity)}
       </group>
     )
-  }, [hasWindows, width, depth, height, windowsColor])
+  }, [hasWindows, width, depth, height, windowsColor, timeOfDay])
 
   return (
     <group position={position}>

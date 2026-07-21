@@ -20,7 +20,7 @@ export interface WorldData {
   windStrength: number
 }
 
-export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy' | 'stormy'
+export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy' | 'stormy' | 'snow'
 
 export type FinalePhase = 'idle' | 'pullback' | 'dialogue' | 'rewards' | 'complete_show' | 'teaser' | 'done'
 

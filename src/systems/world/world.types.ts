@@ -1,6 +1,6 @@
 export type ChunkID = string
 export type SurfaceType = 'grass' | 'road' | 'pavement' | 'plaza' | 'dirt'
-export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy' | 'stormy'
+export type WeatherType = 'clear' | 'cloudy' | 'rainy' | 'foggy' | 'stormy' | 'snow'
 export type TimePhase = 'dawn' | 'day' | 'dusk' | 'night'
 
 export interface ChunkBounds {

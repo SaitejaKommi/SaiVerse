@@ -10,6 +10,7 @@ import { CameraShake } from './CameraShake'
 import { dampAngle } from '@/lib/math/vectors'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useGameStore } from '@/stores/gameStore'
+import { useDialogueStore } from '@/stores/dialogueStore'
 import { InputManager } from '@/systems/input/InputManager'
 import { PLAYER_CONFIG } from '@/systems/player/player.config'
 
@@ -21,6 +22,7 @@ const _collisionOffset = new Vector3()
 const _rightDir = new Vector3()
 const _direction = new Vector3()
 const _playerPos = new Vector3()
+const _collisionOrigin = new Vector3()
 
 interface CameraSystemProps {
   target?: Vector3
@@ -54,9 +56,22 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
   const sprintDistance = useRef(0)
   const frameCount = useRef(0)
   const collisionDistance = useRef(CAMERA_CONFIG.DEFAULT_DISTANCE)
+  const modeTransition = useRef({ from: 0, to: 0, progress: 0, active: false })
+
+  const eased = useCallback((t: number) => 1 - Math.pow(1 - t, 3), [])
 
   const updateCamera = useCallback((delta: number, targetPos: Vector3) => {
     const state = stateRef.current
+
+    if (modeTransition.current.active) {
+      modeTransition.current.progress += delta / 0.4
+      const p = Math.min(modeTransition.current.progress, 1)
+      state.targetDistance = modeTransition.current.from + (modeTransition.current.to - modeTransition.current.from) * eased(p)
+      if (p >= 1) {
+        modeTransition.current.active = false
+        state.targetDistance = modeTransition.current.to
+      }
+    }
 
     state.angle = dampAngle(state.angle, state.targetAngle, CAMERA_CONFIG.LOOK_SMOOTHING, delta)
     state.elevation = dampAngle(state.elevation, state.targetElevation, CAMERA_CONFIG.LOOK_SMOOTHING, delta)
@@ -76,8 +91,17 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
 
       frameCount.current = (frameCount.current + 1) % 3
       if (frameCount.current === 0) {
-        raycaster.current.set(targetPos, _direction)
-        raycaster.current.far = finalDistance + 0.5
+        let rayOrigin = targetPos
+        let collisionFar = finalDistance + 0.5
+        if (state.mode === 'dialogue') {
+          const dialogueState = useDialogueStore.getState()
+          if (dialogueState.speakerPosition) {
+            const sp = dialogueState.speakerPosition
+            rayOrigin = _collisionOrigin.set(sp[0], sp[1], sp[2])
+          }
+        }
+        raycaster.current.set(rayOrigin, _direction)
+        raycaster.current.far = collisionFar
         raycaster.current.camera = camera
 
         try {
@@ -205,23 +229,34 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     const state = stateRef.current
     state.mode = mode
 
+    let newTargetDistance: number
     switch (mode) {
       case 'third-person': {
-        state.targetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE
+        newTargetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE
         break
       }
       case 'first-person': {
-        state.targetDistance = 0
+        newTargetDistance = 0
         break
       }
       case 'cinematic': {
-        state.targetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE * 1.5
+        newTargetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE * 1.5
         break
       }
       case 'dialogue': {
-        state.targetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE * 0.8
+        newTargetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE * 0.8
         break
       }
+      default: {
+        newTargetDistance = CAMERA_CONFIG.DEFAULT_DISTANCE
+      }
+    }
+
+    modeTransition.current = {
+      from: state.targetDistance,
+      to: newTargetDistance,
+      progress: 0,
+      active: true,
     }
   }, [])
 

@@ -8,6 +8,7 @@ import { useDialogueStore } from '@/stores/dialogueStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { QuestManager } from '@/systems/quest/QuestManager'
 import { soundFX } from '@/systems/audio/SoundFX'
+import { MATERIALS } from '@/systems/material'
 import { EventBus } from '@/lib/events/EventBus'
 import { GameEvents } from '@/lib/events/events.types'
 import type { QuestDef } from '@/systems/quest/quest.types'
@@ -85,6 +86,9 @@ function NPCModel() {
   const bodyRef = useRef<THREE.Mesh>(null)
   const headRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Mesh>(null)
+  const leftArmRef = useRef<THREE.Mesh>(null)
+  const rightArmRef = useRef<THREE.Mesh>(null)
+  const mouthRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
@@ -97,6 +101,18 @@ function NPCModel() {
     if (glowRef.current) {
       glowRef.current.position.y = 0.01 + Math.sin(t * 1.2) * 0.02
       glowRef.current.scale.setScalar(1 + Math.sin(t * 1.2) * 0.05)
+    }
+    const swing = Math.sin(t * 2) * 0.15
+    if (leftArmRef.current) {
+      leftArmRef.current.rotation.x = swing
+    }
+    if (rightArmRef.current) {
+      rightArmRef.current.rotation.x = -swing
+    }
+    if (mouthRef.current) {
+      const isOpen = useDialogueStore.getState().isOpen
+      const scale = isOpen ? Math.sin(t * 4) * 0.4 + 0.6 : 0.2
+      mouthRef.current.scale.y = scale
     }
   })
 
@@ -118,6 +134,18 @@ function NPCModel() {
         <planeGeometry args={[0.08, 0.03]} />
         <meshBasicMaterial color="#00d4ff" />
       </mesh>
+      <mesh ref={leftArmRef} position={[-0.36, 1.4, 0]} castShadow>
+        <boxGeometry args={[0.06, 0.3, 0.06]} />
+        <meshStandardMaterial color="#6366f1" roughness={MATERIALS.metal.painted.roughness} metalness={MATERIALS.metal.painted.metalness} />
+      </mesh>
+      <mesh ref={rightArmRef} position={[0.36, 1.4, 0]} castShadow>
+        <boxGeometry args={[0.06, 0.3, 0.06]} />
+        <meshStandardMaterial color="#6366f1" roughness={MATERIALS.metal.painted.roughness} metalness={MATERIALS.metal.painted.metalness} />
+      </mesh>
+      <mesh ref={mouthRef} position={[0, 1.55, 0.25]}>
+        <sphereGeometry args={[0.05, 0.03, 0.02]} />
+        <meshBasicMaterial color="#ff6b6b" />
+      </mesh>
       <mesh ref={glowRef} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.25, 0.45, 32]} />
         <meshBasicMaterial color="#00d4ff" transparent opacity={0.3} side={THREE.DoubleSide} />
@@ -131,25 +159,26 @@ function FloatingName() {
 
   if (!textureRef.current) {
     const canvas = document.createElement('canvas')
-    canvas.width = 256
-    canvas.height = 64
+    canvas.width = 512
+    canvas.height = 128
     const ctx = canvas.getContext('2d')!
-    ctx.clearRect(0, 0, 256, 64)
+    ctx.clearRect(0, 0, 512, 128)
+    ctx.textRendering = 'geometricPrecision'
 
     ctx.shadowColor = 'rgba(0,212,255,0.5)'
     ctx.shadowBlur = 10
     ctx.fillStyle = '#00d4ff'
-    ctx.font = 'bold 32px monospace'
+    ctx.font = 'bold 36px monospace'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('◆ Guide ◆', 128, 32)
+    ctx.fillText('◆ Guide ◆', 256, 64)
 
     textureRef.current = new THREE.CanvasTexture(canvas)
     textureRef.current.needsUpdate = true
   }
 
   return (
-    <sprite position={[0, 2.4, 0]} scale={[1.6, 0.4, 1]}>
+    <sprite position={[0, 2.4, 0]} scale={[3.2, 0.8, 1]}>
       <spriteMaterial
         map={textureRef.current}
         transparent
@@ -194,18 +223,18 @@ export function PlaceholderNPC() {
       acceptedRef.current = false
 
       if (quest.status === 'completed') {
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
         setTimeout(() => dialogueStore.goToNode('done'), 50)
         return
       }
 
       if (quest.status === 'accepted') {
-        dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+        dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
         setTimeout(() => dialogueStore.goToNode('quest_intro'), 50)
         return
       }
 
-      dialogueStore.openDialogue(NPC_DIALOGUE_ID)
+      dialogueStore.openDialogue(NPC_DIALOGUE_ID, NPC_POSITION)
     })
 
     const unsubAdvance = EventBus.on(GameEvents.DIALOGUE_ADVANCE, (payload: any) => {

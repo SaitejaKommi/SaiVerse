@@ -28,14 +28,14 @@ function KnowledgeBar() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] text-neon-blue font-mono font-bold">LV.{level}</span>
+      <span className="text-[13px] text-neon-blue font-mono font-bold">LV.{level}</span>
       <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-neon-blue to-neon-cyan rounded-full transition-all duration-500"
           style={{ width: `${progress * 100}%` }}
         />
       </div>
-      <span className="text-[9px] text-white/40 font-mono">XP</span>
+      <span className="text-[12px] text-white/40 font-mono">XP</span>
     </div>
   )
 }
@@ -62,7 +62,7 @@ function CurrentChapter() {
   if (!chapterText) return null
 
   return (
-    <span className="text-[10px] text-white/40 font-mono">{chapterText}</span>
+    <span className="text-[13px] text-white/40 font-sans text-shadow-readable">{chapterText}</span>
   )
 }
 
@@ -115,12 +115,12 @@ function ObjectiveTracker() {
 
   return (
     <div className="text-center">
-      <div className="text-[13px] text-white/90 font-medium">{quest.title}</div>
+      <div className="text-[13px] text-white/90 font-medium font-sans text-shadow-readable">{quest.title}</div>
       {incomplete.length > 0 && (
-        <div className="text-[11px] text-white/50 mt-0.5 flex items-center justify-center gap-2">
+        <div className="text-[14px] text-white/50 mt-0.5 flex items-center justify-center gap-2 font-sans text-shadow-readable">
           <span>{incomplete[0]!.description}</span>
           {distance !== null && distance > 3 && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-neon-cyan/70 font-mono">
+            <span className="inline-flex items-center gap-1 text-[13px] text-neon-cyan/70 font-mono">
               <span
                 className="inline-block w-3 h-3"
                 style={{ transform: `rotate(${direction}rad)` }}
@@ -131,7 +131,7 @@ function ObjectiveTracker() {
             </span>
           )}
           {distance !== null && distance <= 3 && (
-            <span className="text-[10px] text-neon-green/70 font-mono">● Here</span>
+            <span className="text-[13px] text-neon-green/70 font-mono">● Here</span>
           )}
         </div>
       )}
@@ -142,7 +142,7 @@ function ObjectiveTracker() {
             style={{ width: `${(completedObjectives / totalObjectives) * 100}%` }}
           />
         </div>
-        <span className="text-[10px] text-white/30 font-mono">
+        <span className="text-[13px] text-white/30 font-mono">
           {completedObjectives}/{totalObjectives}
         </span>
       </div>
@@ -166,7 +166,7 @@ function ControlsHint() {
   if (!visible) return null
 
   return (
-    <div className="text-[10px] text-white/20 font-mono leading-relaxed">
+    <div className="text-[13px] text-white/20 font-sans leading-relaxed text-shadow-readable">
       WASD Move  ·  Mouse Look  ·  Space Jump  ·  Shift Sprint<br />
       E Interact  ·  I Inventory  ·  Esc Pause
     </div>
@@ -234,9 +234,15 @@ interface HUDWrapperProps {
 
 export function HUDWrapper({ showInventory, onToggleInventory }: HUDWrapperProps) {
   const isInitialized = useGameStore((s) => s.isInitialized)
+  const isCinematic = useGameStore((s) => s.isCinematic)
 
   return (
-    <div className={`transition-opacity duration-1000 ${isInitialized ? 'opacity-100' : 'opacity-0'}`}>
+    <div
+      className="transition-all duration-500 ease-in-out"
+      style={{
+        opacity: isCinematic ? 0.15 : isInitialized ? 1 : 0,
+      }}
+    >
       {isInitialized && <HUD showInventory={showInventory} onToggleInventory={onToggleInventory} />}
     </div>
   )

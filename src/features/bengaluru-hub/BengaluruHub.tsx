@@ -20,6 +20,7 @@ import { BusStop } from '@/systems/environment/BusStop'
 import { Fountain } from '@/systems/environment/Fountain'
 import { SignPost } from '@/systems/environment/SignPost'
 import { Statue } from '@/systems/environment/Statue'
+import { LockedDistrict } from '@/systems/environment/LockedDistrict'
 import { MetroTrack } from '@/systems/environment/MetroTrack'
 import { Skybox } from '@/systems/world/Skybox'
 import { WeatherManager } from '@/systems/world/WeatherManager'
@@ -160,10 +161,10 @@ function HubEnvironment() {
       <Statue position={[0, 0, -14]} scale={1.0} />
 
       {/* District signposts */}
-      <SignPost position={[0, 0, -26]} rotation={0} color='#3b5998' />
-      <SignPost position={[0, 0, 28]} rotation={Math.PI} color='#c05621' />
-      <SignPost position={[28, 0, 0]} rotation={-Math.PI / 2} color='#2b6cb0' />
-      <SignPost position={[-28, 0, 0]} rotation={Math.PI / 2} color='#553c9a' />
+      <SignPost position={[0, 0, -26]} rotation={0} color='#3b5998' label="CAMPUS →" />
+      <SignPost position={[0, 0, 28]} rotation={Math.PI} color='#c05621' label="SOFTWARE CITY →" />
+      <SignPost position={[28, 0, 0]} rotation={-Math.PI / 2} color='#2b6cb0' label="CAREER DISTRICT →" />
+      <SignPost position={[-28, 0, 0]} rotation={Math.PI / 2} color='#553c9a' label="AI DISTRICT →" />
 
       {/* Elevated metro track */}
       <MetroTrack position={[0, 0, -70]} length={80} rotation={0} />
@@ -182,12 +183,12 @@ function HubEnvironment() {
       <ChapterFinaleCamera />
       {chapter2Status !== 'locked' && <Chapter2FinaleCamera />}
       <CampusEnvironment />
-      {chapter2Status !== 'locked' && <SoftwareCityEnvironment />}
-      {chapter3Status !== 'locked' && <AIDistrictEnvironment />}
-      {chapter4Status !== 'locked' && <OSVEnvironment />}
-      {chapter5Status !== 'locked' && <HackathonArenaEnvironment />}
-      {chapter6Status !== 'locked' && <CareerDistrictEnvironment />}
-      {chapter7Status !== 'locked' && <FinalSummitEnvironment />}
+      {chapter2Status !== 'locked' ? <SoftwareCityEnvironment /> : <LockedDistrict position={[0, 0, -250]} label="Software City" requiredChapter="Complete Chapter 2" />}
+      {chapter3Status !== 'locked' ? <AIDistrictEnvironment /> : <LockedDistrict position={[0, 0, -360]} label="AI District" requiredChapter="Complete Chapter 3" />}
+      {chapter4Status !== 'locked' ? <OSVEnvironment /> : <LockedDistrict position={[0, 0, -510]} label="Open Source Valley" requiredChapter="Complete Chapter 4" />}
+      {chapter5Status !== 'locked' ? <HackathonArenaEnvironment /> : <LockedDistrict position={[0, 0, -630]} label="Hackathon Arena" requiredChapter="Complete Chapter 5" />}
+      {chapter6Status !== 'locked' ? <CareerDistrictEnvironment /> : <LockedDistrict position={[55, 0, 0]} label="Career District" requiredChapter="Complete Chapter 6" />}
+      {chapter7Status !== 'locked' ? <FinalSummitEnvironment /> : <LockedDistrict position={[0, 0, -730]} label="Final Summit" requiredChapter="Complete Chapter 7" />}
       <SoftwareCitySkyline />
       <SkillUnlockEffect />
     </group>

@@ -57,7 +57,7 @@ export function StewardNPC() {
             },
           })
         }
-        dialogueStore.openDialogue(STEWARD_DIALOGUE_ID)
+        dialogueStore.openDialogue(STEWARD_DIALOGUE_ID, [POS.x, POS.y, POS.z])
       }
     }
     EventBus.on(GameEvents.INTERACTION_START, handler)
