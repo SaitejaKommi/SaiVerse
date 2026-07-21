@@ -4,6 +4,7 @@ import { useMemo, useRef } from 'react'
 import { CuboidCollider } from '@react-three/rapier'
 import * as THREE from 'three'
 import { ENV_CONFIG } from './environment.config'
+import { MATERIALS } from '@/systems/material'
 
 interface StreetLampProps {
   position: [number, number, number]
@@ -16,7 +17,7 @@ export function StreetLamp({
   position,
   color = '#ffdd88',
   lightRadius = ENV_CONFIG.LAMP_REACH,
-  lightIntensity = 0.5,
+  lightIntensity = 2.5,
 }: StreetLampProps) {
   const lightRef = useRef<THREE.PointLight>(null)
   const glowRef = useRef<THREE.Mesh>(null)
@@ -27,21 +28,22 @@ export function StreetLamp({
 
   const poleMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: '#2a2a2a',
-    roughness: 0.5,
-    metalness: 0.8,
+    roughness: MATERIALS.metal.structural.roughness,
+    metalness: MATERIALS.metal.structural.metalness,
   }), [])
 
   const lampMat = useMemo(() => new THREE.MeshStandardMaterial({
     color,
     emissive: color,
     emissiveIntensity: 1,
-    roughness: 0.3,
+    roughness: MATERIALS.metal.lamp.roughness,
+    metalness: MATERIALS.metal.lamp.metalness,
   }), [color])
 
   const glowMat = useMemo(() => new THREE.MeshBasicMaterial({
     color,
     transparent: true,
-    opacity: 0.08,
+    opacity: 0.2,
   }), [color])
 
   return (
@@ -57,7 +59,7 @@ export function StreetLamp({
         color={color}
         intensity={lightIntensity}
         distance={lightRadius}
-        decay={2}
+        decay={1}
       />
 
       <mesh

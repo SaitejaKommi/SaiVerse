@@ -13,7 +13,7 @@
 | Total Visual Issues | 56 |
 | Completed Issues | 18 |
 | Remaining Issues | 38 |
-| Current Phase | Phase 3 — Street lamp lights |
+| Current Phase | Phase 3 — Emissive neon strips |
 | Completion | 32.1% |
 
 ---

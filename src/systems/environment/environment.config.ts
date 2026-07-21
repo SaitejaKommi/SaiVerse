@@ -9,6 +9,6 @@ export const ENV_CONFIG = {
   TREE_VARIANTS: 3,
   TREE_SCALES: [0.8, 1, 1.2, 1.5],
   LAMP_HEIGHT: 4,
-  LAMP_REACH: 6,
+  LAMP_REACH: 15,
   BENCH_SIZE: [1.5, 0.4, 0.6],
 } as const
