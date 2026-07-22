@@ -37,9 +37,10 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
     targetAngle: 0,
     targetElevation: Math.PI / 5,
     mode: (initialMode ?? 'third-person') as CameraMode,
-    currentPosition: new Vector3(0, 5, 10),
   })
 
+  const currentPos = useRef(new Vector3())
+  const firstFrame = useRef(true)
   const raycaster = useRef(new Raycaster())
   const collisionEnabled = useRef(true)
   const sceneRef = useRef<Object3D[]>([])
@@ -174,10 +175,15 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
       .add(targetPos)
     _idealPosition.y = Math.max(_idealPosition.y, targetPos.y + CAMERA_CONFIG.CAMERA_MIN_Y_OFFSET)
 
-    const posDt = 1 - Math.exp(-CAMERA_CONFIG.POSITION_SMOOTHING * dt)
-    s.currentPosition.lerp(_idealPosition, posDt)
+    if (firstFrame.current) {
+      currentPos.current.copy(_idealPosition)
+      firstFrame.current = false
+    } else {
+      const posDt = 1 - Math.exp(-CAMERA_CONFIG.POSITION_SMOOTHING * dt)
+      currentPos.current.lerp(_idealPosition, posDt)
+    }
 
-    camera.position.copy(s.currentPosition)
+    camera.position.copy(currentPos.current)
 
     _lookTarget.set(targetPos.x, targetPos.y + CAMERA_CONFIG.DEFAULT_HEIGHT_OFFSET, targetPos.z)
     camera.lookAt(_lookTarget)
