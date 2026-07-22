@@ -83,15 +83,13 @@ export class InputManager {
   }
 
   requestPointerLock(): void {
-    this.#mouse.requestLock()
   }
 
   exitPointerLock(): void {
-    this.#mouse.exitLock()
   }
 
   get isPointerLocked(): boolean {
-    return this.#mouse.isLocked
+    return false
   }
 
   #setupSettingsSync(): void {

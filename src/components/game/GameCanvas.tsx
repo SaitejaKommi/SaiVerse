@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, Component, type ReactNode } from 'react'
+import { useCallback, Component, type ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { GameEngine } from '@/systems/bootstrap/GameEngine'
 import { LoadingScreen } from '@/components/layout/LoadingScreen'
@@ -42,8 +42,6 @@ interface GameCanvasProps {
 }
 
 export default function GameCanvas({ showInventory, onToggleInventory }: GameCanvasProps = {}) {
-  const canvasRef = useRef<HTMLDivElement>(null)
-
   const handleLoadComplete = useCallback(() => {}, [])
 
   const handleCreated = useCallback((state: { gl: { domElement: HTMLCanvasElement; setClearColor: (color: string) => void } }) => {
@@ -55,24 +53,11 @@ export default function GameCanvas({ showInventory, onToggleInventory }: GameCan
 
   const handleError = useCallback(() => {}, [])
 
-  useEffect(() => {
-    const el = canvasRef.current
-    if (!el) return
-
-    const handleClick = () => {
-      if (!document.pointerLockElement) {
-        document.body.requestPointerLock()
-      }
-    }
-    el.addEventListener('click', handleClick)
-    return () => el.removeEventListener('click', handleClick)
-  }, [])
-
   return (
     <CanvasErrorBoundary onError={handleError}>
       <LoadingScreen minimumDuration={1500} onComplete={handleLoadComplete} />
       <IntroOverlay />
-      <div ref={canvasRef} className="fixed inset-0">
+      <div className="fixed inset-0">
         <Canvas
           shadows
           dpr={[1, 2]}

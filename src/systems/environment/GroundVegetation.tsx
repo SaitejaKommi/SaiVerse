@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '@/stores/gameStore'
@@ -65,7 +65,7 @@ function GrassPatch({ positions, color }: { positions: Float32Array; color: stri
 
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
-  useMemo(() => {
+  useEffect(() => {
     const rng = seededRandom(42)
     const mesh = meshRef.current
     for (let i = 0; i < count; i++) {
@@ -109,7 +109,7 @@ function BushPatch({ positions, color }: { positions: Float32Array; color: strin
 
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
-  useMemo(() => {
+  useEffect(() => {
     const rng = seededRandom(137)
     const mesh = meshRef.current
     for (let i = 0; i < count; i++) {

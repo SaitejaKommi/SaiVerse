@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
 
   experimental: {
-    webpackBuildWorker: true,
+    webpackBuildWorker: false,
   },
 
   webpack: (config) => {

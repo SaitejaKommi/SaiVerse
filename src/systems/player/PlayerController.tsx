@@ -4,7 +4,7 @@ import { useRef, useEffect, useCallback } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RigidBody, useRapier } from '@react-three/rapier'
 import type { RapierRigidBody } from '@react-three/rapier'
-import { Vector3 } from 'three'
+import { Vector3, Group } from 'three'
 import { PLAYER_CONFIG } from './player.config'
 import { processPlayerInput } from './PlayerInput'
 import { InputManager } from '@/systems/input/InputManager'
@@ -31,9 +31,11 @@ interface PlayerControllerProps {
 
 export function PlayerController({ onPositionChange }: PlayerControllerProps) {
   const rigidBodyRef = useRef<RapierRigidBody>(null)
+  const modelRef = useRef<Group>(null)
   const setPlayer = useGameStore((s) => s.setPlayer)
   const currentSpeed = useRef(0)
   const footstepTimer = useRef(0)
+  const currentRotY = useRef(0)
   const { world, rapier } = useRapier()
   const { interact, nearestObject } = useInteractionSystem()
   const wasInteractingRef = useRef(false)
@@ -89,6 +91,18 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     if (playerInput.moveX !== 0) MOVE_DIR.addScaledVector(CAM_RIGHT, playerInput.moveX)
     if (MOVE_DIR.lengthSq() > 0) MOVE_DIR.normalize()
 
+    if (MOVE_DIR.lengthSq() > 0.01) {
+      const targetRot = Math.atan2(MOVE_DIR.x, MOVE_DIR.z)
+      let diff = targetRot - currentRotY.current
+      while (diff > Math.PI) diff -= Math.PI * 2
+      while (diff < -Math.PI) diff += Math.PI * 2
+      const rotDt = 1 - Math.exp(-12 * dt)
+      currentRotY.current += diff * rotDt
+    }
+    if (modelRef.current) {
+      modelRef.current.rotation.y = currentRotY.current
+    }
+
     const pos = body.translation()
 
     rayOriginRef.current.x = pos.x
@@ -132,7 +146,7 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
     setPlayer({
       position: [pos.x, pos.y, pos.z],
       velocity: [_moveVel.x, _moveVel.y, _moveVel.z],
-      rotation: [0, 0, 0],
+      rotation: [0, currentRotY.current, 0],
       state: playerState,
       isGrounded,
     })
@@ -182,7 +196,7 @@ export function PlayerController({ onPositionChange }: PlayerControllerProps) {
       friction={0}
       restitution={0}
     >
-      <group position={[0, -HALF_HEIGHT, 0]}>
+      <group ref={modelRef} position={[0, -HALF_HEIGHT, 0]}>
         <mesh position={[0, HALF_HEIGHT * 0.6, 0]} castShadow>
           <capsuleGeometry args={[PLAYER_CONFIG.RADIUS, HALF_HEIGHT * 0.7, 8, 16]} />
           <meshStandardMaterial color="#6366f1" metalness={0.3} roughness={0.4} />
