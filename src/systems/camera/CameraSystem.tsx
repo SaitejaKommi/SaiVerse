@@ -146,6 +146,7 @@ export function CameraSystem({ target: externalTarget, mode: initialMode }: Came
         }
         raycaster.current.set(rayOrigin, _direction)
         raycaster.current.far = collisionFar
+        raycaster.current.camera = camera
 
         try {
           const intersects = raycaster.current.intersectObjects(sceneRef.current, true)
